@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My webpage</title>
+    <link rel="stylesheet" href="quizApp.css">
+    <script src="quizLogic.js" defer></script>
+</head>
+<body>
+<header> <h1>Interactive Quiz</h1></header>
+<main>
+        <p id="qn">Question 1/3:</p>
+        <p id="question">Which animal is best?</p>
+
+        <form id="allQ" >
+            <input id="answer1" type="radio" name="choice" value="1">
+            <label for="answer1" id="at1">Dog</label><br/>
+            <input id="answer2" type="radio" name="choice" value="2" >
+            <label for="answer2" id="at2">Cat</label><br/>
+            <input id="answer3" type="radio" name="choice" value="3">
+            <label for="answer3" id="at3">Duck</label><br/>
+            <input id="answer4" type="radio" name="choice" value="4">
+            <label for="answer4" id="at4">Snake</label><br/>
+
+           
+        <button id="submit" type="submit">Submit Quiz</button>
+        </form>
+        <table id="t" hidden >
+            <tr><th>Question</th><th>Your Answer   </th><th>Correct Answer   </th><th>Points</th></tr>
+            <tr><td>Which animal is best?</td><td id="ya1">Dog</td><td>Dog</td><td id="points1">0</td></tr>
+            <tr><td>What do dogs like to eat?</td><td id="ya2">Dog</td><td>Meat</td><td id="points2">0</td></tr>
+            <tr><td>What is food?</td><td id="ya3">Dog</td><td>Sandwich</td><td id="points3">0</td></tr>
+        </table>
+
+        <p id="needChoice" hidden>Please select an answer before going to the next or previous question</p>
+       
+        <div id="infotable" hidden>
+            <ul class="questions-list" id="t2" hidden>
+                <li><span>Question1: Which animal is best?</span></li>
+                <ul class="answer-list">
+                    <li>Dog</li>
+                    <li>Cat</li>
+                    <li>Duck</li>
+                    <li>Snake</li>
+                </ul>
+            </ul>
+            
+            <ul class="questions-list" id="t3" hidden>
+                <li><span>Question2: What do dogs like to eat?</span></li>
+                <ul class="answer-list">
+                    <li>Meat</li>
+                    <li>Plastic</li>
+                    <li>Chocolate</li>
+                    <li>Electricity</li>
+                </ul>
+            </ul>
+            
+            <ul class="questions-list" id="t4" hidden>
+                <li><span>Question3: What is food?</span></li>
+                <ul class="answer-list">
+                    <li>Game controller</li>
+                    <li>Door bell</li>
+                    <li>Jacket</li>
+                    <li>Sandwich</li>
+                </ul>
+            </ul>
+        </div>
+        
+        <p id="finalscore" hidden>SS</p>
+        <a style="text-decoration: none" id="Restart" href="#" hidden>Restart Quiz</button>
+</main>
+<footer>
+    <nav>
+        <a id="prev" href="#">PREV</a>
+        <a id="next" href="#">NEXT</a> 
+    </nav>
+    
+    
+</footer>
+    
+</body>
+</html>

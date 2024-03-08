@@ -1,0 +1,146 @@
+header, main
+{
+    color: #22223B;
+}
+header{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:  45px;
+}
+body
+{
+    background-color: #F2E9E4;
+    margin: 50px;
+}
+
+h1
+{
+    border-top-style: solid;
+    border-top-color: #C9ADA7;
+    text-align: center;
+    margin: auto;
+    padding: 20px;
+    z-index: -10;
+}
+
+form
+{
+    font-size: 35px;
+    font-family:Arial, Helvetica, sans-serif;
+    color: #22223B;
+}
+input[type=radio] {
+    width: 2em; height: 2em; 
+}
+a
+{
+    float: left;
+    margin-top: 20px;
+    color: #9A8C98;
+    
+    border-style: solid;
+    border-radius: 25px;
+    padding: 20px;   
+    
+}
+#needChoice
+{
+    color:#D62828;
+}
+#next
+{
+    margin-left:60px ;
+}
+#finalscore, #needChoice
+{
+    font-size: 28px;
+    font-family:Arial, Helvetica, sans-serif;
+    color: #22223B;
+}
+
+
+a:hover{
+    color: #D62828;
+}
+
+#animal{
+    color: #4A4E69 ;
+}
+#question
+{
+    font-size: 40px;
+    font-family:Arial, Helvetica, sans-serif;
+    color: #4A4E69;
+}
+#qn
+{
+     font-size: 40px;
+    font-family:Arial, Helvetica, sans-serif;
+    color: #4A4E69;
+}
+button
+{
+    float: right;
+    background-color: #f4f0ed;
+    color: #22223B;
+    padding: 12px 20px;
+    border-radius: 25px;
+}
+#infotable
+{
+    margin: auto;
+    width: 80%;
+    text-align: center;
+
+    background-color: #f4f0ed;
+    color: #22223B;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border-style:dashed;
+
+    font-size: 28px;
+    font-family:Arial, Helvetica, sans-serif;
+    color: #22223B;
+
+    
+}
+#Restart
+{
+    float: right;
+    background-color: #f4f0ed;
+    color: #22223B;
+    font-family:Arial, Helvetica, sans-serif;
+    padding: 12px 20px;
+    border-radius: 25px;
+}
+table
+{
+    margin: auto;
+    width: 80%;
+    text-align: center;
+    
+    font-size: 28px;
+    font-family:Arial, Helvetica, sans-serif;
+    color: #22223B;
+}
+#finalscore
+{
+    text-align: center;
+}
+tr {
+    text-align: center;
+}
+#t {
+    border-collapse: collapse;
+    width: 100%;
+    margin: auto;
+}
+
+#t th, #t td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#t th {
+    background-color: #f2f2f2;
+}
