@@ -1,5 +1,5 @@
 package com.example.demo.controllers;
-// copilot was used during the assingment
+
 
 
 import java.util.List;
@@ -37,15 +37,15 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public String login(@RequestParam Map<String, String> newuser, HttpServletResponse response, Model model)
+    public String login(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model)
     {
         System.out.println("Logging in");
 
-        String newUsername = newuser.get("username");
-        String newPassword = newuser.get("password");
+        String newUsername = newUser.get("username");
+        String newPassword = newUser.get("password");
 
         // Check if username and password are present
-        if (!newuser.containsKey("username") || !newuser.containsKey("password")) {
+        if (!newUser.containsKey("username") || !newUser.containsKey("password")) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Username or password not provided");
             return "users/loginPage";
@@ -84,10 +84,10 @@ public class UsersController {
     }
 
     @PostMapping("/users/register")
-    public String registerUser(@RequestParam Map<String, String> newuser, HttpServletResponse response, Model model)
+    public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model)
     {
         System.out.println("ADD user");
-        String newUsername = newuser.get("username");
+        String newUsername = newUser.get("username");
 
         //username already exists
         if (userRepo.existsByUsername(newUsername)) {
@@ -97,8 +97,8 @@ public class UsersController {
             return "redirect:/registerPage";
         }
       
-        int newStatus = Integer.parseInt(newuser.getOrDefault("status", "0"));
-        String newPassword = newuser.get("password");
+        int newStatus = Integer.parseInt(newUser.getOrDefault("status", "0"));
+        String newPassword = newUser.get("password");
 
         userRepo.save(new User(newUsername, newPassword, newStatus));
         response.setStatus(201);
