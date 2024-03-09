@@ -29,12 +29,12 @@ public class User {
     public User() {
     }
 
-    public User(String username, double weight, double height, Integer status, String password) {
+    public User(String username, String password, Integer status) {
         this.username = username;
-        this.weight = weight;
-        this.height = height;
         this.status = status;
         this.password = password;
+        this.weight = 0.0;
+        this.height = 0.0;
     }
 
     public String getUsername() {

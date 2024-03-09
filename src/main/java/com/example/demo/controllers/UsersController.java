@@ -7,6 +7,7 @@ import java.util.Map;
 // import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.models.User;
-import com.example.demo.models.StudentRepository;
+import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,52 +24,88 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UsersController {
 
     @Autowired
-    private StudentRepository userRepo;
+    private UserRepository userRepo;
 
-    @GetMapping("/users/view")
-    public String getAllUsers(Model model)
-    {
-        System.out.println("Getting all users");
-
-        List<User> users = userRepo.findAllByOrderByUid();
-
-        model.addAttribute("students", users);
-        return "users/showAll";
+    //simple get request to login page
+    @GetMapping("/login")
+    public String loginPage() {
+        return "users/loginPage";
+    }
+    @GetMapping("/register")
+    public String registerPage() {
+        return "users/registerPage";
     }
 
-    @PostMapping("/users/add")
-    public String addUser(@RequestParam Map<String, String> newuser, HttpServletResponse response)
+    @PostMapping("/users/login")
+    public String login(@RequestParam Map<String, String> newuser, HttpServletResponse response, Model model)
+    {
+        System.out.println("Logging in");
+
+        String newUsername = newuser.get("username");
+        String newPassword = newuser.get("password");
+
+        // Check if username and password are present
+        if (!newuser.containsKey("username") || !newuser.containsKey("password")) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Username or password not provided");
+            return "users/loginPage";
+        }
+
+        User user = userRepo.findByUsername(newUsername);
+        if (user == null) {
+            response.setStatus(404); // Not Found
+            model.addAttribute("error", "Invalid username");
+            return "users/loginPage";
+        }
+        if (!user.getPassword().equals(newPassword)) {
+            response.setStatus(401); // Unauthorized
+            model.addAttribute("error", "Invalid password");
+            return "users/loginPage";
+        }
+        
+        //login successful
+        //if 0 go to user page
+        if (user.getStatus() == 0) {
+            response.setStatus(200); // OK
+            model.addAttribute("user", user);
+            return "users/userPage";
+        }
+        //if 1 go to coach page
+        if (user.getStatus() == 1) {
+            response.setStatus(200); // OK
+            model.addAttribute("user", user);
+            return "users/coachPage";
+        }
+
+        //default to login page
+        response.setStatus(401); // Unauthorized
+        model.addAttribute("error", "Invalid status");
+        return "users/loginPage";
+    }
+
+    @PostMapping("/users/register")
+    public String registerUser(@RequestParam Map<String, String> newuser, HttpServletResponse response, Model model)
     {
         System.out.println("ADD user");
         String newUsername = newuser.get("username");
 
+        //username already exists
         if (userRepo.existsByUsername(newUsername)) {
-            //redirect it to the add page with an error message
             System.out.println("Username already exists");
             response.setStatus(409); // Conflict
-            return "redirect:/users/view";
+            model.addAttribute("error", "Username already exists");
+            return "redirect:/registerPage";
         }
       
-
-        double newWeight = Double.parseDouble(newuser.getOrDefault("weight", "0.0"));
-        double newHeight = Double.parseDouble(newuser.getOrDefault("height", "0.0"));
         int newStatus = Integer.parseInt(newuser.getOrDefault("status", "0"));
         String newPassword = newuser.get("password");
 
-        userRepo.save(new User(newUsername, newWeight, newHeight, newStatus, newPassword));
+        userRepo.save(new User(newUsername, newPassword, newStatus));
         response.setStatus(201);
-        return "redirect:/users/view";
+        model.addAttribute("success", "User created");
+        return "redirect:/loginPage";
     }
-   
-    // @GetMapping("/users/login")
-    // {
-        
 
-        
-    //     //if status is zero go to user page
-
-    //     //if status is one go to coach page
-    // }    
     
     @PostMapping("/users/deleteAll")
     public String deleteAllUsers(HttpServletResponse response)
