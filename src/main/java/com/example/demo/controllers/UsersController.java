@@ -37,19 +37,21 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public String login(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model)
+    public String login(@RequestParam Map<String, String> userLogin, HttpServletResponse response, Model model)
     {
         System.out.println("Logging in");
 
-        String newUsername = newUser.get("username");
-        String newPassword = newUser.get("password");
-
+        
         // Check if username and password are present
-        if (!newUser.containsKey("username") || !newUser.containsKey("password")) {
+        if (!userLogin.containsKey("username") || !userLogin.containsKey("password")) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Username or password not provided");
             return "users/loginPage";
         }
+
+        String newUsername = userLogin.get("username");
+        String newPassword = userLogin.get("password");
+
 
         User user = userRepo.findByUsername(newUsername);
         if (user == null) {
