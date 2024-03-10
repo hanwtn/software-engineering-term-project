@@ -37,21 +37,19 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public String login(@RequestParam Map<String, String> userLogin, HttpServletResponse response, Model model)
+    public String login(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model)
     {
         System.out.println("Logging in");
 
-        
+        String newUsername = newUser.get("username");
+        String newPassword = newUser.get("password");
+
         // Check if username and password are present
-        if (!userLogin.containsKey("username") || !userLogin.containsKey("password")) {
+        if (newUsername.isEmpty() || newPassword.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Username or password not provided");
             return "users/loginPage";
         }
-
-        String newUsername = userLogin.get("username");
-        String newPassword = userLogin.get("password");
-
 
         User user = userRepo.findByUsername(newUsername);
         if (user == null) {
@@ -89,23 +87,31 @@ public class UsersController {
     public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model)
     {
         System.out.println("ADD user");
+
         String newUsername = newUser.get("username");
+        int newStatus = Integer.parseInt(newUser.getOrDefault("status", "0"));
+        String newPassword = newUser.get("password");
+
+
+        // Check if username and password are present
+        if (newUsername.isEmpty() || newPassword.isEmpty()) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Username or password not provided");
+            return "users/registerPage";
+        }
 
         //username already exists
         if (userRepo.existsByUsername(newUsername)) {
             System.out.println("Username already exists");
             response.setStatus(409); // Conflict
             model.addAttribute("error", "Username already exists");
-            return "redirect:/registerPage";
+            return "users/registerPage";
         }
       
-        int newStatus = Integer.parseInt(newUser.getOrDefault("status", "0"));
-        String newPassword = newUser.get("password");
-
         userRepo.save(new User(newUsername, newPassword, newStatus));
         response.setStatus(201);
         model.addAttribute("success", "User created");
-        return "redirect:/loginPage";
+        return "users/loginPage";
     }
 
     
