@@ -19,6 +19,7 @@ import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UsersController {
@@ -34,6 +35,13 @@ public class UsersController {
     @GetMapping("/register")
     public String registerPage() {
         return "users/registerPage";
+    }
+
+    @GetMapping("/users/logout")
+    public String logout(HttpSession session) {
+        System.out.println("Logging out");
+        session.invalidate(); // Invalidate the session to logout the user
+        return "users/loginPage";
     }
 
     @PostMapping("/users/login")
