@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>User Page</title>
 </head>
 <body>
-    <h1>You are in a user main page</h1>
+    <h1>Welcome <span th:text="${user.username}"></span>!</h1>
+    
+    <form action="/users/logout" method="get">
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
+
 </body>
 </html>

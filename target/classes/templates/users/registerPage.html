@@ -30,7 +30,11 @@
 						</select>
 					</div>
                     
+					<!-- Display error message -->
+					<div th:if="${error}" class="alert alert-danger mb-3">
+						<p th:text="${error}">Error</p>
 					</div>
+
 					<!-- Submit button -->
                     <div class="d-grid gap-2">
                         <input class="btn btn-primary" type="submit" value="Register"></input>

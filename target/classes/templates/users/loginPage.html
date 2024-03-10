@@ -45,7 +45,7 @@
     <main class="container-fluid"> 
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <h1 class="text-center mt-5 mb-4">Students</h1>
+                <h1 class="text-center mt-5 mb-4">Login</h1>
                 <div class="row justify-content-center">
                     <form action="/users/login" method="post">
                         <div class="mb-3">
@@ -59,6 +59,11 @@
                         <!-- Display error message -->
                         <div th:if="${error}" class="alert alert-danger mb-3">
                             <p th:text="${error}">Error</p>
+                        </div>
+
+                        <!-- Display success message -->
+                        <div th:if="${success}" class="alert alert-success mb-3">
+                            <p th:text="${success}">Success</p>
                         </div>
 
                         <!-- login button -->
