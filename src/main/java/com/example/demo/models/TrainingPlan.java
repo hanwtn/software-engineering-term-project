@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "TrainingPlan")
 public class TrainingPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,28 +17,17 @@ public class TrainingPlan {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "plan_id")
-    private List<TrainingSessionDate> sessions;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public TrainingPlan() {
-        this.sessions = new ArrayList<>();
-    }
-
-    public void addSession(TrainingSessionDate sessionDate) {
-        this.sessions.add(sessionDate);
-    }
-
-    public List<TrainingSessionDate> getSessions() {
-        return sessions;
-    }
-
-    public void setSessions(List<TrainingSessionDate> sessions) {
-        this.sessions = sessions;
+    public TrainingPlan(String name, String description, User user) {
+        this.name = name;
+        this.description = description;
+        this.startDate = LocalDate.of(2022, 3, 11);
+        this.endDate = LocalDate.of(2022, 3, 16);
+        this.user = user;
     }
 
     public int getId() {
@@ -54,6 +44,10 @@ public class TrainingPlan {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getName() {
+        return this.name;
     }
     
 }

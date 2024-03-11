@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.models.TrainingPlan;
+import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
@@ -26,6 +28,7 @@ public class UsersController {
 
     @Autowired
     private UserRepository userRepo;
+    private TrainingPlanRepository trainingPlanRepo;
 
     //simple get request to login page
     @GetMapping("/login")
@@ -131,6 +134,20 @@ public class UsersController {
     response.setStatus(204); 
     return "redirect:/users/view";
     }
+
+    //TEMP
+    @GetMapping("/trainingPlan")
+    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+        User user = userRepo.findByUsername("Trainer");
+        model.addAttribute("user", user);
+        TrainingPlan trainingPlan = new TrainingPlan("Training Plan 1", "Description", user);
+        model.addAttribute("trainingPlan", trainingPlan);
+        return "users/trainingPlanPage";
+    }
+
+    
+    
+
 
 }
 
