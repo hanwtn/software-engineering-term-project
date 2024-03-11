@@ -20,6 +20,10 @@ public class TrainingPlan {
     @JoinColumn(name = "plan_id")
     private List<TrainingSessionDate> sessions;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public TrainingPlan() {
         this.sessions = new ArrayList<>();
     }
@@ -42,6 +46,14 @@ public class TrainingPlan {
 
     public void setId(int tpid) {
         this.tpid = tpid;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     
 }
