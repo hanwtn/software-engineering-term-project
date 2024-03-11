@@ -2,7 +2,8 @@
 02/25/2024, version 1.0 Prototype
 
 ## Summary/Abstract:
-	A web app designed to help trainers and clients streamline their fitness routines. Trainers can easily track clients, assign workouts, and monitor progress, while clients benefit from personalized programs and engaging in a supportive community. Features include video logging, real-time tracking, fitness data analytics, and a gamified scoring system for added motivation. Overall, the app seeks to enhance efficiency, save costs, increase community engagement, and encourage consistent fitness progress.
+
+A web app designed to help trainers and clients streamline their fitness routines. Trainers can easily track clients, assign workouts, and monitor progress, while clients benefit from personalized programs and engaging in a supportive community. Features include video logging, real-time tracking, fitness data analytics, and a gamified scoring system for added motivation. Overall, the app seeks to enhance efficiency, save costs, increase community engagement, and encourage consistent fitness progress.
 
 ## Our group (backgrounds/experience)
 
