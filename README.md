@@ -44,9 +44,7 @@ An iOS-friendly web-app that allows trainers to manage their client base giving 
 
 ## Competitive Analysis/Comparison with Alternatives:
 Our app is:
-More community-driven, 
-More engaging, especially for people who don’t usually work out, casual people,
-Focused on building consistent fitness habits over specific results.
+More community-driven and more engaging, especially for people who don’t usually work out (casual people). It is focused on building consistent fitness habits over specific results.
 
 ## Main features (Epics):
 Trainer and clients management: Helps trainers manage all their clients information efficiently. Trainers have access to clients’ progress, allowing them to give feedback and prescribe personalized workout plans.
