@@ -157,5 +157,4 @@ public class UsersController {
         response.setStatus(204);
         return "redirect:/users/view";
     }
-
 }
