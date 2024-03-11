@@ -13,6 +13,7 @@ public class Exercise {
     private int sets;
     private int reps;
     private int duration; //to-do add duration to the database
+    //optional attribute, if 0 dont mentio(default value 0)
     
     public Exercise() {
     }

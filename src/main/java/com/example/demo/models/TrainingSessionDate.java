@@ -2,7 +2,6 @@ package com.example.demo.models;
 
 import jakarta.persistence.*;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,20 +20,15 @@ public class TrainingSessionDate {
     @Enumerated(EnumType.STRING)
     private Set<DayOfWeek> daysOfWeek;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-
     public TrainingSessionDate() {
         this.session = new TrainingSession();
         this.daysOfWeek = new HashSet<>();
     }
 
-    public TrainingSessionDate(TrainingSession session, Set<DayOfWeek> daysOfWeek, LocalDate startDate, LocalDate endDate) {
+    public TrainingSessionDate(TrainingSession session, Set<DayOfWeek> daysOfWeek) {
         this.session = new TrainingSession();
         this.session.setExercises(new ArrayList<>(session.getExercises()));
         this.daysOfWeek = daysOfWeek;
-        this.startDate = startDate;
-        this.endDate = endDate;
     }
 
     public int getId() {
@@ -59,21 +53,5 @@ public class TrainingSessionDate {
 
     public void setDaysOfWeek(Set<DayOfWeek> daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 }
