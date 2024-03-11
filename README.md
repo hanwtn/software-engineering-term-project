@@ -43,7 +43,7 @@ Fitness trainers and their clients, more specifically adult clients with busy li
 An iOS-friendly web-app that allows trainers to manage their client base giving them workouts, and tracking their progress over time. Our application will ease trainers' minds, and allow them 24/7 access to all their client's details, and workouts to further elevate their training. The application is very client-centered, giving them a safe space to get valuable fitness knowledge, and access to free videos and personalized coaching from their trainer.
 
 ## Competitive Analysis/Comparison with Alternatives:
-	Our app is:
+Our app is:
 More community-driven, 
 More engaging, especially for people who don’t usually work out, casual people,
 Focused on building consistent fitness habits over specific results.
