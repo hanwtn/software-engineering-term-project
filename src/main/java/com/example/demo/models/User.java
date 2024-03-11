@@ -1,16 +1,14 @@
 package com.example.demo.models;
 
-
 import jakarta.persistence.*;
 
-
 @Entity
-@Table(name="Users")
+@Table(name = "Users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int uid;
-    
+
     @Column(unique = true)
     private String username;
 
@@ -23,8 +21,6 @@ public class User {
     private Integer status; // 0 = regular user, 1 = coach, 2 = admin
 
     private String password;
-
-
 
     public User() {
     }
@@ -40,6 +36,7 @@ public class User {
     public String getUsername() {
         return username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -47,19 +44,23 @@ public class User {
     public double getWeight() {
         return weight;
     }
+
     public void setWeight(double weight) {
         this.weight = weight;
     }
+
     public double getHeight() {
         return height;
     }
+
     public void setHeight(double height) {
         this.height = height;
     }
-  
+
     public Integer getStatus() {
         return status;
     }
+
     public void setStatus(Integer status) {
         this.status = status;
     }
@@ -67,6 +68,7 @@ public class User {
     public int getUid() {
         return uid;
     }
+
     public void setUid(int uid) {
         this.uid = uid;
     }
@@ -74,9 +76,9 @@ public class User {
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
+
 }
