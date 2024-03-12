@@ -153,11 +153,50 @@ public class UsersController {
     */
     @PostMapping("/trainingPlan/add")
     public String addPlan(@RequestParam Map<String, String> newPlan, HttpServletResponse response, Model model){
+
         String newName = newPlan.get("name");
         String newDesc = newPlan.get("description");
+
+        // Check if name and description are present
+        if (newName.isEmpty() || newDesc.isEmpty()) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Name or description are not provided");
+            return "users/loginPage";
+        }
+
         int userId = Integer.parseInt(newPlan.get("userId"));
-        LocalDate startDate = LocalDate.parse(newPlan.get("sdate"));
-        LocalDate endDate = LocalDate.parse(newPlan.get("edate"));
+       
+        // Check if user exists
+        if (!userRepo.existsByUid(userId)) {
+            response.setStatus(404); // Not Found
+            model.addAttribute("error", "User does not exist");
+            return "users/loginPage";
+        }
+
+        String startDateStr = newPlan.get("sdate");
+        String endDateStr = newPlan.get("edate");
+
+        if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Start date or end date are not provided");
+            return "users/loginPage";
+        }
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        //check if start date is before end date
+        if (startDate.isAfter(endDate)) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Start date is after end date");
+            return "users/loginPage";
+        }
+        //check if start date and end date are valid
+        if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Start or end date is before today");
+            return "users/loginPage";
+        }
+
         trainingPlanRepo.save(new TrainingPlan(newName, newDesc, userRepo.findByUid(userId), startDate, endDate));
         System.out.println("Successfully Added");
         return "users/loginPage";
