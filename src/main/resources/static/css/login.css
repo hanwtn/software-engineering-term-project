@@ -50,9 +50,9 @@ body {
 }
 
 .btn-danger:hover {
-    /* background-color: #ffffff;
+    background-color: #444444;
     border-color: #000000;
-    color: #000000; */
+    color: #ffffff;
 }
 
 .btn-primary {
@@ -62,6 +62,7 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #ff7f69;
-    border-color: #ff7f69;
+    background-color: #6999ff;
+    border-color: #6999ff;
+    color: rgb(255, 255, 255);
 }
