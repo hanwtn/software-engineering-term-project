@@ -16,6 +16,8 @@ public class TrainingPlan {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
+    @Column(name = "is_deleted", nullable = true)
+    private boolean isDeleted;
 
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -30,7 +32,7 @@ public class TrainingPlan {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
-        this.endDate = this.endDate;
+        this.endDate = endDate;
         this.user = user;
     }
 
@@ -52,6 +54,18 @@ public class TrainingPlan {
 
     public String getName() {
         return this.name;
+    }
+
+    public int getTpid() {
+        return tpid;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
     }
     
 }

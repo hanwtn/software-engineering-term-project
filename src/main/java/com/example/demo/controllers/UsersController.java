@@ -23,6 +23,7 @@ import com.example.demo.models.UserRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 @Controller
 public class UsersController {
@@ -168,6 +169,21 @@ public class UsersController {
         model.addAttribute("user", user);
         return "users/addTrainingPlan";
     }
+
+    /* 
+    @Transactional
+    @PostMapping("/trainingPlan/delete")
+    public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model) {
+        // Implement logic to delete the training plan by ID
+        int userId = Integer.parseInt(deleteForm.get("userId"));
+        int tpid = Integer.parseInt(deleteForm.get("tpid"));
+        trainingPlanRepo.deleteBytpid(tpid);
+    
+        User user = userRepo.findByUid(userId);
+        model.addAttribute("user", user);
+        return "redirect:/trainingPlan";
+    }
+    */
     
     
 

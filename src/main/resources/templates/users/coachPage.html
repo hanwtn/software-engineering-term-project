@@ -11,6 +11,11 @@
         <h1>Heres your Training Plans!</h1>
         <section th:each="plan : ${trainingPlans}">
             <h1><span th:text="${plan.name}"></span></h1>
+            <form th:action="@{/trainingPlan/delete}" method="post">
+                <input type="hidden" name="tpid" th:value="${plan.tpid}"/>
+                <input type="hidden" name="userId" th:value="${user.uid}"/>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
         </section>
     </section>
     <form action="/users/logout" method="get">
