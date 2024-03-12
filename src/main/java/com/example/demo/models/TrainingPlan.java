@@ -26,11 +26,11 @@ public class TrainingPlan {
 
     }
 
-    public TrainingPlan(String name, String description, User user) {
+    public TrainingPlan(String name, String description, User user, LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.description = description;
-        this.startDate = LocalDate.of(2022, 3, 11);
-        this.endDate = LocalDate.of(2022, 3, 16);
+        this.startDate = startDate;
+        this.endDate = this.endDate;
         this.user = user;
     }
 

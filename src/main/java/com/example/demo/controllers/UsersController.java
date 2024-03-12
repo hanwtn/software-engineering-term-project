@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 // import java.util.Optional;
@@ -154,7 +155,9 @@ public class UsersController {
         String newName = newPlan.get("name");
         String newDesc = newPlan.get("description");
         int userId = Integer.parseInt(newPlan.get("userId"));
-        trainingPlanRepo.save(new TrainingPlan(newName, newDesc, userRepo.findByUid(userId)));
+        LocalDate startDate = LocalDate.parse(newPlan.get("sdate"));
+        LocalDate endDate = LocalDate.parse(newPlan.get("edate"));
+        trainingPlanRepo.save(new TrainingPlan(newName, newDesc, userRepo.findByUid(userId), startDate, endDate));
         System.out.println("Successfully Added");
         return "users/loginPage";
     }

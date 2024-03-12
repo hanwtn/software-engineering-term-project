@@ -17,10 +17,16 @@
                             <input type="text" id="name" name="name" class="form-control form-control-lg" 
                                 placeholder="Name:">
                         </div>
-                        <div class="mb-3" style="height: 30vh;">
-                            <textarea type="text" id="description" name="description" class="form-control form-control-lg" placeholder="Description"></textarea>
+                        <div class="mb-3">
+                            <textarea style="height: 20vh;" type="text" id="description" name="description" class="form-control form-control-lg" placeholder="Description"></textarea>
                         </div>
-                        <input type="text" id="userId" name="userId" th:value="${user.uid}">
+                        <div class="mb-3">
+                            <h2>Start Date:</h2>
+                            <input type="date" id="sdate" name="sdate" class="form-control form-control-lg" placeholder="DD/MM/YY">
+                            <h2>End Date:</h2>
+                            <input type="date" id="edate" name="edate" class="form-control form-control-lg" placeholder="DD/MM/YY">
+                        </div>
+                        <input type="hidden" id="userId" name="userId" th:value="${user.uid}">
 
                         <!-- login button -->
                         <div class="col-md-10">
