@@ -22,6 +22,10 @@ public class TrainingPlan {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public TrainingPlan() {
+
+    }
+
     public TrainingPlan(String name, String description, User user) {
         this.name = name;
         this.description = description;

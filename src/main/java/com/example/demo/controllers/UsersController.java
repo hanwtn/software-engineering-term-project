@@ -28,6 +28,7 @@ public class UsersController {
 
     @Autowired
     private UserRepository userRepo;
+    @Autowired
     private TrainingPlanRepository trainingPlanRepo;
 
     //simple get request to login page
@@ -85,6 +86,7 @@ public class UsersController {
         if (user.getStatus() == 1) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
+            model.addAttribute("trainingPlans", trainingPlanRepo.getAllTrainingPlansByUser(user));
             return "users/coachPage";
         }
 
@@ -136,6 +138,7 @@ public class UsersController {
     }
 
     //TEMP
+    /* 
     @GetMapping("/trainingPlan")
     public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
         User user = userRepo.findByUsername("Trainer");
@@ -143,8 +146,25 @@ public class UsersController {
         TrainingPlan trainingPlan = new TrainingPlan("Training Plan 1", "Description", user);
         model.addAttribute("trainingPlan", trainingPlan);
         return "users/trainingPlanPage";
+    
+    }
+    */
+    @PostMapping("/trainingPlan/add")
+    public String addPlan(@RequestParam Map<String, String> newPlan, HttpServletResponse response, Model model){
+        String newName = newPlan.get("name");
+        String newDesc = newPlan.get("description");
+        int userId = Integer.parseInt(newPlan.get("userId"));
+        trainingPlanRepo.save(new TrainingPlan(newName, newDesc, userRepo.findByUid(userId)));
+        System.out.println("Successfully Added");
+        return "users/loginPage";
     }
 
+    @GetMapping("/trainingPlan")
+    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+        User user = userRepo.findByUsername("Trainer");
+        model.addAttribute("user", user);
+        return "users/addTrainingPlan";
+    }
     
     
 
