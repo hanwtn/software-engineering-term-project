@@ -16,8 +16,6 @@ public class TrainingPlan {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-    @Column(name = "is_deleted", nullable = true)
-    private boolean isDeleted;
 
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -58,14 +56,6 @@ public class TrainingPlan {
 
     public int getTpid() {
         return tpid;
-    }
-
-    public void delete() {
-        this.isDeleted = true;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
     }
     
 }
