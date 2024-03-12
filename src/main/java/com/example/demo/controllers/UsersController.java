@@ -103,7 +103,7 @@ public class UsersController {
         if (user.getStatus() == 1) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
-            return "users/coachPage";
+            return "redirect:/dashboard"; //coach view is same as user for now, more to come
         }
 
         //default to login page
