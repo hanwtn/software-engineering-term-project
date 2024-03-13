@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
-import com.example.demo.service.TrainingPlanService;
 import com.example.demo.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -158,10 +157,6 @@ public class UsersController {
 
 
 
-
-    @Autowired
-    private TrainingPlanService trainingPlanService;
-
     @GetMapping("/dashboard")
     public String showDashboard(HttpSession session, Model model) {
         Integer uId = (Integer) session.getAttribute("userId");
@@ -176,12 +171,7 @@ public class UsersController {
         }
         User loggedInUser = uOptional.get();
 
-        Boolean planExists = trainingPlanService.checkForUserTrainingPlan(loggedInUser.getUid());
-        System.out.println("Plan exists: " + planExists); // Debugging line
-        boolean hasTrainingPlan = Optional.ofNullable(planExists).orElse(false);
-
-        model.addAttribute("hasTrainingPlan", hasTrainingPlan);
-        model.addAttribute("user", loggedInUser);
+         model.addAttribute("user", loggedInUser);
         return "users/dashboard"; 
     }
 
