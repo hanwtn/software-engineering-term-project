@@ -1,8 +1,12 @@
 package com.example.demo.models;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface TrainingPlanRepository extends JpaRepository<TrainingPlan, Long> {
-    boolean existsByid(int id);
-}
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+public interface TrainingPlanRepository extends JpaRepository<TrainingPlan,Integer> {
+    ArrayList<TrainingPlan> getAllTrainingPlansByUser(User user);
+    TrainingPlan findBytpid(int tpid);
+} 
