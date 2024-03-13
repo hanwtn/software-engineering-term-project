@@ -42,7 +42,7 @@ public class User {
     }
 
     public double getWeight() {
-        return weight;
+        return weight != null ? weight : 0.0;
     }
 
     public void setWeight(double weight) {
@@ -50,7 +50,7 @@ public class User {
     }
 
     public double getHeight() {
-        return height;
+        return height != null ? height : 0.0;
     }
 
     public void setHeight(double height) {
