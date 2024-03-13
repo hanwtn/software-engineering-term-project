@@ -3,22 +3,28 @@ package com.example.demo.controllers;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-// import java.util.Optional;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
+import com.example.demo.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -32,7 +38,18 @@ public class UsersController {
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
+    private UserService userService = null;
+    
+    @Autowired
+    public void UserController(UserService userService) {
+        this.userService = userService;
+    }
 
+    @PostMapping("/users")
+    @ResponseBody
+    public User createUser(@RequestBody User user) {
+        return userService.saveUser(user);
+    }
     // simple get request to login page
     @GetMapping("/login")
     public String loginPage() {
@@ -52,7 +69,7 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public String login(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+    public String login(@RequestParam Map<String, String> newUser,HttpSession session, HttpServletResponse response, Model model) {
         System.out.println("Logging in");
 
         String newUsername = newUser.get("username");
@@ -92,11 +109,12 @@ public class UsersController {
         }
 
         // login successful
+        session.setAttribute("userId", user.getUid());
         // if 0 go to user page
         if (user.getStatus() == 0) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
-            return "users/userPage";
+            return "redirect:/dashboard";
         }
 
         // TODO: (low priority) Reconsider/remove Coach as it is no longer used
@@ -105,7 +123,7 @@ public class UsersController {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
             model.addAttribute("trainingPlans", trainingPlanRepo.getAllTrainingPlansByUser(user));
-            return "users/coachPage";
+            return "redirect:/dashboard"; //coach view is same as user for now, more to come
         }
 
         // default to login page
@@ -250,7 +268,68 @@ public class UsersController {
     }
     */
     
+
+    @GetMapping("/dashboard")
+    public String showDashboard(HttpSession session, Model model) {
+        Integer uId = (Integer) session.getAttribute("userId");
+        if (uId == null) {
+            return "redirect:/login"; 
+        }
+
+        Optional<User> uOptional = userRepo.findById(uId);
+        if (!uOptional.isPresent()) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+        User loggedInUser = uOptional.get();
+
+         model.addAttribute("user", loggedInUser);
+        return "users/dashboard"; 
+    }
+
     
+    @GetMapping("/accEdit/{userId}")
+    public String editAccountForm(@PathVariable("userId") Integer uId, HttpSession session, Model model, HttpServletRequest request) {
+        Integer sessionUid = (Integer) session.getAttribute("userId");
+        if (sessionUid == null || !sessionUid.equals(uId)) {
+            return "redirect:/login";
+        }
+
+        Optional<User> uOptional = userRepo.findById(uId);
+        if (!uOptional.isPresent()) {
+            return "redirect:/login"; 
+        }
+
+        model.addAttribute("user", uOptional.get());
+        return "users/accEdit"; 
+    }
+
+    @PostMapping("/accEdit/{userId}")
+    public String updateAccount(@PathVariable("userId") Integer uId, @RequestParam Map<String, String> params, HttpSession session, RedirectAttributes redirectAttributes) {
+        Integer sessionUid = (Integer) session.getAttribute("userId");
+        if (sessionUid == null || !sessionUid.equals(uId)) {
+            return "redirect:/login";
+        }
+
+        User user = userRepo.findById(uId).orElse(null);
+        if (user == null) {
+            return "redirect:/login"; 
+        }
+        String newUname = params.get("username");
+        if (!user.getUsername().equals(newUname) && userRepo.existsByUsername(newUname)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Username already exists. Please choose a different username.");
+            return "redirect:/accEdit/" + uId; 
+        }
+
+        user.setUsername(params.get("username"));
+        user.setWeight(Double.valueOf(params.get("weight")));
+        user.setHeight(Double.valueOf(params.get("height")));
+        userService.saveUser(user);
+        return "redirect:/dashboard"; 
+    }  
 
 
 }
+
+
+    
