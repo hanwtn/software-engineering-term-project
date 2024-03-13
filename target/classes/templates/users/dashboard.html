@@ -13,9 +13,6 @@
             <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
         </div>
 
-        <div th:if="${hasTrainingPlan != null ? !hasTrainingPlan : false}" class="alert alert-warning mt-3" role="alert">
-            You do not have a training plan yet. <a href="/training-plans/new" class="alert-link">Click here to create one.</a>
-        </div>
         
         
         <div class="mt-3">
@@ -28,15 +25,7 @@
 
         <div class="mt-3">
             <h2>Your Training Plans</h2>
-            <div th:each="plan : ${trainingPlans}">
-                <div class="card mt-2">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${plan.name}">Training Plan Name</h5>
-                        <p class="card-text">Plan details...</p>
-                        <a href="#" class="btn btn-primary">View Plan</a>
-                    </div>
-                </div>
-            </div>
+            
         </div>
         
         <div class="mt-4">
