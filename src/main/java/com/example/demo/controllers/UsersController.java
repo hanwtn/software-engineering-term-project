@@ -34,8 +34,6 @@ import jakarta.transaction.Transactional;
 
 @Controller
 public class UsersController {
-    private final int USERNAME_MIN_LENGTH = 4;
-    private final int PASSWORD_MIN_LENGTH = 8;
 
     @Autowired
     private UserRepository userRepo;
@@ -55,12 +53,11 @@ public class UsersController {
         return userService.saveUser(user);
     }
 
-    // simple get request to login page
+    //simple get request to login page
     @GetMapping("/login")
     public String loginPage() {
         return "users/loginPage";
     }
-
     @GetMapping("/register")
     public String registerPage() {
         return "users/registerPage";
@@ -88,20 +85,6 @@ public class UsersController {
             return "users/loginPage";
         }
 
-        // Check if username reaches minimum length
-        if (newUsername.length() < USERNAME_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
-            return "users/loginPage";
-        }
-
-        // Check if password reaches minimum length
-        if (newPassword.length() < PASSWORD_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH + " characters");
-            return "users/loginPage";
-        }
-
         User user = userRepo.findByUsername(newUsername);
         if (user == null) {
             response.setStatus(404); // Not Found
@@ -121,9 +104,7 @@ public class UsersController {
             model.addAttribute("user", user);
             return "redirect:/dashboard";
         }
-
-        // TODO: (low priority) Reconsider/remove Coach as it is no longer used
-        // if 1 go to coach page
+        //if 1 go to coach page
         if (user.getStatus() == 1) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
@@ -131,19 +112,21 @@ public class UsersController {
             return "redirect:/dashboard";
         }
 
-        // default to login page
+        //default to login page
         response.setStatus(401); // Unauthorized
         model.addAttribute("error", "Invalid status");
         return "users/loginPage";
     }
 
     @PostMapping("/users/register")
-    public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+    public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model)
+    {
         System.out.println("ADD user");
 
         String newUsername = newUser.get("username");
         int newStatus = Integer.parseInt(newUser.getOrDefault("status", "0"));
         String newPassword = newUser.get("password");
+
 
         // Check if username and password are present
         if (newUsername.isEmpty() || newPassword.isEmpty()) {
@@ -152,40 +135,28 @@ public class UsersController {
             return "users/registerPage";
         }
 
-        // Check if username reaches minimum length
-        if (newUsername.length() < USERNAME_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
-            return "users/registerPage";
-        }
-
-        // Check if password reaches minimum length
-        if (newPassword.length() < PASSWORD_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH + " characters");
-            return "users/registerPage";
-        }
-
-        // username already exists
+        //username already exists
         if (userRepo.existsByUsername(newUsername)) {
             System.out.println("Username already exists");
             response.setStatus(409); // Conflict
             model.addAttribute("error", "Username already exists");
             return "users/registerPage";
         }
-
+      
         userRepo.save(new User(newUsername, newPassword, newStatus));
         response.setStatus(201);
         model.addAttribute("success", "User created");
         return "users/loginPage";
     }
 
+    
     @PostMapping("/users/deleteAll")
-    public String deleteAllUsers(HttpServletResponse response) {
-        System.out.println("DELETE all users");
-        userRepo.deleteAll();
-        response.setStatus(204);
-        return "redirect:/users/view";
+    public String deleteAllUsers(HttpServletResponse response)
+    {
+    System.out.println("DELETE all users");
+    userRepo.deleteAll();
+    response.setStatus(204); 
+    return "redirect:/users/view";
     }
 
 
@@ -304,3 +275,4 @@ public class UsersController {
 
 
 }
+
