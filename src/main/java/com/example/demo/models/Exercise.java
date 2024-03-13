@@ -12,7 +12,7 @@ public class Exercise {
     private String intensity;
     private int sets;
     private int reps;
-    private int duration; 
+    private int duration; //currently not used, do we want to comment it out and leave it for next iteration? 
     
     public Exercise() {
     }
@@ -71,9 +71,4 @@ public class Exercise {
     public void setEid(int eid) {
         this.eid = eid;
     }
-
-
-
-
-
 }
