@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 // import java.util.Optional;
@@ -12,12 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.models.TrainingPlan;
+import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 @Controller
 public class UsersController {
@@ -26,6 +30,8 @@ public class UsersController {
 
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private TrainingPlanRepository trainingPlanRepo;
 
     // simple get request to login page
     @GetMapping("/login")
@@ -98,6 +104,7 @@ public class UsersController {
         if (user.getStatus() == 1) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
+            model.addAttribute("trainingPlans", trainingPlanRepo.getAllTrainingPlansByUser(user));
             return "users/coachPage";
         }
 
@@ -157,4 +164,93 @@ public class UsersController {
         response.setStatus(204);
         return "redirect:/users/view";
     }
+
+    //TEMP
+    /* 
+    @GetMapping("/trainingPlan")
+    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+        User user = userRepo.findByUsername("Trainer");
+        model.addAttribute("user", user);
+        TrainingPlan trainingPlan = new TrainingPlan("Training Plan 1", "Description", user);
+        model.addAttribute("trainingPlan", trainingPlan);
+        return "users/trainingPlanPage";
+    
+    }
+    */
+    @PostMapping("/trainingPlan/add")
+    public String addPlan(@RequestParam Map<String, String> newPlan, HttpServletResponse response, Model model){
+
+        String newName = newPlan.get("name");
+        String newDesc = newPlan.get("description");
+
+        // Check if name and description are present
+        if (newName.isEmpty() || newDesc.isEmpty()) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Name or description are not provided");
+            return "users/loginPage";
+        }
+
+        int userId = Integer.parseInt(newPlan.get("userId"));
+       
+        // Check if user exists
+        if (!userRepo.existsByUid(userId)) {
+            response.setStatus(404); // Not Found
+            model.addAttribute("error", "User does not exist");
+            return "users/loginPage";
+        }
+
+        String startDateStr = newPlan.get("sdate");
+        String endDateStr = newPlan.get("edate");
+
+        if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Start date or end date are not provided");
+            return "users/loginPage";
+        }
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        //check if start date is before end date
+        if (startDate.isAfter(endDate)) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Start date is after end date");
+            return "users/loginPage";
+        }
+        //check if start date and end date are valid
+        if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Start or end date is before today");
+            return "users/loginPage";
+        }
+
+        trainingPlanRepo.save(new TrainingPlan(newName, newDesc, userRepo.findByUid(userId), startDate, endDate));
+        System.out.println("Successfully Added");
+        return "users/loginPage";
+    }
+
+    @GetMapping("/trainingPlan")
+    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+        User user = userRepo.findByUsername("Trainer");
+        model.addAttribute("user", user);
+        return "users/addTrainingPlan";
+    }
+
+    /* 
+    @Transactional
+    @PostMapping("/trainingPlan/delete")
+    public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model) {
+        // Implement logic to delete the training plan by ID
+        int userId = Integer.parseInt(deleteForm.get("userId"));
+        int tpid = Integer.parseInt(deleteForm.get("tpid"));
+        trainingPlanRepo.deleteBytpid(tpid);
+    
+        User user = userRepo.findByUid(userId);
+        model.addAttribute("user", user);
+        return "redirect:/trainingPlan";
+    }
+    */
+    
+    
+
+
 }
