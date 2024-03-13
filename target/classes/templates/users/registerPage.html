@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add User</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Register</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head>
+
 <body>
-    <main class="container-fluid">
+	<main class="container-fluid">
 		<div class="row justify-content-center">
 			<div class="col-md-4">
 				<h1 class="text-center mt-5 mb-4">Registration</h1>
 				<form action="/users/register" method="post">
-                    
 					<div class="mb-3">
-						<input type="text" id="username" name="username" class="form-control form-control-lg" 
-                            placeholder="Username">
+						<input type="text" id="username" name="username" class="form-control form-control-lg"
+							placeholder="Username">
 					</div>
+
 					<div class="mb-3">
-						<input type="password" id="password" name="password" class="form-control form-control-lg" placeholder="Password">
+						<input type="password" id="password" name="password" class="form-control form-control-lg"
+							placeholder="Password">
 					</div>
 
 					<div class="mb-3">
@@ -29,23 +33,21 @@
 							<option value="1">Coach</option>
 						</select>
 					</div>
-                    
+
 					<!-- Display error message -->
 					<div th:if="${error}" class="alert alert-danger mb-3">
 						<p th:text="${error}">Error</p>
 					</div>
 
 					<!-- Submit button -->
-                    <div class="d-grid gap-2">
-                        <input class="btn btn-primary" type="submit" value="Register"></input>
+					<div class="d-grid gap-2">
+						<input class="btn btn-primary" type="submit" value="Register"></input>
 						<a href="/login" class="btn btn-secondary">Return to Login Page</a>
 					</div>
-
-                    
-                    
 				</form>
 			</div>
 		</div>
 	</main>
 </body>
+
 </html>
