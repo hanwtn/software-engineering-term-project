@@ -1,4 +1,5 @@
 package com.example.demo.models;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,8 +13,8 @@ public class Exercise {
     private String intensity;
     private int sets;
     private int reps;
-    private int duration; //currently not used, do we want to comment it out and leave it for next iteration? 
-    
+    private int duration;
+
     public Exercise() {
     }
 
@@ -28,6 +29,7 @@ public class Exercise {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
