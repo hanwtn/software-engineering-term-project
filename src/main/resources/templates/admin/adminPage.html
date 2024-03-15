@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <a th:href="@{/admin/logout}" class="btn btn-danger">Logout</a>
+    <h2>Add New Account</h2>
+    <form th:action="@{/admin/addUser}" method="post">
+        <div class="form-group">
+            <label for="newUsername">Username</label>
+            <input type="text" class="form-control" id="newUsername" name="username" placeholder="Enter Username" required>
+        </div>
+        <div class="form-group">
+            <label for="newPassword">Password</label>
+            <input type="password" class="form-control" id="newPassword" name="password" placeholder="Enter Password" required>
+        </div>
+        <div class="form-group">
+            <label for="weight">Weight</label>
+            <input type="number" class="form-control" id="newWeight" name="weight" placeholder="Enter weight" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="height">Height</label>
+            <input type="number" class="form-control" id="newHeight" name="height" placeholder="Enter height" required>
+        </div>
+        <div class="form-group">
+            <label for="newStatus">Status</label>
+            <select class="form-control" id="newStatus" name="status">
+                <option value="0">User</option>
+                <option value="1">Coach</option>
+                <option value="2">Admin</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Add Account</button>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Weight (kg)</th>
+                <th>Height (cm)</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.uid}"></td>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.weight}"></td>
+                <td th:text="${user.height}"></td>
+                <td th:text="${user.status == 1 ? 'Coach' : (user.status == 2 ? 'Admin' : 'User')}"></td>
+                <td>
+                    <a th:href="@{/admin/adminEdit/{userId}(userId=${user.uid})}" class="btn btn-primary">Edit</a>
+                    <form th:action="@{/admin/delete/{userId}(userId=${user.uid})}" method="post" style="display:inline">
+                        <input type="submit" value="Delete" class="btn btn-danger"/>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+</body>
+</html>
