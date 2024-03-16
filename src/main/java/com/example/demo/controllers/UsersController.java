@@ -52,7 +52,11 @@ public class UsersController {
     }
     // simple get request to login page
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(HttpSession session) {
+        if(session.getAttribute("userId") != null){
+            return "redirect:/dashboard";
+        }
+        
         return "users/loginPage";
     }
 
