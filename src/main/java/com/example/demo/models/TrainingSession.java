@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.sql.Time;
 
 @Entity
 public class TrainingSession {
@@ -16,7 +16,7 @@ public class TrainingSession {
     private int tsid;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "session_id")
+    @JoinColumn(name = "training_session_id")
     private List<Exercise> exercises; // list is ordered
     // may add time to the training session
 
@@ -24,14 +24,22 @@ public class TrainingSession {
     @Enumerated(EnumType.STRING)
     private Set<DayOfWeek> daysOfWeek;
 
+    @Column
+    private Time startTime;
+
+    @Column
+    private Time endTime;
+
     public TrainingSession() {
         this.exercises = new ArrayList<>();
         this.daysOfWeek = new HashSet<>();
     }
 
-    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks) {
+    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime) {
         this.exercises = new ArrayList<>(exercises);
         this.daysOfWeek = new HashSet<>(dayOfWeeks);
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public int getTsid() {
@@ -57,7 +65,8 @@ public class TrainingSession {
                 exercise.getDescription(),
                 exercise.getSets(),
                 exercise.getReps(),
-                exercise.getIntensity());
+                exercise.getIntensity(),
+                exercise.getDuration());
         this.exercises.add(exerciseCopy);
     }
 
@@ -79,5 +88,21 @@ public class TrainingSession {
 
     public void setDaysOfWeek(Set<DayOfWeek> daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
+    }
+
+    public Time getStartTime() {
+        return startTime;
+    }
+
+    public Time getEndTime() {
+        return endTime;
+    }
+
+    public void setStartTime(Time startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(Time endTime) {
+        this.endTime = endTime;
     }
 }

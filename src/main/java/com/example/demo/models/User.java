@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +23,13 @@ public class User {
     private Integer status; // 0 = regular user, 1 = coach, 2 = admin
 
     private String password;
+
+    // TO DO: do this better
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TrainingPlan> trainingPlans;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Exercise> exercises;
 
     public User() {
     }

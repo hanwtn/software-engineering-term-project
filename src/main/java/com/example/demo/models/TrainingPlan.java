@@ -1,8 +1,8 @@
 package com.example.demo.models;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,26 +12,30 @@ public class TrainingPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tpid;
 
+    @Column
     private String name;
+    @Column(nullable = true)
     private String description;
+    @Column
     private LocalDate startDate;
+    @Column(nullable = true)
     private LocalDate endDate;
 
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "training_plan_id")
+    List<TrainingSession> trainingSessions;
 
     public TrainingPlan() {
 
     }
 
-    public TrainingPlan(String name, String description, User user, LocalDate startDate, LocalDate endDate) {
+    public TrainingPlan(String name, String description, User user, LocalDate startDate, LocalDate endDate,
+            List<TrainingSession> trainingSessions) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.user = user;
+        this.trainingSessions = trainingSessions;
     }
 
     public int getId() {
@@ -42,14 +46,6 @@ public class TrainingPlan {
         this.tpid = tpid;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public String getName() {
         return this.name;
     }
@@ -57,5 +53,5 @@ public class TrainingPlan {
     public int getTpid() {
         return tpid;
     }
-    
+
 }
