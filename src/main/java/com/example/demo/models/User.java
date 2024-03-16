@@ -31,6 +31,24 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises;
 
+    //make method to add training plan
+    // each user holds a list of training plans
+    public void addTrainingPlan(TrainingPlan trainingPlan) {
+        trainingPlans.add(trainingPlan);
+    }
+
+    public void removeTrainingPlan(TrainingPlan trainingPlan) {
+        trainingPlans.remove(trainingPlan);
+    }
+
+    public void addExercise(Exercise exercise) {
+        exercises.add(exercise);
+    }
+
+    public void removeExercise(Exercise exercise) {
+        exercises.remove(exercise);
+    }
+
     public User() {
     }
 

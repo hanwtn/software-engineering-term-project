@@ -29,13 +29,13 @@ public class TrainingPlan {
 
     }
 
-    public TrainingPlan(String name, String description, User user, LocalDate startDate, LocalDate endDate,
-            List<TrainingSession> trainingSessions) {
+    // Lets remove user, training plan no longer knows its user
+    //now user knows its training plans
+    public TrainingPlan(String name, String description, LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.trainingSessions = trainingSessions;
     }
 
     public int getId() {

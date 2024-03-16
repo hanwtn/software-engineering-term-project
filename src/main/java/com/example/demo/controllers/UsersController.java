@@ -39,7 +39,7 @@ public class UsersController {
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
-    private UserService userService = null;
+    private UserService userService = null;// what?
     
     @Autowired
     public void UserController(UserService userService) {
@@ -241,8 +241,8 @@ public class UsersController {
             model.addAttribute("error", "Start or end date is before today");
             return "users/loginPage";
         }
-
-        trainingPlanRepo.save(new TrainingPlan(newName, newDesc, userRepo.findByUid(userId), startDate, endDate));
+        userRepo.findByUid(userId).addTrainingPlan(new TrainingPlan(newName, newDesc, startDate, endDate));
+        //removed user from training plan constructor
         System.out.println("Successfully Added");
         return "users/loginPage";
     }
