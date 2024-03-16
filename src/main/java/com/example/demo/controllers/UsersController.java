@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
+import com.example.demo.models.TrainingSession;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
