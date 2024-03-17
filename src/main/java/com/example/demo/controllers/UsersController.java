@@ -332,6 +332,23 @@ public class UsersController {
         return "redirect:/dashboard"; 
     }  
 
+    
+    @GetMapping("/accDetails/{userId}")
+    public String accountDetails(@PathVariable("userId") Integer Uid, HttpSession session, Model model) {
+        Integer sessionUid = (Integer) session.getAttribute("userId");
+        if(sessionUid == null || !sessionUid.equals(Uid)) {
+            return "redirect:/login";
+        }
+
+        Optional<User> userOptional = userRepo.findById(Uid);
+        if(!userOptional.isPresent()) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", userOptional.get());
+        return "users/accDetails";
+    }
+
 
 }
 
