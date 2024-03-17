@@ -21,6 +21,10 @@ public class TrainingPlan {
     @Column(nullable = true)
     private LocalDate endDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "training_plan_id")
     List<TrainingSession> trainingSessions;
@@ -53,5 +57,27 @@ public class TrainingPlan {
     public int getTpid() {
         return tpid;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+    
+    //write rest of getters and setters
+    public String getDescription() {
+        return this.description;
+    }
+
+    public LocalDate getStartDate() {
+        return this.startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return this.endDate;
+    }
+
 
 }

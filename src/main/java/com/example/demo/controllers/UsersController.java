@@ -123,7 +123,6 @@ public class UsersController {
         if (user.getStatus() == 1) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
-            model.addAttribute("trainingPlans", trainingPlanRepo.getAllTrainingPlansByUser(user));
             return "redirect:/dashboard"; //coach view is same as user for now, more to come
         }
 
@@ -241,18 +240,70 @@ public class UsersController {
             model.addAttribute("error", "Start or end date is before today");
             return "users/loginPage";
         }
-        userRepo.findByUid(userId).addTrainingPlan(new TrainingPlan(newName, newDesc, startDate, endDate));
+        TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
+        User user = userRepo.findByUid(userId);
+        //add error-check for getting user
+        user.addTrainingPlan(newTrainingPlan);
+        userRepo.save(user); // Save the user with the new training plan
+
         //removed user from training plan constructor
         System.out.println("Successfully Added");
-        return "users/loginPage";
+        return "redirect:/dashboard";
     }
 
     @GetMapping("/trainingPlan")
     public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
-        User user = userRepo.findByUsername("Trainer");
+        //need to find the user first
+        Integer userId = Integer.parseInt(newUser.get("userId"));
+        User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
         return "users/addTrainingPlan";
     }
+
+    @GetMapping("/trainingPlan/view")
+    public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+        Integer userId = Integer.parseInt(newUser.get("userId"));
+        User user = userRepo.findByUid(userId);
+        model.addAttribute("user", user);
+        List<TrainingPlan> trainingPlans = user.getTrainingPlans();
+        model.addAttribute("trainingPlans", trainingPlans);
+        System.out.println("Number of training plans: " + trainingPlans.size());
+
+        System.out.println("Training Plans for user " + user.getUsername() + ":");
+        for (TrainingPlan plan : trainingPlans) {
+        System.out.println("Name: " + plan.getName());
+        System.out.println("Description: " + plan.getDescription());
+        System.out.println("Start Date: " + plan.getStartDate());
+        System.out.println("End Date: " + plan.getEndDate());
+    }
+        return "users/viewTrainingPlan";
+    }
+
+    @PostMapping("/trainingPlan/delete")
+    public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model) {
+    int userId = Integer.parseInt(deleteForm.get("userId"));
+    int tpid = Integer.parseInt(deleteForm.get("tpid"));
+
+    User user = userRepo.findByUid(userId);
+    if (user != null) {
+        // Find the training plan by ID
+        TrainingPlan planToDelete = user.getTrainingPlans().stream()
+                .filter(plan -> plan.getTpid() == tpid)
+                .findFirst()
+                .orElse(null);
+
+        if (planToDelete != null) {
+            user.removeTrainingPlan(planToDelete);
+            userRepo.save(user); // Save the user to update the training plan list
+            model.addAttribute("success", "Training plan deleted successfully");
+        } else {
+            model.addAttribute("error", "Training plan not found");
+        }
+    } else {
+        model.addAttribute("error", "User not found");
+    }
+    return "redirect:/trainingPlan/view?userId=" + userId;
+}
 
     /* 
     @Transactional

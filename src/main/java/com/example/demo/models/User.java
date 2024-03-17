@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -25,8 +26,8 @@ public class User {
     private String password;
 
     // TO DO: do this better
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TrainingPlan> trainingPlans;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TrainingPlan> trainingPlans = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises;
@@ -34,11 +35,25 @@ public class User {
     //make method to add training plan
     // each user holds a list of training plans
     public void addTrainingPlan(TrainingPlan trainingPlan) {
+        if (trainingPlans == null) {
+            trainingPlans = new ArrayList<>();
+        }
         trainingPlans.add(trainingPlan);
+        trainingPlan.setUser(this);
     }
 
     public void removeTrainingPlan(TrainingPlan trainingPlan) {
-        trainingPlans.remove(trainingPlan);
+        if (trainingPlans != null) {
+            trainingPlans.remove(trainingPlan);
+            trainingPlan.setUser(null);
+            //do that in controller
+            // trainingPlanRepository.delete(trainingPlan);
+        }
+    }
+
+    
+    public List<TrainingPlan> getTrainingPlans() {
+        return trainingPlans;
     }
 
     public void addExercise(Exercise exercise) {
