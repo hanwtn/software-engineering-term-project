@@ -245,7 +245,6 @@ public class UsersController {
         //add error-check for getting user
         user.addTrainingPlan(newTrainingPlan);
         userRepo.save(user); // Save the user with the new training plan
-
         //removed user from training plan constructor
         System.out.println("Successfully Added");
         return "redirect:/dashboard";
@@ -295,6 +294,7 @@ public class UsersController {
         if (planToDelete != null) {
             user.removeTrainingPlan(planToDelete);
             userRepo.save(user); // Save the user to update the training plan list
+            trainingPlanRepo.delete(planToDelete);
             model.addAttribute("success", "Training plan deleted successfully");
         } else {
             model.addAttribute("error", "Training plan not found");

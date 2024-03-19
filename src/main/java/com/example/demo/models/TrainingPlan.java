@@ -25,9 +25,8 @@ public class TrainingPlan {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "training_plan_id")
-    List<TrainingSession> trainingSessions;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "trainingPlan", orphanRemoval = true)
+    private List<TrainingSession> trainingSessions;
 
     public TrainingPlan() {
 

@@ -15,10 +15,15 @@ public class TrainingSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tsid;
 
+    //fix relationship later
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "training_session_id")
-    private List<Exercise> exercises; // list is ordered
-    // may add time to the training session
+    private List<Exercise> exercises; 
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "training_plan_id")
+    private TrainingPlan trainingPlan;
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
