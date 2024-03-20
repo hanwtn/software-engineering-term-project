@@ -1,4 +1,5 @@
 package com.example.demo.models;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -7,27 +8,40 @@ public class Exercise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int eid;
 
+    @Column
     private String name;
+
+    @Column(nullable = true)
     private String description;
+
+    @Column(nullable = true)
     private String intensity;
+
+    @Column(nullable = true)
     private int sets;
+
+    @Column(nullable = true)
     private int reps;
-    private int duration; 
-    
+
+    @Column(nullable = true)
+    private int duration;
+
     public Exercise() {
     }
 
-    public Exercise(String name, String description, int sets, int reps, String intensity) {
+    public Exercise(String name, String description, int sets, int reps, String intensity, int duration) {
         this.name = name;
         this.description = description;
         this.sets = sets;
         this.reps = reps;
         this.intensity = intensity;
+        this.duration = duration;
     }
 
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -72,8 +86,11 @@ public class Exercise {
         this.eid = eid;
     }
 
+    public int getDuration() {
+        return duration;
+    }
 
-
-
-
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }

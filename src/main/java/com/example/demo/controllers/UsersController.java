@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
+import com.example.demo.models.TrainingSession;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
@@ -38,7 +39,7 @@ public class UsersController {
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
-    private UserService userService = null;
+    private UserService userService = null;// what?
     
     @Autowired
     public void UserController(UserService userService) {
@@ -122,7 +123,6 @@ public class UsersController {
         if (user.getStatus() == 1) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
-            model.addAttribute("trainingPlans", trainingPlanRepo.getAllTrainingPlansByUser(user));
             return "redirect:/dashboard"; //coach view is same as user for now, more to come
         }
 
@@ -183,6 +183,7 @@ public class UsersController {
         return "redirect:/users/view";
     }
 
+<<<<<<< HEAD
     //TEMP
     /* 
     @GetMapping("/trainingPlan")
@@ -280,6 +281,8 @@ public class UsersController {
     */
     
 
+=======
+>>>>>>> d0a548be9a4c110aecb41ae2490dbf6a5ca7c9d0
     @GetMapping("/dashboard")
     public String showDashboard(HttpSession session, Model model) {
         Integer uId = (Integer) session.getAttribute("userId");
