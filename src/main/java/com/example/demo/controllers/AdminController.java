@@ -149,6 +149,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("successMessage", "Account successfully added.");
 
         return "redirect:/admin";
+        
     }
 
 }
