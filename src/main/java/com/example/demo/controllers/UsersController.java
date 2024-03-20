@@ -247,9 +247,20 @@ public class UsersController {
     }
 
     @GetMapping("/trainingPlan")
-    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
-        User user = userRepo.findByUsername("Trainer");
-        model.addAttribute("user", user);
+    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model, HttpSession session) {
+        Integer uId = (Integer) session.getAttribute("userId");
+        if (uId == null) {
+            return "redirect:/login"; 
+        }
+
+        Optional<User> uOptional = userRepo.findById(uId);
+        if (!uOptional.isPresent()) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+        User loggedInUser = uOptional.get();
+
+        model.addAttribute("user", loggedInUser);
         return "users/addTrainingPlan";
     }
 
