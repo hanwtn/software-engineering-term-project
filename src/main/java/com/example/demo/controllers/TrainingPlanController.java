@@ -46,7 +46,7 @@ public class TrainingPlanController {
         if (newName.isEmpty() || newDesc.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Name or description are not provided");
-            return "users/loginPage";
+            return "users/addTrainingPlan";
         }
 
         int userId = Integer.parseInt(newPlan.get("userId"));
@@ -55,7 +55,7 @@ public class TrainingPlanController {
         if (!userRepo.existsByUid(userId)) {
             response.setStatus(404); // Not Found
             model.addAttribute("error", "User does not exist");
-            return "users/loginPage";
+            return "users/addTrainingPlan";
         }
 
         String startDateStr = newPlan.get("sdate");
@@ -64,7 +64,7 @@ public class TrainingPlanController {
         if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date or end date are not provided");
-            return "users/loginPage";
+            return "users/addTrainingPlan";
         }
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
@@ -73,13 +73,13 @@ public class TrainingPlanController {
         if (startDate.isAfter(endDate)) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date is after end date");
-            return "users/loginPage";
+            return "users/addTrainingPlan";
         }
         //check if start date and end date are valid
         if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start or end date is before today");
-            return "users/loginPage";
+            return "users/addTrainingPlan";
         }
         TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
         User user = userRepo.findByUid(userId);
