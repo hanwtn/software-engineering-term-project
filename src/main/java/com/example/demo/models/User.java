@@ -57,11 +57,26 @@ public class User {
     }
 
     public void addExercise(Exercise exercise) {
+        if (exercises == null) {
+            exercises = new ArrayList<>();
+        }
         exercises.add(exercise);
+        exercise.setUser(this);
     }
 
     public void removeExercise(Exercise exercise) {
-        exercises.remove(exercise);
+        if (exercises != null) {
+            exercises.remove(exercise);
+            exercise.setUser(null);
+        }
+    }
+
+    public List<Exercise> getExercises() {
+        return exercises;
+    }
+
+    public void setExercises(List<Exercise> exercises) {
+        this.exercises = exercises;
     }
 
     public User() {

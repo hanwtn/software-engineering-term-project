@@ -36,7 +36,7 @@ public class TrainingPlanController {
         this.userService = userService;
     }
 
-    @PostMapping("/trainingPlan/add")
+    @PostMapping("/trainingPlan/add/submit")
     public String addPlan(@RequestParam Map<String, String> newPlan, HttpServletResponse response, Model model){
 
         String newName = newPlan.get("name");
@@ -91,13 +91,12 @@ public class TrainingPlanController {
         return "redirect:/dashboard";
     }
 
-     @GetMapping("/trainingPlan")
+     @GetMapping("/trainingPlan/add")
     public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
-        //need to find the user first
         Integer userId = Integer.parseInt(newUser.get("userId"));
         User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
-        return "users/addTrainingPlan";
+        return "training_plans/addTrainingPlan";
     }
 
     @GetMapping("/trainingPlan/view")
@@ -107,7 +106,7 @@ public class TrainingPlanController {
         model.addAttribute("user", user);
         List<TrainingPlan> trainingPlans = user.getTrainingPlans();
         model.addAttribute("trainingPlans", trainingPlans);
-        return "users/viewTrainingPlan";
+        return "training_plans/viewTrainingPlan";
     }
 
     @PostMapping("/trainingPlan/delete")

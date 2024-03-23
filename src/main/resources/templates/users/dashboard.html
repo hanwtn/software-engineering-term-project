@@ -24,9 +24,15 @@
         
 
         <div class="mt-3">
-            <form action="/trainingPlan" method="get">
+            <form action="/trainingPlan/add" method="get">
                 <input type="hidden" name="userId" th:value="${user.uid}">
                 <button type="submit" class="btn btn-secondary">Add Training Plan</button>
+            </form>
+        </div>
+        <div class="mt-3">
+            <form action="/exercise/view" method="get">
+                <input type="hidden" name="userId" th:value="${user.uid}">
+                <button type="submit" class="btn btn-secondary">View Exercises</button>
             </form>
         </div>
         <div class="mt-3">

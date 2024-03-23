@@ -15,13 +15,10 @@ public class TrainingSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tsid;
 
-    //fix relationship later
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "training_session_id")
-    private List<Exercise> exercises; 
-    
+    @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Exercise> exercises;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "training_plan_id")
     private TrainingPlan trainingPlan;
 

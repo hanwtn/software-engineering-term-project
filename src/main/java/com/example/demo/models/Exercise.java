@@ -26,6 +26,22 @@ public class Exercise {
     @Column(nullable = true)
     private int duration;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "training_session_id")
+    private TrainingSession trainingSession;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Exercise() {
     }
 
