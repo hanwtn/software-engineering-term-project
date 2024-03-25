@@ -107,4 +107,12 @@ public class TrainingSession {
     public void setEndTime(Time endTime) {
         this.endTime = endTime;
     }
+
+    public void setTrainingPlan(TrainingPlan trainingPlan) {
+        this.trainingPlan = trainingPlan;
+    }
+
+    public TrainingPlan getTrainingPlan() {
+        return trainingPlan;
+    }
 }

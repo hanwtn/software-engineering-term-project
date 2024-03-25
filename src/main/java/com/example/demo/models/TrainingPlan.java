@@ -3,6 +3,7 @@ package com.example.demo.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -77,6 +78,20 @@ public class TrainingPlan {
     public LocalDate getEndDate() {
         return this.endDate;
     }
+
+     public void addTrainingSession(TrainingSession trainingSession) {
+        if (trainingSessions == null) {
+            trainingSessions = new ArrayList<>();
+        }
+        trainingSessions.add(trainingSession);
+        trainingSession.setTrainingPlan(this);
+    }
+
+    public List<TrainingSession> getTrainingSessions() {
+        return trainingSessions;
+    }
+
+
 
 
 }

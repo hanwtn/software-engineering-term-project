@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.time.DayOfWeek;
+import java.util.HashSet;
+import java.util.Set;
+import java.sql.Time;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,16 +60,18 @@ public class TrainingSessionController {
                 exercises.add(exerciseRepository.findByEid(Integer.parseInt(exerciseId)));
             }
         }
+        Set<DayOfWeek> dayOfWeeks = new HashSet<>();
+        dayOfWeeks.add(DayOfWeek.WEDNESDAY);
+        dayOfWeeks.add(DayOfWeek.SATURDAY);
+        Time startTime = Time.valueOf("09:00:00");
+        Time endTime = Time.valueOf("10:00:00");
 
-        /* 
-        TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
-        User user = userRepo.findByUid(userId);
-        //add error-check for getting user
-        user.addTrainingPlan(newTrainingPlan);
-        userRepo.save(user); // Save the user with the new training plan
-        //removed user from training plan constructor
-        System.out.println("Successfully Added");
-        */
+        TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime);
+
+        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(17);
+
+        trainingPlan.addTrainingSession(newTrainingSession);
+        trainingPlanRepo.save(trainingPlan);
         return "redirect:/dashboard";
     }
 
@@ -75,7 +81,7 @@ public class TrainingSessionController {
         User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
         String search = "";
-        List<Exercise> allExercises = exerciseRepository.findByNameContaining(search);
+        List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
         model.addAttribute("exercises", allExercises);
         return "training_sessions/addTrainingSession";
     }
@@ -86,7 +92,7 @@ public class TrainingSessionController {
         String search = newUser.get("search");
         User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
-        List<Exercise> allExercises = exerciseRepository.findByNameContaining(search);
+        List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
         model.addAttribute("exercises", allExercises);
         return "training_sessions/addTrainingSession";
     }
