@@ -41,9 +41,19 @@
                 <button type="submit" class="btn btn-secondary">View Training Plans</button>
             </form>
         </div>
+        <div class="mt-3">
+            <form action="/trainingSession/add" method="get">
+                <input type="hidden" name="userId" th:value="${user.uid}">
+                <button type="submit" class="btn btn-secondary">Add Training Session</button>
+            </form>
+        </div>
+        <div class="mt-3">
+            <form action="/trainingSession/view" method="get">
+                <input type="hidden" name="userId" th:value="${user.uid}">
+                <button type="submit" class="btn btn-secondary">View Training Sessions</button>
+            </form>
+        </div>
 
-        
-        
         <!-- todo change style to the on above (priority low) -->
         <div class="mt-4">
             <a th:href="@{/accEdit/{userId}(userId=${user.uid})}" class="btn btn-secondary">Edit Account Details</a>
