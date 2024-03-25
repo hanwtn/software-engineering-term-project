@@ -19,6 +19,9 @@
 
                     <form action="/trainingSession/add/submit" method="post">
                         <div class="mb-3">
+                            <input type="text" name="name" class="form-control form-control-lg" placeholder="Name :">
+                        </div>
+                        <div class="mb-3">
                             <h2>Add Exercises!</h2>
                             <div th:each="exercise: ${exercises}">
                                 <label>

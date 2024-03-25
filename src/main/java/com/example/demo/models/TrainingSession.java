@@ -32,16 +32,20 @@ public class TrainingSession {
     @Column
     private Time endTime;
 
+    @Column
+    private String name;
+
     public TrainingSession() {
         this.exercises = new ArrayList<>();
         this.daysOfWeek = new HashSet<>();
     }
 
-    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime) {
+    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime, String name) {
         this.exercises = new ArrayList<>(exercises);
         this.daysOfWeek = new HashSet<>(dayOfWeeks);
         this.startTime = startTime;
         this.endTime = endTime;
+        this.name = name;
     }
 
     public int getTsid() {
@@ -115,4 +119,13 @@ public class TrainingSession {
     public TrainingPlan getTrainingPlan() {
         return trainingPlan;
     }
+
+    private String getName() {
+        return name;
+    }
+
+    private void setName(String name) {
+        this.name = name;
+    }
+
 }

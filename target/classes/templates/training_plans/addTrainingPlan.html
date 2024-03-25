@@ -26,6 +26,12 @@
                             <h2>End Date:</h2>
                             <input type="date" id="edate" name="edate" class="form-control form-control-lg" placeholder="DD/MM/YY">
                         </div>
+                        <div th:each="ts: ${trainingSessions}">
+                            <label>
+                                <input type="checkbox" th:id="'exercise_' + ${ts.tsid}" name="ts" class="form-check-input" th:value="${ts.tsid}">
+                                <span th:text="${ts.tsid}"></span>
+                            </label>
+                        </div>
                         <input type="hidden" id="userId" name="userId" th:value="${user.uid}">
 
                         <!-- login button -->

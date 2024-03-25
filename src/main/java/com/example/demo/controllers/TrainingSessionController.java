@@ -52,7 +52,7 @@ public class TrainingSessionController {
     @PostMapping("/trainingSession/add/submit")
     public String addSession(@RequestParam Map<String, String> newSession, @RequestParam(value = "exercises", required = false) String[] selectedExercises,  HttpServletResponse response, Model model){
 
-        String desc = newSession.get("description");
+        String name = newSession.get("name");
         List<Exercise> exercises = new ArrayList<>();;
         if (selectedExercises != null) {
             for (String exerciseId : selectedExercises) {
@@ -60,15 +60,17 @@ public class TrainingSessionController {
                 exercises.add(exerciseRepository.findByEid(Integer.parseInt(exerciseId)));
             }
         }
+        //Default for now (Dont understand)
         Set<DayOfWeek> dayOfWeeks = new HashSet<>();
         dayOfWeeks.add(DayOfWeek.WEDNESDAY);
         dayOfWeeks.add(DayOfWeek.SATURDAY);
         Time startTime = Time.valueOf("09:00:00");
         Time endTime = Time.valueOf("10:00:00");
 
-        TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime);
-
-        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(17);
+        TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime, name);
+        
+        //HardCoded for now :3
+        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(10);
 
         trainingPlan.addTrainingSession(newTrainingSession);
         trainingPlanRepo.save(trainingPlan);
@@ -99,12 +101,19 @@ public class TrainingSessionController {
 
     @GetMapping("/trainingSession/view")
     public String viewTrainingSessionView(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
-        Integer userId = Integer.parseInt(newUser.get("userId"));
-        User user = userRepo.findByUid(userId);
-        model.addAttribute("user", user);
-        List<TrainingPlan> trainingPlans = user.getTrainingPlans();
-        model.addAttribute("trainingPlans", trainingPlans);
-        return "training_plans/viewTrainingPlan";
+        List<TrainingSession> trainingSessions= trainingSessionRepo.findAll();
+        model.addAttribute("trainingSessions", trainingSessions);
+        return "training_sessions/viewTrainingSession";
+    }
+
+    @PostMapping("/trainingSession/delete")
+    public String deleteTrainingSession(@RequestParam Map<String, String> deleteForm, Model model) {
+        int tsid = Integer.parseInt(deleteForm.get("tsid"));
+        TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
+        System.out.println(tsid);
+        System.out.println(ts.getTsid());
+        trainingSessionRepo.delete(ts);
+        return "redirect:/dashboard";
     }
 
     

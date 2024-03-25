@@ -7,16 +7,12 @@
     <title>View Training Plans</title>
 </head>
 <body>
-    <h1>Training Plans for <span th:text="${user.username}"></span></h1>
+    <h1>Training Sessions</h1>
     <ul>
-        <li th:each="plan : ${trainingPlans}">
-            <p>Name: <span th:text="${plan.name}"></span></p>
-            <p>Description: <span th:text="${plan.description}"></span></p>
-            <p>Start Date: <span th:text="${plan.startDate}"></span></p>
-            <p>End Date: <span th:text="${plan.endDate}"></span></p>
-            <form th:action="@{/trainingPlan/delete}" method="post">
-                <input type="hidden" name="userId" th:value="${user.uid}" />
-                <input type="hidden" name="tpid" th:value="${plan.tpid}" />
+        <li th:each="s : ${trainingSessions}">
+            <p>Name: <span th:text="${s.name}"></span></p>
+            <form th:action="@{/trainingSession/delete}" method="post">
+                <input type="hidden" name="tsid" th:value="${s.tsid}" />
                 <button type="submit">Delete</button>
             </form>
         </li>

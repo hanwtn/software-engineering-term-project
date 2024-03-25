@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.TrainingSession;
+import com.example.demo.models.TrainingSessionRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
@@ -28,6 +30,8 @@ public class TrainingPlanController {
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
+    @Autowired
+    private TrainingSessionRepository trainingSessionRepo;
     private UserService userService = null;   
 
 
@@ -96,6 +100,11 @@ public class TrainingPlanController {
         Integer userId = Integer.parseInt(newUser.get("userId"));
         User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
+        
+        //Find training session by user
+        List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
+
+        model.addAttribute("trainingSessions", trainingSessions);
         return "training_plans/addTrainingPlan";
     }
 
