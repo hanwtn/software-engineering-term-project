@@ -12,13 +12,20 @@
             <div class="col-md-8">
                 <h1 class="text-center mt-5 mb-4">Create a Training Session!</h1>
                 <div class="row justify-content-center">
-                    <form action="/trainingPlan/add/submit" method="post">
+                    <form action="/trainingSession/add/search">
+                        <span><input type="text" id="search" name="search" class="form-control form-control-lg" placeholder="Search: "><button class="btn btn-primary" type="submit">Search</button></span>
+                        <input type="hidden" id="userId" name="userId" th:value="${user.uid}">
+                    </form>
+
+                    <form action="/trainingSession/add/submit" method="post">
                         <div class="mb-3">
                             <h2>Add Exercises!</h2>
-                            <div th:each="exercise, iterStat : ${allexercises}" th:if="${iterStat.index lt 5}">
-                                <h2 th:text="${exercise.name}"></h2>
+                            <div th:each="exercise: ${exercises}">
+                                <label>
+                                    <input type="checkbox" th:id="'exercise_' + ${exercise.eid}" name="exercises" class="form-check-input" th:value="${exercise.eid}">
+                                    <span th:text="${exercise.name}"></span>
+                                </label>
                             </div>
-                            
                         </div>
 
                         <div class="mb-3">
@@ -27,7 +34,6 @@
 
                         <input type="hidden" id="userId" name="userId" th:value="${user.uid}">
 
-                        <!-- login button -->
                         <div class="col-md-10">
                                 <button type="submit" class="btn btn-success mb-3 d-block w-100 text-center">Create Plan!</button>
                         </div>

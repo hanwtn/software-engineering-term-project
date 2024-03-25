@@ -10,4 +10,5 @@ import org.springframework.data.repository.query.Param;
 public interface ExerciseRepository extends JpaRepository<Exercise,Integer> {
     Exercise findByEid(int Exerciseid);
     List<Exercise> findByUser(User user);
+    List<Exercise> findByNameContaining(String search);
 } 
