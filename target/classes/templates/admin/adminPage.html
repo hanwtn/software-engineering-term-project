@@ -64,6 +64,28 @@
             </tr>
         </tbody>
     </table>
-    
+    <h2>All Training Plans</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>User ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="plan : ${trainingPlans}">
+                <td th:text="${plan.tpid}"></td>
+                <td th:text="${plan.name}"></td>
+                <td th:text="${plan.description}"></td>
+                <td th:text="${plan.startDate}"></td>
+                <td th:text="${plan.endDate}"></td>
+                <td th:text="${plan.user.uid}"></td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

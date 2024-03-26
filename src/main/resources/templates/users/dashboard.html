@@ -5,22 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/users/dashboard.css}" />
     <title>Dashboard</title>
+    <link href='https://unpkg.com/fullcalendar@5/main.min.css' rel='stylesheet' />
+    <script src='https://unpkg.com/fullcalendar@5/main.min.js'></script>
+    <style>
+        .fc-event {
+            cursor: pointer;
+        }
+    </style>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('training-calendar');
+            
+            
+            var trainingPlans = JSON.parse(/*[[${trainingPlansJson}]]*/ '[]');
+
+            var calendarEvents = trainingPlans.map(plan => ({
+                title: plan.name,
+                start: plan.startDate,
+                end: plan.endDate,
+                description: plan.description
+            }));
+    
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: calendarEvents,
+                eventClick: function(info) {
+                    alert(info.event.extendedProps.description);
+                }
+            });
+            calendar.render();
+        });
+    </script>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="header">
-            <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
+    <div class="container mt-5">
+        <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
+        <div class="mt-4">
+            <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
+        </div>
+        <div class="mt-2">
             <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
         </div>
+
         
-        <div class="main-content">
-            <div class="account-details">
-                <h2>Account details</h2>
-                <p><strong>Weight:</strong> <span th:text="${user.weight}">0</span> kg</p>
-                <p><strong>Height:</strong> <span th:text="${user.height}">0</span> cm</p>
-                <a th:href="@{/accEdit/{userId}(userId=${user.uid})}" class="btn btn-secondary">Edit</a>
-            </div>
-            
             <div class="actions">
                 <div class="card">
                     <form action="/trainingPlan/view" method="get">
