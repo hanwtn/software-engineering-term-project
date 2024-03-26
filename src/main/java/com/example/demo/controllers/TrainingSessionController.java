@@ -111,8 +111,8 @@ public class TrainingSessionController {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
         System.out.println(tsid);
         System.out.println(ts.getTsid());
-        //THIS DELETES THE TRAINING PLAN ALSO: ()
-        //trainingSessionRepo.delete(ts);
+        
+        trainingSessionRepo.delete(ts);
         return "redirect:/dashboard";
     }
 
