@@ -70,10 +70,7 @@ public class TrainingSessionController {
         TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime, name);
         
         //HardCoded for now :3
-        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(10);
-
-        trainingPlan.addTrainingSession(newTrainingSession);
-        trainingPlanRepo.save(trainingPlan);
+        trainingSessionRepo.save(newTrainingSession);
         return "redirect:/dashboard";
     }
 
@@ -101,8 +98,10 @@ public class TrainingSessionController {
 
     @GetMapping("/trainingSession/view")
     public String viewTrainingSessionView(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
-        List<TrainingSession> trainingSessions= trainingSessionRepo.findAll();
+        List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
         model.addAttribute("trainingSessions", trainingSessions);
+        System.out.println("HERE");
+        System.out.println(trainingSessions.get(0).getName());
         return "training_sessions/viewTrainingSession";
     }
 
@@ -112,7 +111,8 @@ public class TrainingSessionController {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
         System.out.println(tsid);
         System.out.println(ts.getTsid());
-        trainingSessionRepo.delete(ts);
+        //THIS DELETES THE TRAINING PLAN ALSO: ()
+        //trainingSessionRepo.delete(ts);
         return "redirect:/dashboard";
     }
 

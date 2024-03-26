@@ -16,13 +16,9 @@
             <p>Start Date: <span th:text="${plan.startDate}"></span></p>
             <p>End Date: <span th:text="${plan.endDate}"></span></p>
             <p>Training Sessions:</p>
-                <ul>
-                    <th:block th:each="s : ${plan.trainingSessions}">
-                        <li>
-                            <span th:text="${s.tsid}"></span></span>
-                        </li>
-                    </th:block>
-                </ul>
+            <div th:each="s : ${trainingSessions}">
+                <span th:text="${s.name}"> <span th:text="${s.tpid}"></span></span></br>
+            </div>
             <form th:action="@{/trainingPlan/delete}" method="post">
                 <input type="hidden" name="userId" th:value="${user.uid}" />
                 <input type="hidden" name="tpid" th:value="${plan.tpid}" />

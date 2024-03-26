@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.models.Exercise;
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.TrainingSession;
@@ -41,7 +42,7 @@ public class TrainingPlanController {
     }
 
     @PostMapping("/trainingPlan/add/submit")
-    public String addPlan(@RequestParam Map<String, String> newPlan, HttpServletResponse response, Model model){
+    public String addPlan(@RequestParam Map<String, String> newPlan,@RequestParam(value = "trainingSessions", required = false) String[] selectedSessions, HttpServletResponse response, Model model){
 
         String newName = newPlan.get("name");
         String newDesc = newPlan.get("description");
@@ -85,8 +86,26 @@ public class TrainingPlanController {
             model.addAttribute("error", "Start or end date is before today");
             return "users/loginPage";
         }
-        TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
+
+        List<TrainingSession> ts  = new ArrayList<>();;
+        if (selectedSessions != null) {
+            for (String tsid : selectedSessions) {
+                ts.add(trainingSessionRepo.findBytsid(Integer.parseInt(tsid)));
+            }
+        }
+        
+        TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate, ts);
+        newTrainingPlan.setTrainingSessions(ts);
         User user = userRepo.findByUid(userId);
+        System.out.println("Training Session Names:");
+        for(int i = 0; i < ts.size(); i++) {
+            System.out.println(ts.get(i).getName());
+        }
+        System.out.println("NEW TRAINING PLAN TEST:");
+        for(int i = 0; i < newTrainingPlan.getTrainingSessions().size(); i++) {
+            System.out.println(newTrainingPlan.getTrainingSessions().get(i).getName());
+        }
+        
         //add error-check for getting user
         user.addTrainingPlan(newTrainingPlan);
         userRepo.save(user); // Save the user with the new training plan
@@ -115,6 +134,10 @@ public class TrainingPlanController {
         model.addAttribute("user", user);
         List<TrainingPlan> trainingPlans = user.getTrainingPlans();
         model.addAttribute("trainingPlans", trainingPlans);
+        
+        //TESt
+        System.out.println(trainingPlans.get(0).getName() + " plan :");
+        System.out.println(trainingPlans.get(0).getTrainingSessions());
         return "training_plans/viewTrainingPlan";
     }
 

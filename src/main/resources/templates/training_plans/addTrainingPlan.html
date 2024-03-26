@@ -14,10 +14,12 @@
                 <div class="row justify-content-center">
                     <form action="/trainingPlan/add/submit" method="post">
                         <div class="mb-3">
+                            <h2>Plan Name:</h2>
                             <input type="text" id="name" name="name" class="form-control form-control-lg" 
                                 placeholder="Name:">
                         </div>
                         <div class="mb-3">
+                            <h2>Description</h2>
                             <textarea style="height: 20vh;" type="text" id="description" name="description" class="form-control form-control-lg" placeholder="Description"></textarea>
                         </div>
                         <div class="mb-3">
@@ -26,12 +28,16 @@
                             <h2>End Date:</h2>
                             <input type="date" id="edate" name="edate" class="form-control form-control-lg" placeholder="DD/MM/YY">
                         </div>
-                        <div th:each="ts: ${trainingSessions}">
-                            <label>
-                                <input type="checkbox" th:id="'exercise_' + ${ts.tsid}" name="ts" class="form-check-input" th:value="${ts.tsid}">
-                                <span th:text="${ts.tsid}"></span>
-                            </label>
+                        <div class="mb-3">
+                            <h2>Add Training Sessions!</h2>
+                            <div th:each="s: ${trainingSessions}">
+                                <label>
+                                    <input type="checkbox" name="trainingSessions" class="form-check-input" th:value="${s.tsid}">
+                                    <span th:text="${s.name}"></span>
+                                </label>
+                            </div>
                         </div>
+
                         <input type="hidden" id="userId" name="userId" th:value="${user.uid}">
 
                         <!-- login button -->

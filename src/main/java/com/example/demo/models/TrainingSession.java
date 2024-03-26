@@ -120,11 +120,11 @@ public class TrainingSession {
         return trainingPlan;
     }
 
-    private String getName() {
+    public String getName() {
         return name;
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

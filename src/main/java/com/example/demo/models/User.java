@@ -53,7 +53,7 @@ public class User {
 
     
     public List<TrainingPlan> getTrainingPlans() {
-        return trainingPlans;
+        return this.trainingPlans;
     }
 
     public void addExercise(Exercise exercise) {
