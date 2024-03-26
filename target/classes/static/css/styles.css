@@ -51,12 +51,34 @@ header {
     margin: 20px 0;
 }
 
+/* Center the content in the header and add styles for the button */
+.header-content {
+    text-align: center;
+}
+
+.get-started {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 1.2em; /* Slightly larger text */
+    color: white;
+    background-color: #ff7f50; /* Coral color, but you can change it as you wish */
+    border: none;
+    border-radius: 50px; /* Rounded borders */
+    text-decoration: none;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* Add some shadow for depth */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for interaction */
+}
+
+.get-started:hover, .get-started:active {
+    transform: translateY(-2px); /* Slightly raise the button when hovered or clicked */
+    box-shadow: 0 12px 24px 0 rgba(0,0,0,0.2); /* Larger shadow when hovered or clicked */
+}
+
+/* Modify footer to not be fixed to allow content above to be centered */
 footer {
     background: #333;
     color: #fff;
     text-align: center;
     padding: 10px 0;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+    /* Removed the fixed positioning to let the content flow naturally */
 }
