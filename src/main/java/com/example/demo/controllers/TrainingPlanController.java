@@ -106,12 +106,12 @@ public class TrainingPlanController {
     @GetMapping("/trainingPlan")
 public String trainingPlanTest(@RequestParam(name = "userId") String userIdString, HttpServletResponse response, Model model) {
     try {
-        Integer userId = Integer.parseInt(userIdString); // Parse the user ID to an integer
+        Integer userId = Integer.parseInt(userIdString); 
         User user = userRepo.findByUid(userId);
         if (user != null) {
-            model.addAttribute("user", user); // Adding the whole user object if needed for other purposes
-            model.addAttribute("userId", userId); // Specifically adding the userId to the model
-            return "users/addTrainingPlan"; // Assuming this is the correct path to your template
+            model.addAttribute("user", user); 
+            model.addAttribute("userId", userId); 
+            return "users/addTrainingPlan"; 
         } else {
             // Handling case where user does not exist
             response.setStatus(404); // Not Found
