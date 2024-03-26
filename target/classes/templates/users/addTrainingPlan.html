@@ -27,7 +27,15 @@
                             <h2>End Date:</h2>
                             <input type="date" id="edate" name="edate" class="form-control form-control-lg" placeholder="DD/MM/YY">
                         </div>
-                        <input type="hidden" id="userId" name="userId" th:value="${user.uid}">
+
+                        <input type="hidden" id="userId" name="userId" th:value="${userId}">
+
+
+                        <!-- Display error message -->
+                        <div th:if="${error}" class="alert alert-danger mb-3">
+                            <p th:text="${error}">Error</p>
+                        </div>
+                        
 
                         <!-- login button -->
                         <div class="col-md-10">

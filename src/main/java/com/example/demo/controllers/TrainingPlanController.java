@@ -21,6 +21,8 @@ import com.example.demo.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+
+
 @Controller
 public class TrainingPlanController {
     
@@ -41,20 +43,27 @@ public class TrainingPlanController {
 
         String newName = newPlan.get("name");
         String newDesc = newPlan.get("description");
+        
+        int userId = Integer.parseInt(newPlan.get("userId"));
+
+  
 
         // Check if name and description are present
         if (newName.isEmpty() || newDesc.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Name or description are not provided");
+            model.addAttribute("userId", userId);
             return "users/addTrainingPlan";
         }
 
-        int userId = Integer.parseInt(newPlan.get("userId"));
+        
+        
        
         // Check if user exists
         if (!userRepo.existsByUid(userId)) {
             response.setStatus(404); // Not Found
             model.addAttribute("error", "User does not exist");
+            model.addAttribute("userId", userId);
             return "users/addTrainingPlan";
         }
 
@@ -64,6 +73,7 @@ public class TrainingPlanController {
         if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date or end date are not provided");
+            model.addAttribute("userId", userId);
             return "users/addTrainingPlan";
         }
         LocalDate startDate = LocalDate.parse(startDateStr);
@@ -73,12 +83,14 @@ public class TrainingPlanController {
         if (startDate.isAfter(endDate)) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date is after end date");
+            model.addAttribute("userId", userId);
             return "users/addTrainingPlan";
         }
         //check if start date and end date are valid
         if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start or end date is before today");
+            model.addAttribute("userId", userId);
             return "users/addTrainingPlan";
         }
         TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
@@ -91,14 +103,29 @@ public class TrainingPlanController {
         return "redirect:/dashboard";
     }
 
-     @GetMapping("/trainingPlan")
-    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
-        //need to find the user first
-        Integer userId = Integer.parseInt(newUser.get("userId"));
+    @GetMapping("/trainingPlan")
+public String trainingPlanTest(@RequestParam(name = "userId") String userIdString, HttpServletResponse response, Model model) {
+    try {
+        Integer userId = Integer.parseInt(userIdString); // Parse the user ID to an integer
         User user = userRepo.findByUid(userId);
-        model.addAttribute("user", user);
+        if (user != null) {
+            model.addAttribute("user", user); // Adding the whole user object if needed for other purposes
+            model.addAttribute("userId", userId); // Specifically adding the userId to the model
+            return "users/addTrainingPlan"; // Assuming this is the correct path to your template
+        } else {
+            // Handling case where user does not exist
+            response.setStatus(404); // Not Found
+            model.addAttribute("error", "User does not exist");
+            return "users/addTrainingPlan";
+        }
+    } catch (NumberFormatException e) {
+        // Handling case where userId is not a valid integer
+        response.setStatus(400); // Bad Request
+        model.addAttribute("error", "Invalid User ID");
         return "users/addTrainingPlan";
     }
+}
+
 
     @GetMapping("/trainingPlan/view")
     public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
