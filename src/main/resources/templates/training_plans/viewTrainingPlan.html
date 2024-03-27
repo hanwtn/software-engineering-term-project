@@ -10,7 +10,14 @@
 
 <body>
     <h1>Training Plans for <span th:text="${user.username}"></span></h1>
-    <ul>
+    
+    <!-- Check if trainingPlans is empty -->
+    <th:block th:if="${#lists.isEmpty(trainingPlans)}">
+        <p>No training plans found.</p>
+    </th:block>
+    
+    <!-- If trainingPlans is not empty, iterate over it -->
+    <ul th:unless="${#lists.isEmpty(trainingPlans)}">
         <li th:each="plan : ${trainingPlans}">
             <p>tpid: <span th:text="${plan.tpid}"></span></p>
             <p>Name: <span th:text="${plan.name}"></span></p>
@@ -18,9 +25,14 @@
             <p>Start Date: <span th:text="${plan.startDate}"></span></p>
             <p>End Date: <span th:text="${plan.endDate}"></span></p>
             <p>Training Sessions:</p>
+            
+            <!-- Iterate over trainingSessions related to the current plan -->
             <div th:each="s : ${trainingSessions}">
-                <span th:text="${s.name}"> <span th:text="${s.tpid}"></span></span></br>
+                <th:block th:if="${s.tpid == plan.tpid}">
+                    <span th:text="${s.name}"></span><br>
+                </th:block>
             </div>
+            
             <form th:action="@{/trainingPlan/delete}" method="post">
                 <input type="hidden" name="userId" th:value="${user.uid}" />
                 <input type="hidden" name="tpid" th:value="${plan.tpid}" />

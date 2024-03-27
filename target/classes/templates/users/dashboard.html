@@ -56,6 +56,12 @@
                     </form>
                 </div>
                 <div class="card">
+                    <form action="/trainingPlan" method="get">
+                        <input type="hidden" name="userId" th:value="${user.uid}">
+                        <button type="submit" class="btn btn-secondary">Add Training Plan</button>
+                    </form>
+                </div>
+                <div class="card">
                     <form action="/exercise/view" method="get">
                         <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">View Exercise</button>
@@ -67,12 +73,7 @@
                         <button type="submit" class="btn btn-secondary">Add Exercise</button>
                     </form>
                 </div>
-                <div class="card">
-                    <form action="/trainingPlan" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
-                        <button type="submit" class="btn btn-secondary">Add Training Plan</button>
-                    </form>
-                </div>
+                
             </div>
         </div>
     </div>

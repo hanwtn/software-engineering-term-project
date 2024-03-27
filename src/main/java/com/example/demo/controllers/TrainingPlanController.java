@@ -146,11 +146,14 @@ public class TrainingPlanController {
         List<TrainingPlan> trainingPlans = user.getTrainingPlans();
         model.addAttribute("trainingPlans", trainingPlans);
 
-        // TESt
-        System.out.println(trainingPlans.get(0).getName() + " plan :");
-        System.out.println(trainingPlans.get(0).getTrainingSessions());
+        if (!trainingPlans.isEmpty()) {
+            // Accessing the first training plan if the list is not empty
+            System.out.println(trainingPlans.get(0).getName() + " plan :");
+            System.out.println(trainingPlans.get(0).getTrainingSessions());
+        }
         return "training_plans/viewTrainingPlan";
     }
+
 
     @PostMapping("/trainingPlan/delete")
     public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model) {
