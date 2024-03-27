@@ -3,6 +3,7 @@ package com.example.demo.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -39,12 +40,13 @@ public class TrainingPlan {
     }
 
     // Lets remove user, training plan no longer knows its user
-    //now user knows its training plans
+    // now user knows its training plans
     public TrainingPlan(String name, String description, LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.trainingSessions = new ArrayList<>();
     }
 
     public int getId() {
@@ -70,8 +72,8 @@ public class TrainingPlan {
     public User getUser() {
         return user;
     }
-    
-    //write rest of getters and setters
+
+    // write rest of getters and setters
     public String getDescription() {
         return this.description;
     }
@@ -83,6 +85,7 @@ public class TrainingPlan {
     public LocalDate getEndDate() {
         return this.endDate;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -97,6 +100,22 @@ public class TrainingPlan {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public void addTrainingSession(TrainingSession trainingSession) {
+        if (trainingSessions == null) {
+            trainingSessions = new ArrayList<>();
+        }
+        trainingSessions.add(trainingSession);
+        trainingSession.setTrainingPlan(this);
+    }
+
+    public List<TrainingSession> getTrainingSessions() {
+        return trainingSessions;
+    }
+
+    public void setTrainingSessions(List<TrainingSession> sessions) {
+        this.trainingSessions = sessions;
     }
 
 }

@@ -17,6 +17,8 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    private String password;
+
     @Column(nullable = true)
     private Double weight;
 
@@ -24,8 +26,6 @@ public class User {
     private Double height;
 
     private Integer status; // 0 = regular user, 1 = coach, 2 = admin
-
-    private String password;
 
     // TO DO: do this better
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -56,15 +56,30 @@ public class User {
 
     
     public List<TrainingPlan> getTrainingPlans() {
-        return trainingPlans;
+        return this.trainingPlans;
     }
 
     public void addExercise(Exercise exercise) {
+        if (exercises == null) {
+            exercises = new ArrayList<>();
+        }
         exercises.add(exercise);
+        exercise.setUser(this);
     }
 
     public void removeExercise(Exercise exercise) {
-        exercises.remove(exercise);
+        if (exercises != null) {
+            exercises.remove(exercise);
+            exercise.setUser(null);
+        }
+    }
+
+    public List<Exercise> getExercises() {
+        return exercises;
+    }
+
+    public void setExercises(List<Exercise> exercises) {
+        this.exercises = exercises;
     }
 
     public User() {

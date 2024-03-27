@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Exercises</title>
+</head>
+<body>
+    <h1>Exercises for<span th:text="${user.username}"></span></h1>
+    <div class="mt-3">
+        <form action="/exercise/add" method="post">
+            <input type="hidden" name="userId" th:value="${user.uid}">
+            <button type="submit" class="btn btn-secondary">Create new exercise</button>
+        </form>
+    </div>
+    <ul>
+        <li th:each="exercise : ${exercises}">
+            <p>Name: <span th:text="${exercise.name}"></span></p>
+            <p>Description: <span th:text="${exercise.description}"></span></p>
+            <p>Intensity: <span th:text="${exercise.intensity}"></span></p>
+            <p>Sets: <span th:text="${exercise.sets}"></span></p>
+            <p>Reps: <span th:text="${exercise.reps}"></span></p>
+            <p>Duration: <span th:text="${exercise.duration}"></span> seconds</p>
+            <form th:action="@{/exercise/delete}" method="post">
+                <input type="hidden" name="userId" th:value="${user.uid}" />
+                <input type="hidden" name="eid" th:value="${exercise.eid}" />
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    </ul>
+</body>
+</html>

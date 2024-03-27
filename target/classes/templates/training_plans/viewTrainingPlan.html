@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Training Plans</title>
+</head>
+
+<body>
+    <h1>Training Plans for <span th:text="${user.username}"></span></h1>
+    <ul>
+        <li th:each="plan : ${trainingPlans}">
+            <p>tpid: <span th:text="${plan.tpid}"></span></p>
+            <p>Name: <span th:text="${plan.name}"></span></p>
+            <p>Description: <span th:text="${plan.description}"></span></p>
+            <p>Start Date: <span th:text="${plan.startDate}"></span></p>
+            <p>End Date: <span th:text="${plan.endDate}"></span></p>
+            <p>Training Sessions:</p>
+            <div th:each="s : ${trainingSessions}">
+                <span th:text="${s.name}"> <span th:text="${s.tpid}"></span></span></br>
+            </div>
+            <form th:action="@{/trainingPlan/delete}" method="post">
+                <input type="hidden" name="userId" th:value="${user.uid}" />
+                <input type="hidden" name="tpid" th:value="${plan.tpid}" />
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    </ul>
+</body>
+
+</html>

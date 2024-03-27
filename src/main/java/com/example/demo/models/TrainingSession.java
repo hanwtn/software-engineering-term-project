@@ -15,13 +15,13 @@ public class TrainingSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tsid;
 
-    //fix relationship later
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "training_session_id")
-    private List<Exercise> exercises; 
-    
+    @Column
+    private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Exercise> exercises;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "training_plan_id")
     private TrainingPlan trainingPlan;
 
@@ -40,11 +40,13 @@ public class TrainingSession {
         this.daysOfWeek = new HashSet<>();
     }
 
-    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime) {
+    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime,
+            String name) {
         this.exercises = new ArrayList<>(exercises);
         this.daysOfWeek = new HashSet<>(dayOfWeeks);
         this.startTime = startTime;
         this.endTime = endTime;
+        this.name = name;
     }
 
     public int getTsid() {
@@ -110,4 +112,21 @@ public class TrainingSession {
     public void setEndTime(Time endTime) {
         this.endTime = endTime;
     }
+
+    public void setTrainingPlan(TrainingPlan trainingPlan) {
+        this.trainingPlan = trainingPlan;
+    }
+
+    public TrainingPlan getTrainingPlan() {
+        return trainingPlan;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

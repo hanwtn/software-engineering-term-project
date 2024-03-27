@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/css/users/addTrainingPlan.css}" />
 </head>
 <body>
     <main class="container-fluid"> 
@@ -13,12 +12,14 @@
             <div class="col-md-8">
                 <h1 class="text-center mt-5 mb-4">Create a Training Plan!</h1>
                 <div class="row justify-content-center">
-                    <form action="/trainingPlan/add" method="post">
+                    <form action="/trainingPlan/add/submit" method="post">
                         <div class="mb-3">
+                            <h2>Plan Name:</h2>
                             <input type="text" id="name" name="name" class="form-control form-control-lg" 
                                 placeholder="Name:">
                         </div>
                         <div class="mb-3">
+                            <h2>Description</h2>
                             <textarea style="height: 20vh;" type="text" id="description" name="description" class="form-control form-control-lg" placeholder="Description"></textarea>
                         </div>
                         <div class="mb-3">
@@ -27,15 +28,17 @@
                             <h2>End Date:</h2>
                             <input type="date" id="edate" name="edate" class="form-control form-control-lg" placeholder="DD/MM/YY">
                         </div>
-
-                        <input type="hidden" id="userId" name="userId" th:value="${userId}">
-
-
-                        <!-- Display error message -->
-                        <div th:if="${error}" class="alert alert-danger mb-3">
-                            <p th:text="${error}">Error</p>
+                        <div class="mb-3">
+                            <h2>Add Training Sessions!</h2>
+                            <div th:each="s: ${trainingSessions}">
+                                <label>
+                                    <input type="checkbox" name="trainingSessions" class="form-check-input" th:value="${s.tsid}">
+                                    <span th:text="${s.name}"></span>
+                                </label>
+                            </div>
                         </div>
-                        
+
+                        <input type="hidden" id="userId" name="userId" th:value="${user.uid}">
 
                         <!-- login button -->
                         <div class="col-md-10">
