@@ -94,6 +94,8 @@ public class TrainingPlanController {
         TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
         User user = userRepo.findByUid(userId);
         System.out.println("Training Session Names:");
+        
+        /*
         for (int i = 0; i < ts.size(); i++) {
             System.out.println(ts.get(i).getName());
         }
@@ -101,6 +103,7 @@ public class TrainingPlanController {
         for (int i = 0; i < newTrainingPlan.getTrainingSessions().size(); i++) {
             System.out.println(newTrainingPlan.getTrainingSessions().get(i).getName());
         }
+        */
 
         // add error-check for getting user
         user.addTrainingPlan(newTrainingPlan);
