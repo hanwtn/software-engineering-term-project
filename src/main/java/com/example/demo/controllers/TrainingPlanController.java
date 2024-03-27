@@ -24,6 +24,8 @@ import com.example.demo.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+
+
 @Controller
 public class TrainingPlanController {
     
@@ -46,21 +48,28 @@ public class TrainingPlanController {
 
         String newName = newPlan.get("name");
         String newDesc = newPlan.get("description");
+        
+        int userId = Integer.parseInt(newPlan.get("userId"));
+
+  
 
         // Check if name and description are present
         if (newName.isEmpty() || newDesc.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Name or description are not provided");
-            return "users/loginPage";
+            model.addAttribute("userId", userId);
+            return "users/addTrainingPlan";
         }
 
-        int userId = Integer.parseInt(newPlan.get("userId"));
+        
+        
        
         // Check if user exists
         if (!userRepo.existsByUid(userId)) {
             response.setStatus(404); // Not Found
             model.addAttribute("error", "User does not exist");
-            return "users/loginPage";
+            model.addAttribute("userId", userId);
+            return "users/addTrainingPlan";
         }
 
         String startDateStr = newPlan.get("sdate");
@@ -69,7 +78,8 @@ public class TrainingPlanController {
         if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date or end date are not provided");
-            return "users/loginPage";
+            model.addAttribute("userId", userId);
+            return "users/addTrainingPlan";
         }
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
@@ -78,7 +88,8 @@ public class TrainingPlanController {
         if (startDate.isAfter(endDate)) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date is after end date");
-            return "users/loginPage";
+            model.addAttribute("userId", userId);
+            return "users/addTrainingPlan";
         }
         //check if start date and end date are valid
         if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
@@ -86,16 +97,7 @@ public class TrainingPlanController {
             model.addAttribute("error", "Start or end date is before today");
             return "users/loginPage";
         }
-
-        List<TrainingSession> ts  = new ArrayList<>();;
-        if (selectedSessions != null) {
-            for (String tsid : selectedSessions) {
-                ts.add(trainingSessionRepo.findBytsid(Integer.parseInt(tsid)));
-            }
-        }
-        
-        TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate, ts);
-        newTrainingPlan.setTrainingSessions(ts);
+        TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
         User user = userRepo.findByUid(userId);
         System.out.println("Training Session Names:");
         for(int i = 0; i < ts.size(); i++) {
@@ -114,18 +116,29 @@ public class TrainingPlanController {
         return "redirect:/dashboard";
     }
 
-     @GetMapping("/trainingPlan/add")
-    public String trainingPlanTest(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
-        Integer userId = Integer.parseInt(newUser.get("userId"));
+    @GetMapping("/trainingPlan")
+public String trainingPlanTest(@RequestParam(name = "userId") String userIdString, HttpServletResponse response, Model model) {
+    try {
+        Integer userId = Integer.parseInt(userIdString); 
         User user = userRepo.findByUid(userId);
-        model.addAttribute("user", user);
-        
-        //Find training session by user
-        List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
-
-        model.addAttribute("trainingSessions", trainingSessions);
-        return "training_plans/addTrainingPlan";
+        if (user != null) {
+            model.addAttribute("user", user); 
+            model.addAttribute("userId", userId); 
+            return "users/addTrainingPlan"; 
+        } else {
+            // Handling case where user does not exist
+            response.setStatus(404); // Not Found
+            model.addAttribute("error", "User does not exist");
+            return "users/addTrainingPlan";
+        }
+    } catch (NumberFormatException e) {
+        // Handling case where userId is not a valid integer
+        response.setStatus(400); // Bad Request
+        model.addAttribute("error", "Invalid User ID");
+        return "users/addTrainingPlan";
     }
+}
+
 
     @GetMapping("/trainingPlan/view")
     public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {

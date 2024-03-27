@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Details</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Account Details for <span th:text="${user.username}">Username</span></h1>
+        <div class="mt-3">
+            <p><strong>Weight:</strong> <span th:text="${user.weight}">0</span> kg</p>
+            <p><strong>Height:</strong> <span th:text="${user.height}">0</span> cm</p>
+        </div>
+        
+        <div class="mt-4">
+            <a th:href="@{/accEdit/{userId}(userId=${user.uid})}" class="btn btn-primary">Edit Account Details</a>
+            <a th:href="@{/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

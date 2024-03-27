@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.container {
+    margin-top: 5%; /* Adjust to 5% for better vertical alignment */
+}
+
+.form-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 5%; /* Add some space at the bottom */
+}
+
+.form-container h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.form-label {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px; /* Add space between input fields */
+}
+
+.form-control:focus {
+    border-color: #ff6347;
+    box-shadow: 0 0 0 0.25rem rgba(255, 99, 71, 0.25);
+}
+
+.btn {
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #146c43;
+    border-color: #146c43;
+}
+
+/* Add styles for textarea specifically */
+textarea.form-control {
+    resize: vertical; /* Allows the textarea to be resizable vertically */
+}

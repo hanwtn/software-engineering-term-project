@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.models.TrainingPlan;
+import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 import com.example.demo.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -28,15 +31,23 @@ public class AdminController {
     private UserRepository userRepo;
     @Autowired
     private UserService userService;
-    
+    @Autowired
+    private TrainingPlanRepository trainingPlanRepo;
     @GetMapping("/admin")
-    public String adminDashboard(Model model, HttpSession session) {
+    public String adminDashboard(Model model, HttpSession session, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
         if (session.getAttribute("isAdmin") == null) {
             return "redirect:/admin/login";
         }
 
         List<User> users = userRepo.findAll();
         model.addAttribute("users", users);
+        
+        List<TrainingPlan> trainingPlans = trainingPlanRepo.findAll();
+        model.addAttribute("trainingPlans", trainingPlans);
         return "admin/adminPage"; 
     }
     @GetMapping("/admin/logout")
@@ -138,6 +149,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("successMessage", "Account successfully added.");
 
         return "redirect:/admin";
+        
     }
 
 }

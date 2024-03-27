@@ -24,11 +24,15 @@ import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
 import com.example.demo.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+
+
 
 @Controller
 public class UsersController {
@@ -40,7 +44,8 @@ public class UsersController {
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
     private UserService userService = null;// what?
-    
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     public void UserController(UserService userService) {
         this.userService = userService;
@@ -53,7 +58,10 @@ public class UsersController {
     }
     // simple get request to login page
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(HttpSession session) {
+        if(session.getAttribute("userId") != null){
+            return "redirect:/dashboard";
+        }
         return "users/loginPage";
     }
 
@@ -131,7 +139,15 @@ public class UsersController {
         model.addAttribute("error", "Invalid status");
         return "users/loginPage";
     }
-
+    private boolean isPasswordValid(String password){
+        boolean hasUppercase = !password.equals(password.toLowerCase());
+        boolean hasLowercase = !password.equals(password.toUpperCase());
+        
+        boolean hasSymbol = password.matches(".*\\W.*");
+        boolean isLongEnough = password.length()>= PASSWORD_MIN_LENGTH;
+        
+        return hasUppercase && hasLowercase && hasSymbol && isLongEnough;
+    }
     @PostMapping("/users/register")
     public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
         System.out.println("ADD user");
@@ -154,10 +170,10 @@ public class UsersController {
             return "users/registerPage";
         }
 
-        // Check if password reaches minimum length
-        if (newPassword.length() < PASSWORD_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH + " characters");
+        if (!isPasswordValid(newPassword)) {
+            response.setStatus(400);
+            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH + 
+                               " characters and include at least one uppercase letter, one lowercase letter, and one symbol");
             return "users/registerPage";
         }
 
@@ -184,7 +200,11 @@ public class UsersController {
     }
 
     @GetMapping("/dashboard")
-    public String showDashboard(HttpSession session, Model model) {
+    public String showDashboard(HttpSession session, Model model, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
         Integer uId = (Integer) session.getAttribute("userId");
         if (uId == null) {
             return "redirect:/login"; 
@@ -197,10 +217,23 @@ public class UsersController {
         }
         User loggedInUser = uOptional.get();
 
-         model.addAttribute("user", loggedInUser);
+        model.addAttribute("user", loggedInUser);
+        List<TrainingPlan> trainingPlans = trainingPlanRepo.getAllTrainingPlansByUser(loggedInUser);
+
+        
+        String trainingPlansJson = convertToJson(trainingPlans);
+        model.addAttribute("trainingPlansJson", trainingPlansJson);
+        
         return "users/dashboard"; 
     }
-
+    private String convertToJson(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "[]"; 
+        }
+    }
     
     @GetMapping("/accEdit/{userId}")
     public String editAccountForm(@PathVariable("userId") Integer uId, HttpSession session, Model model, HttpServletRequest request) {
@@ -239,10 +272,24 @@ public class UsersController {
         user.setWeight(Double.valueOf(params.get("weight")));
         user.setHeight(Double.valueOf(params.get("height")));
         userService.saveUser(user);
-        return "redirect:/dashboard"; 
+        return "redirect:/accDetails/" + uId; 
     }  
 
+    @GetMapping("/accDetails/{userId}")
+    public String accountDetails(@PathVariable("userId") Integer Uid, HttpSession session, Model model) {
+        Integer sessionUid = (Integer) session.getAttribute("userId");
+        if(sessionUid == null || !sessionUid.equals(Uid)) {
+            return "redirect:/login";
+        }
 
+        Optional<User> userOptional = userRepo.findById(Uid);
+        if(!userOptional.isPresent()) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", userOptional.get());
+        return "users/accDetails";
+    }
 }
 
 

@@ -6,6 +6,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "TrainingPlan")
 public class TrainingPlan {
@@ -18,12 +21,15 @@ public class TrainingPlan {
     @Column(nullable = true)
     private String description;
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
     @Column(nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "trainingPlan", orphanRemoval = true)
@@ -79,7 +85,21 @@ public class TrainingPlan {
     public LocalDate getEndDate() {
         return this.endDate;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
      public void addTrainingSession(TrainingSession trainingSession) {
         if (trainingSessions == null) {
             trainingSessions = new ArrayList<>();
