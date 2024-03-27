@@ -12,19 +12,19 @@ public class Exercise {
     private String name;
 
     @Column(nullable = true)
-    private String description;
-
-    @Column(nullable = true)
-    private String intensity;
-
-    @Column(nullable = true)
     private int sets;
 
     @Column(nullable = true)
     private int reps;
 
     @Column(nullable = true)
+    private String intensity;
+
+    @Column(nullable = true)
     private int duration;
+
+    @Column(nullable = true)
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_session_id")

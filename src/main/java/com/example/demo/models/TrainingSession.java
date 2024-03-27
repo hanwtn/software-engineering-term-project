@@ -15,6 +15,9 @@ public class TrainingSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tsid;
 
+    @Column
+    private String name;
+
     @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises;
 
@@ -32,15 +35,13 @@ public class TrainingSession {
     @Column
     private Time endTime;
 
-    @Column
-    private String name;
-
     public TrainingSession() {
         this.exercises = new ArrayList<>();
         this.daysOfWeek = new HashSet<>();
     }
 
-    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime, String name) {
+    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime,
+            String name) {
         this.exercises = new ArrayList<>(exercises);
         this.daysOfWeek = new HashSet<>(dayOfWeeks);
         this.startTime = startTime;

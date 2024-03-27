@@ -15,6 +15,8 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    private String password;
+
     @Column(nullable = true)
     private Double weight;
 
@@ -22,8 +24,6 @@ public class User {
     private Double height;
 
     private Integer status; // 0 = regular user, 1 = coach, 2 = admin
-
-    private String password;
 
     // TO DO: do this better
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
