@@ -138,7 +138,7 @@ public class TrainingPlanController {
         }
     }
 
-    @GetMapping("/trainingPlan/view")
+    @GetMapping("/trainingPlan/viewAll")
     public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response,
             Model model) {
         Integer userId = Integer.parseInt(newUser.get("userId"));
@@ -152,7 +152,7 @@ public class TrainingPlanController {
             System.out.println(trainingPlans.get(0).getName() + " plan :");
             System.out.println(trainingPlans.get(0).getTrainingSessions());
         }
-        return "training_plans/viewTrainingPlan";
+        return "training_plans/viewAllTrainingPlan";
     }
 
     @PostMapping("/trainingPlan/delete")
