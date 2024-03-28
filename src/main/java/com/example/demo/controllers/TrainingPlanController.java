@@ -23,6 +23,7 @@ import com.example.demo.models.UserRepository;
 import com.example.demo.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class TrainingPlanController {
@@ -42,13 +43,13 @@ public class TrainingPlanController {
 
     @PostMapping("/trainingPlan/add/submit")
     public String addPlan(@RequestParam Map<String, String> newPlan,
-            @RequestParam(value = "trainingSessions", required = false) String[] selectedSessions,
+            @RequestParam(value = "trainingSessions", required = false) String[] selectedSessions, HttpSession session, 
             HttpServletResponse response, Model model) {
 
         String newName = newPlan.get("name");
         String newDesc = newPlan.get("description");
 
-        int userId = Integer.parseInt(newPlan.get("userId"));
+        int userId = (int) session.getAttribute("userId");
 
         // Check if name and description are present
         if (newName.isEmpty() || newDesc.isEmpty()) {
@@ -71,7 +72,7 @@ public class TrainingPlanController {
 
         if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
             response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Start date or end date are not provided");
+            model.addAttribute("error", "Start date or end date is not provided");
             model.addAttribute("userId", userId);
             return "users/addTrainingPlan";
         }
@@ -86,6 +87,7 @@ public class TrainingPlanController {
             return "users/addTrainingPlan";
         }
         // check if start date and end date are valid
+        //TO DO: I think we should allow users to add start date and end dates before the current date, give them more freedom
         if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start or end date is before today");
@@ -94,16 +96,16 @@ public class TrainingPlanController {
         TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
         User user = userRepo.findByUid(userId);
         System.out.println("Training Session Names:");
-        
+
         /*
-        for (int i = 0; i < ts.size(); i++) {
-            System.out.println(ts.get(i).getName());
-        }
-        System.out.println("NEW TRAINING PLAN TEST:");
-        for (int i = 0; i < newTrainingPlan.getTrainingSessions().size(); i++) {
-            System.out.println(newTrainingPlan.getTrainingSessions().get(i).getName());
-        }
-        */
+         * for (int i = 0; i < ts.size(); i++) {
+         * System.out.println(ts.get(i).getName());
+         * }
+         * System.out.println("NEW TRAINING PLAN TEST:");
+         * for (int i = 0; i < newTrainingPlan.getTrainingSessions().size(); i++) {
+         * System.out.println(newTrainingPlan.getTrainingSessions().get(i).getName());
+         * }
+         */
 
         // add error-check for getting user
         user.addTrainingPlan(newTrainingPlan);
@@ -113,11 +115,10 @@ public class TrainingPlanController {
         return "redirect:/dashboard";
     }
 
-    @GetMapping("/trainingPlan")
-    public String trainingPlanTest(@RequestParam(name = "userId") String userIdString, HttpServletResponse response,
-            Model model) {
+    @GetMapping("/trainingPlan/add")
+    public String trainingPlanTest(HttpSession session, HttpServletResponse response, Model model) {
         try {
-            Integer userId = Integer.parseInt(userIdString);
+            int userId = (int) session.getAttribute("userId");
             User user = userRepo.findByUid(userId);
             if (user != null) {
                 model.addAttribute("user", user);
@@ -153,7 +154,6 @@ public class TrainingPlanController {
         }
         return "training_plans/viewTrainingPlan";
     }
-
 
     @PostMapping("/trainingPlan/delete")
     public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model) {

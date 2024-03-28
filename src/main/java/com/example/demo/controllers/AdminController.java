@@ -1,7 +1,5 @@
 package com.example.demo.controllers;
 
-
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
+import com.example.demo.models.TrainingSession;
+import com.example.demo.models.TrainingSessionRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 import com.example.demo.service.UserService;
@@ -33,28 +33,35 @@ public class AdminController {
     private UserService userService;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
+    @Autowired
+    private TrainingSessionRepository trainingSessionRepo;
+
     @GetMapping("/admin")
     public String adminDashboard(Model model, HttpSession session, HttpServletResponse response) {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
-        
+
         if (session.getAttribute("isAdmin") == null) {
             return "redirect:/admin/login";
         }
 
         List<User> users = userRepo.findAll();
         model.addAttribute("users", users);
-        
+
         List<TrainingPlan> trainingPlans = trainingPlanRepo.findAll();
         model.addAttribute("trainingPlans", trainingPlans);
-        return "admin/adminPage"; 
+
+        List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
+        model.addAttribute("trainingSessions", trainingSessions);
+        return "admin/adminPage";
     }
+
     @GetMapping("/admin/logout")
     public String adminLogout(HttpSession session) {
-        session.removeAttribute("isAdmin"); 
+        session.removeAttribute("isAdmin");
 
-        return "redirect:/admin/login"; 
+        return "redirect:/admin/login";
     }
 
     @PostMapping("/admin/delete/{userId}")
@@ -71,23 +78,23 @@ public class AdminController {
 
     @GetMapping("/admin/login")
     public String adminLoginPage() {
-        return "admin/adminLogin"; 
+        return "admin/adminLogin";
     }
 
     @PostMapping("/admin/login")
-    public String adminLogin(@RequestParam String username, @RequestParam String password, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String adminLogin(@RequestParam String username, @RequestParam String password, HttpSession session,
+            RedirectAttributes redirectAttributes) {
         final String adminUsername = "admin";
         final String adminPassword = "276";
 
         if (adminUsername.equals(username) && adminPassword.equals(password)) {
-            session.setAttribute("isAdmin", true); 
-            return "redirect:/admin"; 
+            session.setAttribute("isAdmin", true);
+            return "redirect:/admin";
         } else {
             redirectAttributes.addFlashAttribute("loginError", "Invalid username or password");
-            return "redirect:/admin/login"; 
+            return "redirect:/admin/login";
         }
     }
-
 
     @GetMapping("/admin/adminEdit/{userId}")
     public String adminEditAccountForm(@PathVariable("userId") Integer uId, HttpSession session, Model model) {
@@ -106,7 +113,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/adminEdit/{userId}")
-    public String adminUpdateAccount(@PathVariable("userId") Integer uId, @RequestParam Map<String, String> params, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String adminUpdateAccount(@PathVariable("userId") Integer uId, @RequestParam Map<String, String> params,
+            HttpSession session, RedirectAttributes redirectAttributes) {
         Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
         if (!Boolean.TRUE.equals(isAdmin)) {
             return "redirect:/admin/login";
@@ -119,12 +127,13 @@ public class AdminController {
 
         String newUsername = params.get("username");
         if (!user.getUsername().equals(newUsername) && userRepo.existsByUsername(newUsername)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Username already exists. Please choose a different username.");
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Username already exists. Please choose a different username.");
             return "redirect:/admin/adminEdit/" + uId;
         }
 
         user.setUsername(newUsername);
-        user.setPassword(params.get("password")); 
+        user.setPassword(params.get("password"));
         user.setWeight(Double.valueOf(params.get("weight")));
         user.setHeight(Double.valueOf(params.get("height")));
         user.setStatus(Integer.valueOf(params.get("status")));
@@ -132,16 +141,20 @@ public class AdminController {
 
         return "redirect:/admin";
     }
+
     @PostMapping("/admin/addUser")
-    public String addUser(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("status") Integer status, @RequestParam("weight") Integer weight, @RequestParam("height") Integer height, RedirectAttributes redirectAttributes) {
+    public String addUser(@RequestParam("username") String username, @RequestParam("password") String password,
+            @RequestParam("status") Integer status, @RequestParam("weight") Integer weight,
+            @RequestParam("height") Integer height, RedirectAttributes redirectAttributes) {
         if (userRepo.existsByUsername(username)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Username already exists. Please choose a different username.");
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Username already exists. Please choose a different username.");
             return "redirect:/admin";
         }
 
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setPassword(password); 
+        newUser.setPassword(password);
         newUser.setStatus(status);
         newUser.setHeight(height);
         newUser.setWeight(weight);
@@ -149,7 +162,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("successMessage", "Account successfully added.");
 
         return "redirect:/admin";
-        
+
     }
 
 }

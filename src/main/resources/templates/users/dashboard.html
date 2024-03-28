@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +14,10 @@
         }
     </style>
     <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('training-calendar');
-            
-            
+
+
             var trainingPlans = JSON.parse(/*[[${trainingPlansJson}]]*/ '[]');
 
             var calendarEvents = trainingPlans.map(plan => ({
@@ -25,11 +26,11 @@
                 end: plan.endDate,
                 description: plan.description
             }));
-    
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 events: calendarEvents,
-                eventClick: function(info) {
+                eventClick: function (info) {
                     alert(info.event.extendedProps.description);
                 }
             });
@@ -37,45 +38,48 @@
         });
     </script>
 </head>
+
 <body>
     <div class="container mt-5">
         <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
         <div class="mt-4">
-            <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
+            <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account
+                Details</a>
         </div>
         <div class="mt-2">
             <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
         </div>
 
-        
-            <div class="actions">
-                <div class="card">
-                    <form action="/trainingPlan/view" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
-                        <button type="submit" class="btn btn-secondary">View Training Plans</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <form action="/trainingPlan" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
-                        <button type="submit" class="btn btn-secondary">Add Training Plan</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <form action="/exercise/view" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
-                        <button type="submit" class="btn btn-secondary">View Exercise</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <form action="/exercise/add" method="post">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
-                        <button type="submit" class="btn btn-secondary">Add Exercise</button>
-                    </form>
-                </div>
-                
+
+        <div class="actions">
+            <div class="card">
+                <form action="/trainingPlan/view" method="get">
+                    <input type="hidden" name="userId" th:value="${user.uid}">
+                    <button type="submit" class="btn btn-secondary">View Training Plans</button>
+                </form>
             </div>
+            <div class="card">
+                <form action="/trainingPlan/add" method="get">
+                    <input type="hidden" name="userId" th:value="${user.uid}">
+                    <button type="submit" class="btn btn-secondary">Add Training Plan</button>
+                </form>
+            </div>
+            <div class="card">
+                <form action="/exercise/view" method="get">
+                    <input type="hidden" name="userId" th:value="${user.uid}">
+                    <button type="submit" class="btn btn-secondary">View Exercise</button>
+                </form>
+            </div>
+            <div class="card">
+                <form action="/exercise/add" method="post">
+                    <input type="hidden" name="userId" th:value="${user.uid}">
+                    <button type="submit" class="btn btn-secondary">Add Exercise</button>
+                </form>
+            </div>
+
         </div>
     </div>
+    </div>
 </body>
+
 </html>
