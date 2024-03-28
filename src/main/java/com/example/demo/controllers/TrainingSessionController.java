@@ -51,7 +51,7 @@ public class TrainingSessionController {
 
     @PostMapping("/trainingSession/add/submit")
     public String addSession(@RequestParam Map<String, String> newSession,
-            @RequestParam(value = "tpid", required = true) int tpid,
+            @RequestParam("tpid") int tpid,
             @RequestParam(value = "exercises", required = false) String[] selectedExercises,
             HttpServletResponse response, Model model) {
 
@@ -78,11 +78,12 @@ public class TrainingSessionController {
         TrainingPlan addToThisTrainingPlan = trainingPlanRepo.findBytpid(tpid);
         addToThisTrainingPlan.addTrainingSession(newTrainingSession);
         trainingPlanRepo.save(addToThisTrainingPlan);
+        response.setStatus(200); // OK
         return "redirect:/dashboard";
     }
 
     @GetMapping("/trainingSession/add")
-    public String trainingSessionAdd(@RequestParam(value = "tpid", required = true) int tpid, HttpSession session,
+    public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
             HttpServletResponse response,
             Model model) {
         int userId = (int) session.getAttribute("userId");

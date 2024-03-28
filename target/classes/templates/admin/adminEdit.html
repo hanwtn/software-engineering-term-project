@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Edit Account - Admin</title>
 </head>
+
 <body>
     <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
     <form th:action="@{/admin/adminEdit/{userId}(userId=${user.uid})}" th:object="${user}" method="post">
@@ -13,13 +15,14 @@
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Enter Password">
+            <input type="password" class="form-control" id="password" th:field="*{password}"
+                placeholder="Enter Password">
         </div>
         <div class="form-group">
             <label for="weight">Weight</label>
             <input type="number" class="form-control" id="weight" th:field="*{weight}" placeholder="Enter weight">
         </div>
-        
+
         <div class="form-group">
             <label for="height">Height</label>
             <input type="number" class="form-control" id="height" th:field="*{height}" placeholder="Enter height">
@@ -35,4 +38,5 @@
     </form>
 
 </body>
+
 </html>

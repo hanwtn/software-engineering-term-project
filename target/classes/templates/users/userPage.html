@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Page</title>
 </head>
+
 <body>
     <h1>Welcome <span th:text="${user.username}"></span>!</h1>
-    
+
     <form action="/users/logout" method="get">
         <button type="submit" class="btn btn-primary">Logout</button>
     </form>
 
 </body>
+
 </html>
