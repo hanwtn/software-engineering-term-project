@@ -29,11 +29,12 @@ import com.example.demo.models.UserRepository;
 import com.example.demo.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class TrainingSessionController {
-    
-     @Autowired
+
+    @Autowired
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
@@ -41,8 +42,7 @@ public class TrainingSessionController {
     private TrainingSessionRepository trainingSessionRepo;
     @Autowired
     private ExerciseRepository exerciseRepository;
-    private UserService userService = null;   
-
+    private UserService userService = null;
 
     @Autowired
     public void UserController(UserService userService) {
@@ -50,17 +50,22 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/add/submit")
-    public String addSession(@RequestParam Map<String, String> newSession, @RequestParam(value = "exercises", required = false) String[] selectedExercises,  HttpServletResponse response, Model model){
+    public String addSession(@RequestParam Map<String, String> newSession,
+            @RequestParam("tpid") int tpid,
+            @RequestParam(value = "exercises", required = false) String[] selectedExercises,
+            HttpServletResponse response, Model model) {
 
         String name = newSession.get("name");
-        List<Exercise> exercises = new ArrayList<>();;
+        List<Exercise> exercises = new ArrayList<>();
+
         if (selectedExercises != null) {
             for (String exerciseId : selectedExercises) {
                 System.out.println(exerciseId);
                 exercises.add(exerciseRepository.findByEid(Integer.parseInt(exerciseId)));
             }
         }
-        //Default for now (Dont understand)
+
+        // Default for now (Dont understand)
         Set<DayOfWeek> dayOfWeeks = new HashSet<>();
         dayOfWeeks.add(DayOfWeek.WEDNESDAY);
         dayOfWeeks.add(DayOfWeek.SATURDAY);
@@ -68,17 +73,23 @@ public class TrainingSessionController {
         Time endTime = Time.valueOf("10:00:00");
 
         TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime, name);
-        
-        //HardCoded for now :3
-        trainingSessionRepo.save(newTrainingSession);
+
+        // HardCoded for now :3
+        TrainingPlan addToThisTrainingPlan = trainingPlanRepo.findBytpid(tpid);
+        addToThisTrainingPlan.addTrainingSession(newTrainingSession);
+        trainingPlanRepo.save(addToThisTrainingPlan);
+        response.setStatus(200); // OK
         return "redirect:/dashboard";
     }
 
     @GetMapping("/trainingSession/add")
-    public String trainingSessionAdd(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model ) {
-        Integer userId = Integer.parseInt(newUser.get("userId"));
+    public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
+            HttpServletResponse response,
+            Model model) {
+        int userId = (int) session.getAttribute("userId");
         User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
+        model.addAttribute("tpid", tpid);
         String search = "";
         List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
         model.addAttribute("exercises", allExercises);
@@ -86,7 +97,8 @@ public class TrainingSessionController {
     }
 
     @GetMapping("/trainingSession/add/search")
-    public String trainingSessionSearch(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model ) {
+    public String trainingSessionSearch(@RequestParam Map<String, String> newUser, HttpServletResponse response,
+            Model model) {
         Integer userId = Integer.parseInt(newUser.get("userId"));
         String search = newUser.get("search");
         User user = userRepo.findByUid(userId);
@@ -97,7 +109,8 @@ public class TrainingSessionController {
     }
 
     @GetMapping("/trainingSession/view")
-    public String viewTrainingSessionView(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
+    public String viewTrainingSessionView(@RequestParam Map<String, String> newUser, HttpServletResponse response,
+            Model model) {
         List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
         model.addAttribute("trainingSessions", trainingSessions);
         System.out.println("HERE");
@@ -111,11 +124,9 @@ public class TrainingSessionController {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
         System.out.println(tsid);
         System.out.println(ts.getTsid());
-        
+
         trainingSessionRepo.delete(ts);
         return "redirect:/dashboard";
     }
-
-    
 
 }

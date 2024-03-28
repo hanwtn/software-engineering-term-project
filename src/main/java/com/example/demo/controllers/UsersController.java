@@ -32,8 +32,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
-
-
 @Controller
 public class UsersController {
     private final int USERNAME_MIN_LENGTH = 4;
@@ -46,6 +44,7 @@ public class UsersController {
     private UserService userService = null;// what?
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     public void UserController(UserService userService) {
         this.userService = userService;
@@ -56,10 +55,11 @@ public class UsersController {
     public User createUser(@RequestBody User user) {
         return userService.saveUser(user);
     }
+
     // simple get request to login page
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
-        if(session.getAttribute("userId") != null){
+        if (session.getAttribute("userId") != null) {
             return "redirect:/dashboard";
         }
         return "users/loginPage";
@@ -78,7 +78,8 @@ public class UsersController {
     }
 
     @PostMapping("/users/login")
-    public String login(@RequestParam Map<String, String> newUser,HttpSession session, HttpServletResponse response, Model model) {
+    public String login(@RequestParam Map<String, String> newUser, HttpSession session, HttpServletResponse response,
+            Model model) {
         System.out.println("Logging in");
 
         String newUsername = newUser.get("username");
@@ -119,6 +120,7 @@ public class UsersController {
 
         // login successful
         session.setAttribute("userId", user.getUid());
+
         // if 0 go to user page
         if (user.getStatus() == 0) {
             response.setStatus(200); // OK
@@ -131,7 +133,7 @@ public class UsersController {
         if (user.getStatus() == 1) {
             response.setStatus(200); // OK
             model.addAttribute("user", user);
-            return "redirect:/dashboard"; //coach view is same as user for now, more to come
+            return "redirect:/dashboard"; // coach view is same as user for now, more to come
         }
 
         // default to login page
@@ -139,15 +141,17 @@ public class UsersController {
         model.addAttribute("error", "Invalid status");
         return "users/loginPage";
     }
-    private boolean isPasswordValid(String password){
+
+    private boolean isPasswordValid(String password) {
         boolean hasUppercase = !password.equals(password.toLowerCase());
         boolean hasLowercase = !password.equals(password.toUpperCase());
-        
+
         boolean hasSymbol = password.matches(".*\\W.*");
-        boolean isLongEnough = password.length()>= PASSWORD_MIN_LENGTH;
-        
+        boolean isLongEnough = password.length() >= PASSWORD_MIN_LENGTH;
+
         return hasUppercase && hasLowercase && hasSymbol && isLongEnough;
     }
+
     @PostMapping("/users/register")
     public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
         System.out.println("ADD user");
@@ -172,8 +176,8 @@ public class UsersController {
 
         if (!isPasswordValid(newPassword)) {
             response.setStatus(400);
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH + 
-                               " characters and include at least one uppercase letter, one lowercase letter, and one symbol");
+            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH +
+                    " characters and include at least one uppercase letter, one lowercase letter, and one symbol");
             return "users/registerPage";
         }
 
@@ -204,10 +208,10 @@ public class UsersController {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
-        
+
         Integer uId = (Integer) session.getAttribute("userId");
         if (uId == null) {
-            return "redirect:/login"; 
+            return "redirect:/login";
         }
 
         Optional<User> uOptional = userRepo.findById(uId);
@@ -220,23 +224,24 @@ public class UsersController {
         model.addAttribute("user", loggedInUser);
         List<TrainingPlan> trainingPlans = trainingPlanRepo.getAllTrainingPlansByUser(loggedInUser);
 
-        
         String trainingPlansJson = convertToJson(trainingPlans);
         model.addAttribute("trainingPlansJson", trainingPlansJson);
-        
-        return "users/dashboard"; 
+
+        return "users/dashboard";
     }
+
     private String convertToJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return "[]"; 
+            return "[]";
         }
     }
-    
+
     @GetMapping("/accEdit/{userId}")
-    public String editAccountForm(@PathVariable("userId") Integer uId, HttpSession session, Model model, HttpServletRequest request) {
+    public String editAccountForm(@PathVariable("userId") Integer uId, HttpSession session, Model model,
+            HttpServletRequest request) {
         Integer sessionUid = (Integer) session.getAttribute("userId");
         if (sessionUid == null || !sessionUid.equals(uId)) {
             return "redirect:/login";
@@ -244,15 +249,16 @@ public class UsersController {
 
         Optional<User> uOptional = userRepo.findById(uId);
         if (!uOptional.isPresent()) {
-            return "redirect:/login"; 
+            return "redirect:/login";
         }
 
         model.addAttribute("user", uOptional.get());
-        return "users/accEdit"; 
+        return "users/accEdit";
     }
 
     @PostMapping("/accEdit/{userId}")
-    public String updateAccount(@PathVariable("userId") Integer uId, @RequestParam Map<String, String> params, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String updateAccount(@PathVariable("userId") Integer uId, @RequestParam Map<String, String> params,
+            HttpSession session, RedirectAttributes redirectAttributes) {
         Integer sessionUid = (Integer) session.getAttribute("userId");
         if (sessionUid == null || !sessionUid.equals(uId)) {
             return "redirect:/login";
@@ -260,30 +266,31 @@ public class UsersController {
 
         User user = userRepo.findById(uId).orElse(null);
         if (user == null) {
-            return "redirect:/login"; 
+            return "redirect:/login";
         }
         String newUname = params.get("username");
         if (!user.getUsername().equals(newUname) && userRepo.existsByUsername(newUname)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Username already exists. Please choose a different username.");
-            return "redirect:/accEdit/" + uId; 
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Username already exists. Please choose a different username.");
+            return "redirect:/accEdit/" + uId;
         }
 
         user.setUsername(params.get("username"));
         user.setWeight(Double.valueOf(params.get("weight")));
         user.setHeight(Double.valueOf(params.get("height")));
         userService.saveUser(user);
-        return "redirect:/accDetails/" + uId; 
-    }  
+        return "redirect:/accDetails/" + uId;
+    }
 
     @GetMapping("/accDetails/{userId}")
     public String accountDetails(@PathVariable("userId") Integer Uid, HttpSession session, Model model) {
         Integer sessionUid = (Integer) session.getAttribute("userId");
-        if(sessionUid == null || !sessionUid.equals(Uid)) {
+        if (sessionUid == null || !sessionUid.equals(Uid)) {
             return "redirect:/login";
         }
 
         Optional<User> userOptional = userRepo.findById(Uid);
-        if(!userOptional.isPresent()) {
+        if (!userOptional.isPresent()) {
             return "redirect:/login";
         }
 
@@ -291,6 +298,3 @@ public class UsersController {
         return "users/accDetails";
     }
 }
-
-
-    

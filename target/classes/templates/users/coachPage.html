@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coach Page</title>
 </head>
+
 <body>
     <h1>Welcome Coach <span th:text="${user.username}"></span>!</h1>
     <section>
@@ -12,8 +14,8 @@
         <section th:each="plan : ${trainingPlans}">
             <h1><span th:text="${plan.name}"></span></h1>
             <form th:action="@{/trainingPlan/delete}" method="post">
-                <input type="hidden" name="tpid" th:value="${plan.tpid}"/>
-                <input type="hidden" name="userId" th:value="${user.uid}"/>
+                <input type="hidden" name="tpid" th:value="${plan.tpid}" />
+                <input type="hidden" name="userId" th:value="${user.uid}" />
             </form>
         </section>
     </section>
@@ -22,4 +24,5 @@
     </form>
 
 </body>
+
 </html>

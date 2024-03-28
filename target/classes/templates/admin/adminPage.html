@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    
+
 </head>
+
 <body>
     <h1>Admin Dashboard</h1>
     <a th:href="@{/admin/logout}" class="btn btn-danger">Logout</a>
@@ -12,17 +14,19 @@
     <form th:action="@{/admin/addUser}" method="post">
         <div class="form-group">
             <label for="newUsername">Username</label>
-            <input type="text" class="form-control" id="newUsername" name="username" placeholder="Enter Username" required>
+            <input type="text" class="form-control" id="newUsername" name="username" placeholder="Enter Username"
+                required>
         </div>
         <div class="form-group">
             <label for="newPassword">Password</label>
-            <input type="password" class="form-control" id="newPassword" name="password" placeholder="Enter Password" required>
+            <input type="password" class="form-control" id="newPassword" name="password" placeholder="Enter Password"
+                required>
         </div>
         <div class="form-group">
             <label for="weight">Weight</label>
             <input type="number" class="form-control" id="newWeight" name="weight" placeholder="Enter weight" required>
         </div>
-        
+
         <div class="form-group">
             <label for="height">Height</label>
             <input type="number" class="form-control" id="newHeight" name="height" placeholder="Enter height" required>
@@ -57,8 +61,9 @@
                 <td th:text="${user.status == 1 ? 'Coach' : (user.status == 2 ? 'Admin' : 'User')}"></td>
                 <td>
                     <a th:href="@{/admin/adminEdit/{userId}(userId=${user.uid})}" class="btn btn-primary">Edit</a>
-                    <form th:action="@{/admin/delete/{userId}(userId=${user.uid})}" method="post" style="display:inline">
-                        <input type="submit" value="Delete" class="btn btn-danger"/>
+                    <form th:action="@{/admin/delete/{userId}(userId=${user.uid})}" method="post"
+                        style="display:inline">
+                        <input type="submit" value="Delete" class="btn btn-danger" />
                     </form>
                 </td>
             </tr>
@@ -87,5 +92,21 @@
             </tr>
         </tbody>
     </table>
+    <h2>All Training Sessions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="tsession : ${trainingSessions}">
+                <td th:text="${tsession.tsid}"></td>
+                <td th:text="${tsession.name}"></td>
+            </tr>
+        </tbody>
+    </table>
 </body>
+
 </html>
