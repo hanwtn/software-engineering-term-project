@@ -2,11 +2,14 @@ package com.example.demo.controllers;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.time.DayOfWeek;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.sql.Time;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +78,23 @@ public class TrainingSessionController {
         TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime, name);
 
         // HardCoded for now :3
-        TrainingPlan addToThisTrainingPlan = trainingPlanRepo.findBytpid(tpid);
-        addToThisTrainingPlan.addTrainingSession(newTrainingSession);
-        trainingPlanRepo.save(addToThisTrainingPlan);
+        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(tpid);
+
+        Set<DayOfWeek> daysOfWeek = Arrays.stream(newSession.get("daysOfWeek").split(","))
+                                       .map(DayOfWeek::valueOf)
+                                       .collect(Collectors.toSet());
+
+        // Check for overlapping days
+        for (TrainingSession session : trainingPlan.getTrainingSessions()) {
+            Set<DayOfWeek> existingDays = session.getDaysOfWeek();
+            if (!Collections.disjoint(daysOfWeek, existingDays)) {
+                model.addAttribute("error", "Overlapping days with existing sessions");
+                return "redirect:/trainingSession/add";
+            }
+        }
+
+        trainingPlan.addTrainingSession(newTrainingSession);
+        trainingPlanRepo.save(trainingPlan);
         response.setStatus(200); // OK
         return "redirect:/dashboard";
     }
