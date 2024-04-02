@@ -68,14 +68,11 @@ public class TrainingSessionController {
             }
         }
 
-        // Default for now (Dont understand)
-        Set<DayOfWeek> dayOfWeeks = new HashSet<>();
-        dayOfWeeks.add(DayOfWeek.WEDNESDAY);
-        dayOfWeeks.add(DayOfWeek.SATURDAY);
+        // Default for now 
         Time startTime = Time.valueOf("09:00:00");
         Time endTime = Time.valueOf("10:00:00");
 
-        TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime, name);
+        
 
         // HardCoded for now :3
         TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(tpid);
@@ -93,10 +90,12 @@ public class TrainingSessionController {
             }
         }
 
+        TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, startTime, endTime, name);
+
         trainingPlan.addTrainingSession(newTrainingSession);
         trainingPlanRepo.save(trainingPlan);
         response.setStatus(200); // OK
-        return "redirect:/dashboard";
+        return "redirect:/trainingPlan/viewAll";
     }
 
     @GetMapping("/trainingSession/add")
@@ -136,14 +135,16 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam Map<String, String> deleteForm, Model model) {
-        int tsid = Integer.parseInt(deleteForm.get("tsid"));
+    public String deleteTrainingSession(@RequestParam("tsid") int tsid, Model model) {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
-        System.out.println(tsid);
-        System.out.println(ts.getTsid());
+
+        if (ts == null) {
+            model.addAttribute("error", "Training session not found");
+            return "redirect:/trainingPlan/viewAll";
+        }
 
         trainingSessionRepo.delete(ts);
-        return "redirect:/dashboard";
+        return "redirect:/trainingPlan/viewAll";
     }
 
 }

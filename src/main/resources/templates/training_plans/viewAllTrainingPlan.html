@@ -32,6 +32,10 @@
                 <div th:each="exercise : ${s.getExercises}">
                     <span th:text="${exercise.name}"></span><br>
                 </div>
+                <form th:action="@{/trainingSession/delete}" method="post">
+                    <input type="hidden" name="tsid" th:value="${s.tsid}" />
+                    <button type="submit">Delete Session</button>
+                </form>
             </div>
 
             <form th:action="@{/trainingSession/add}" method="get">

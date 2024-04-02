@@ -21,7 +21,7 @@ public class TrainingSession {
     @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_plan_id")
     private TrainingPlan trainingPlan;
 
@@ -62,7 +62,7 @@ public class TrainingSession {
     }
 
     public void setExercises(List<Exercise> exercises) {
-        this.exercises = exercises;
+        this.exercises = new ArrayList<>(exercises);
     }
 
     public void addExercise(Exercise exercise) {
