@@ -29,11 +29,12 @@
             <!-- Iterate over trainingSessions related to the current plan -->
             <div th:each="s : ${plan.getTrainingSessions}">
                 <span th:text="${s.name}"></span><br>
-                <div th:each="exercise : ${s.getExercises}">
+                <div th:each="exercise : ${s.exercises}">
                     <span th:text="${exercise.name}"></span><br>
                 </div>
                 <form th:action="@{/trainingSession/delete}" method="post">
                     <input type="hidden" name="tsid" th:value="${s.tsid}" />
+                    <input type="hidden" name="userId" th:value="${user.uid}" />
                     <button type="submit">Delete Session</button>
                 </form>
             </div>

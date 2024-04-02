@@ -54,6 +54,10 @@ public class Exercise {
         this.duration = duration;
     }
 
+    public void setTrainingSession(TrainingSession trainingSession) {
+        this.trainingSession = trainingSession;
+    }
+
     public String getName() {
         return name;
     }

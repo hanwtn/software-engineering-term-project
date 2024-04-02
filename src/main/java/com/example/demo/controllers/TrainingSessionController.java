@@ -60,11 +60,14 @@ public class TrainingSessionController {
 
         String name = newSession.get("name");
         List<Exercise> exercises = new ArrayList<>();
-
+        System.out.println("Training add submit called");
         if (selectedExercises != null) {
             for (String exerciseId : selectedExercises) {
-                System.out.println(exerciseId);
-                exercises.add(exerciseRepository.findByEid(Integer.parseInt(exerciseId)));
+                System.out.println("Selected Exercise ID: " + exerciseId);
+                Exercise exercise = exerciseRepository.findByEid(Integer.parseInt(exerciseId));
+                exercises.add(exercise);
+                // Log the details of the fetched exercise
+                System.out.println("Fetched Exercise: " + exercise.getName() + ", Sets: " + exercise.getSets() + ", Reps: " + exercise.getReps());
             }
         }
 
@@ -95,7 +98,8 @@ public class TrainingSessionController {
         trainingPlan.addTrainingSession(newTrainingSession);
         trainingPlanRepo.save(trainingPlan);
         response.setStatus(200); // OK
-        return "redirect:/trainingPlan/viewAll";
+        Integer userId = Integer.parseInt(newSession.get("userId"));
+        return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
 
     @GetMapping("/trainingSession/add")
@@ -125,7 +129,7 @@ public class TrainingSessionController {
     }
 
     @GetMapping("/trainingSession/view")
-    public String viewTrainingSessionView(@RequestParam Map<String, String> newUser, HttpServletResponse response,
+    public String viewTrainingSessionView(@RequestParam Map<String, String> newSession, HttpServletResponse response,
             Model model) {
         List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
         model.addAttribute("trainingSessions", trainingSessions);
@@ -135,16 +139,18 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam("tsid") int tsid, Model model) {
+    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid, Model model) {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
 
         if (ts == null) {
             model.addAttribute("error", "Training session not found");
-            return "redirect:/trainingPlan/viewAll";
+            Integer userId = Integer.parseInt(newSession.get("userId"));
+            return "redirect:/trainingPlan/viewAll?userId=" + userId;// fix it
         }
 
         trainingSessionRepo.delete(ts);
-        return "redirect:/trainingPlan/viewAll";
+        Integer userId = Integer.parseInt(newSession.get("userId"));
+        return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
 
 }

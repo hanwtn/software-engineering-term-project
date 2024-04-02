@@ -145,6 +145,15 @@ public class TrainingPlanController {
         User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
         List<TrainingPlan> trainingPlans = user.getTrainingPlans();
+        for (TrainingPlan plan : trainingPlans) {
+            System.out.println("Plan: " + plan.getName());
+            for (TrainingSession session : plan.getTrainingSessions()) {
+                System.out.println("  Session: " + session.getName());
+                for (Exercise exercise : session.getExercises()) {
+                    System.out.println("    Exercise: " + exercise.getName());
+                }
+            }
+        }
         model.addAttribute("trainingPlans", trainingPlans);
 
         if (!trainingPlans.isEmpty()) {
@@ -180,7 +189,7 @@ public class TrainingPlanController {
         } else {
             model.addAttribute("error", "User not found");
         }
-        return "redirect:/trainingPlan/view?userId=" + userId;
+        return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
 
 }
