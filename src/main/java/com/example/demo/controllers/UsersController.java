@@ -23,7 +23,8 @@ import com.example.demo.models.TrainingSession;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
-import com.example.demo.service.UserService;
+import com.example.demo.service.*;
+import com.example.demo.service.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,7 +42,7 @@ public class UsersController {
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
-    private UserService userService = null;// what?
+    private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -142,16 +143,6 @@ public class UsersController {
         return "users/loginPage";
     }
 
-    private boolean isPasswordValid(String password) {
-        boolean hasUppercase = !password.equals(password.toLowerCase());
-        boolean hasLowercase = !password.equals(password.toUpperCase());
-
-        boolean hasSymbol = password.matches(".*\\W.*");
-        boolean isLongEnough = password.length() >= PASSWORD_MIN_LENGTH;
-
-        return hasUppercase && hasLowercase && hasSymbol && isLongEnough;
-    }
-
     @PostMapping("/users/register")
     public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
         System.out.println("ADD user");
@@ -160,32 +151,23 @@ public class UsersController {
         int newStatus = Integer.parseInt(newUser.getOrDefault("status", "0"));
         String newPassword = newUser.get("password");
 
+        Error usernameValidation = userService.validateUsername(newUsername);
+        if (usernameValidation.isError == true) {
+            response.setStatus(usernameValidation.status);
+            model.addAttribute("error", usernameValidation.message);
+            return "users/registerPage";
+        }
         // Check if username and password are present
-        if (newUsername.isEmpty() || newPassword.isEmpty()) {
+        if (newPassword.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Username or password not provided");
             return "users/registerPage";
         }
 
-        // Check if username reaches minimum length
-        if (newUsername.length() < USERNAME_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
-            return "users/registerPage";
-        }
-
-        if (!isPasswordValid(newPassword)) {
+        if (!userService.isValidPassword(newPassword)) {
             response.setStatus(400);
             model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH +
                     " characters and include at least one uppercase letter, one lowercase letter, and one symbol");
-            return "users/registerPage";
-        }
-
-        // username already exists
-        if (userRepo.existsByUsername(newUsername)) {
-            System.out.println("Username already exists");
-            response.setStatus(409); // Conflict
-            model.addAttribute("error", "Username already exists");
             return "users/registerPage";
         }
 
