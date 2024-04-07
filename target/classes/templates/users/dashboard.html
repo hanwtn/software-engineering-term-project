@@ -18,11 +18,15 @@
     document.addEventListener('DOMContentLoaded', function() {
         var trainingPlans = JSON.parse(/*[[${trainingPlansJson}]]*/ '[]');
         var calendarEl = document.getElementById('training-calendar');
+        var eventColors = {};
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             events: [],
             eventClick: function(info) {
-                alert(info.event.title + "\nStart: " + info.event.start + "\nEnd: " + info.event.end);
+                const startTime = new Date(info.event.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const endTime = new Date(info.event.end).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                alert(`Session: ${info.event.title}\nStart: ${startTime}\nEnd: ${endTime}`);
             }
         });
         calendar.render();
@@ -55,7 +59,21 @@
         });
 
         populateCalendarWithAllEvents();
-
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+        function getEventColor(eventName) {
+            
+            if (!eventColors[eventName]) {
+                eventColors[eventName] = getRandomColor();
+            }
+            return eventColors[eventName];
+        }
     
         function createSessionEvents(sessions, planStartDate, planEndDate) {
             let events = [];
@@ -65,6 +83,7 @@
             const dayMap = { "SUNDAY": 6, "MONDAY": 0, "TUESDAY": 1, "WEDNESDAY": 2, "THURSDAY": 3, "FRIDAY": 4, "SATURDAY": 5 };
 
             sessions.forEach(session => {
+                
                 session.daysOfWeek.forEach(dayName => {
                     var dayNumber = dayMap[dayName];
 
@@ -80,7 +99,9 @@
                         events.push({
                             title: session.name,
                             start: `${eventDate}T${startTime}`,
-                            end: `${eventDate}T${endTime}`
+                            end: `${eventDate}T${endTime}`,
+                            
+                            color: getEventColor(session.name)
                         });
                     }
                 });

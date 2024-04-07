@@ -21,7 +21,7 @@ public class TrainingSession {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "trainingSession")
+    @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
