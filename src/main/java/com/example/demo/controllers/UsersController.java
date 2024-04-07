@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
@@ -133,6 +134,11 @@ public class UsersController {
             model.addAttribute("error", validation.message);
             return "users/registerPage";
         }
+        RestTemplate restTemplate = new RestTemplate();
+        String hashifyUrl = "https://api.hashify.net/hash/md5/hex"; 
+        newPassword = restTemplate.postForObject(hashifyUrl, newPassword, String.class);
+        //System.out.println("SAVED PASSWORD AS: " + extractMD5Hash(newPassword) + newPassword);
+        newPassword = extractMD5Hash(newPassword);
 
         userRepo.save(new User(newUsername, newPassword, newStatus));
         response.setStatus(201);
@@ -241,5 +247,11 @@ public class UsersController {
 
         model.addAttribute("user", userOptional.get());
         return "users/accDetails";
+    }
+
+    private String extractMD5Hash(String responseJson) {
+        int startIndex = responseJson.indexOf(":") + 2;
+        int endIndex = responseJson.indexOf("\",");
+        return responseJson.substring(startIndex, endIndex);
     }
 }
