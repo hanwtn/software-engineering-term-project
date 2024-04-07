@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.models.TrainingPlan;
@@ -151,6 +152,10 @@ public class AdminController {
                     "Username already exists. Please choose a different username.");
             return "redirect:/admin";
         }
+        RestTemplate restTemplate = new RestTemplate();
+        String hashifyUrl = "https://api.hashify.net/hash/md5/hex?value=" + password;
+        String hashifyResponse = restTemplate.getForObject(hashifyUrl, String.class);
+        password = extractMD5Hash(hashifyResponse);
 
         User newUser = new User();
         newUser.setUsername(username);
@@ -165,4 +170,11 @@ public class AdminController {
 
     }
 
+    private String extractMD5Hash(String responseJson) {
+        int startIndex = responseJson.indexOf(":") + 2;
+        int endIndex = responseJson.indexOf("\",");
+        return responseJson.substring(startIndex, endIndex);
+    }
 }
+
+

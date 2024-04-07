@@ -83,9 +83,8 @@ public class UserService {
         RestTemplate restTemplate = new RestTemplate();
         String hashifyUrl = "https://api.hashify.net/hash/md5/hex?value=" + newPassword;
         String hashifyResponse = restTemplate.getForObject(hashifyUrl, String.class);
-
         newPassword = extractMD5Hash(hashifyResponse);
-        System.out.println("CONVERTED PASSSWROD TO: " + newPassword);
+        //System.out.println("CONVERTED PASSSWROD TO: " + newPassword);
         if (user != null) {
             incorrectPassword = !user.getPassword().equals(newPassword);
         }
