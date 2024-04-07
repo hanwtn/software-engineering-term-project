@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.TrainingPlanDTO;
 import com.example.demo.models.TrainingPlan;
@@ -26,6 +27,8 @@ import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
 import com.example.demo.service.UserService;
 import com.example.demo.service.TrainingPlanService;
+import com.example.demo.service.*;
+import com.example.demo.service.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,7 +46,7 @@ public class UsersController {
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
-    private UserService userService = null;// what?
+    private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -88,40 +91,15 @@ public class UsersController {
         String newUsername = newUser.get("username");
         String newPassword = newUser.get("password");
 
-        // Check if username and password are present
-        if (newUsername.isEmpty() || newPassword.isEmpty()) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username or password not provided");
-            return "users/loginPage";
-        }
-
-        // Check if username reaches minimum length
-        if (newUsername.length() < USERNAME_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
-            return "users/loginPage";
-        }
-
-        // Check if password reaches minimum length
-        if (newPassword.length() < PASSWORD_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH + " characters");
-            return "users/loginPage";
-        }
-
-        User user = userRepo.findByUsername(newUsername);
-        if (user == null) {
-            response.setStatus(404); // Not Found
-            model.addAttribute("error", "Invalid username");
-            return "users/loginPage";
-        }
-        if (!user.getPassword().equals(newPassword)) {
-            response.setStatus(401); // Unauthorized
-            model.addAttribute("error", "Invalid password");
+        Error validation = userService.validateLogin(newUsername, newPassword);
+        if (validation.isError) {
+            response.setStatus(validation.status);
+            model.addAttribute("error", validation.message);
             return "users/loginPage";
         }
 
         // login successful
+        User user = userRepo.findByUsername(newUsername);
         session.setAttribute("userId", user.getUid());
 
         // if 0 go to user page
@@ -145,16 +123,6 @@ public class UsersController {
         return "users/loginPage";
     }
 
-    private boolean isPasswordValid(String password) {
-        boolean hasUppercase = !password.equals(password.toLowerCase());
-        boolean hasLowercase = !password.equals(password.toUpperCase());
-
-        boolean hasSymbol = password.matches(".*\\W.*");
-        boolean isLongEnough = password.length() >= PASSWORD_MIN_LENGTH;
-
-        return hasUppercase && hasLowercase && hasSymbol && isLongEnough;
-    }
-
     @PostMapping("/users/register")
     public String registerUser(@RequestParam Map<String, String> newUser, HttpServletResponse response, Model model) {
         System.out.println("ADD user");
@@ -163,34 +131,18 @@ public class UsersController {
         int newStatus = Integer.parseInt(newUser.getOrDefault("status", "0"));
         String newPassword = newUser.get("password");
 
-        // Check if username and password are present
-        if (newUsername.isEmpty() || newPassword.isEmpty()) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username or password not provided");
+        // Username and password validation
+        Error validation = userService.validateRegistration(newUsername, newPassword);
+        if (validation.isError) {
+            response.setStatus(validation.status);
+            model.addAttribute("error", validation.message);
             return "users/registerPage";
         }
-
-        // Check if username reaches minimum length
-        if (newUsername.length() < USERNAME_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
-            return "users/registerPage";
-        }
-
-        if (!isPasswordValid(newPassword)) {
-            response.setStatus(400);
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH +
-                    " characters and include at least one uppercase letter, one lowercase letter, and one symbol");
-            return "users/registerPage";
-        }
-
-        // username already exists
-        if (userRepo.existsByUsername(newUsername)) {
-            System.out.println("Username already exists");
-            response.setStatus(409); // Conflict
-            model.addAttribute("error", "Username already exists");
-            return "users/registerPage";
-        }
+        RestTemplate restTemplate = new RestTemplate();
+        String hashifyUrl = "https://api.hashify.net/hash/md5/hex"; 
+        newPassword = restTemplate.postForObject(hashifyUrl, newPassword, String.class);
+        //System.out.println("SAVED PASSWORD AS: " + extractMD5Hash(newPassword) + newPassword);
+        newPassword = extractMD5Hash(newPassword);
 
         userRepo.save(new User(newUsername, newPassword, newStatus));
         response.setStatus(201);
@@ -299,5 +251,11 @@ public class UsersController {
 
         model.addAttribute("user", userOptional.get());
         return "users/accDetails";
+    }
+
+    private String extractMD5Hash(String responseJson) {
+        int startIndex = responseJson.indexOf(":") + 2;
+        int endIndex = responseJson.indexOf("\",");
+        return responseJson.substring(startIndex, endIndex);
     }
 }

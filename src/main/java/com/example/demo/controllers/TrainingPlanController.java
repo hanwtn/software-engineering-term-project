@@ -41,22 +41,74 @@ public class TrainingPlanController {
         this.userService = userService;
     }
 
+    @GetMapping("/trainingPlan/viewAll")
+    public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response,
+            Model model, HttpSession session) {
+        // check if user is logged in
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
+        Integer userId = (int) session.getAttribute("userId");
+        User user = userRepo.findByUid(userId);
+        model.addAttribute("user", user);
+        List<TrainingPlan> trainingPlans = user.getTrainingPlans();
+        model.addAttribute("trainingPlans", trainingPlans);
+
+        if (!trainingPlans.isEmpty()) {
+            // Accessing the first training plan if the list is not empty
+            System.out.println(trainingPlans.get(0).getName() + " plan :");
+            System.out.println(trainingPlans.get(0).getTrainingSessions());
+        }
+        return "training_plans/viewAllTrainingPlan";
+    }
+
+    @GetMapping("/trainingPlan/add")
+    public String trainingPlanTest(HttpSession session, HttpServletResponse response, Model model) {
+        try {
+            // check if user is logged in
+            if (session.getAttribute("userId") == null) {
+                return "redirect:/login";
+            }
+            int userId = (int) session.getAttribute("userId");
+            User user = userRepo.findByUid(userId);
+            if (user != null) {
+                model.addAttribute("user", user);
+                model.addAttribute("userId", userId);
+                return "training_plans/addTrainingPlan";
+            } else {
+                // Handling case where user does not exist
+                response.setStatus(404); // Not Found
+                model.addAttribute("error", "User does not exist");
+                return "training_plans/addTrainingPlan";
+            }
+        } catch (NumberFormatException e) {
+            // Handling case where userId is not a valid integer
+            response.setStatus(400); // Bad Request
+            model.addAttribute("error", "Invalid User ID");
+            return "users/addTrainingPlan";
+        }
+    }
+
     @PostMapping("/trainingPlan/add/submit")
     public String addPlan(@RequestParam Map<String, String> newPlan,
-            @RequestParam(value = "trainingSessions", required = false) String[] selectedSessions, HttpSession session, 
+            @RequestParam(value = "trainingSessions", required = false) String[] selectedSessions, HttpSession session,
             HttpServletResponse response, Model model) {
 
-        String newName = newPlan.get("name");
-        String newDesc = newPlan.get("description");
+        // check if user is logged in
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
 
         int userId = (int) session.getAttribute("userId");
+        String newName = newPlan.get("name");
+        String newDesc = newPlan.get("description");
 
         // Check if name and description are present
         if (newName.isEmpty() || newDesc.isEmpty()) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Name or description are not provided");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "redirect:/trainingPlan/add";
         }
 
         // Check if user exists
@@ -64,7 +116,7 @@ public class TrainingPlanController {
             response.setStatus(404); // Not Found
             model.addAttribute("error", "User does not exist");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "redirect:/trainingPlan/add";
         }
 
         String startDateStr = newPlan.get("sdate");
@@ -87,7 +139,8 @@ public class TrainingPlanController {
             return "users/addTrainingPlan";
         }
         // check if start date and end date are valid
-        //TO DO: I think we should allow users to add start date and end dates before the current date, give them more freedom
+        // TO DO: I think we should allow users to add start date and end dates before
+        // the current date, give them more freedom
         if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start or end date is before today");
@@ -108,65 +161,23 @@ public class TrainingPlanController {
          */
 
         // add error-check for getting user
-        user.addTrainingPlan(newTrainingPlan);
-        userRepo.save(user); // Save the user with the new training plan
-        // removed user from training plan constructor
-        System.out.println("Successfully Added");
+        if (user != null) {
+            user.addTrainingPlan(newTrainingPlan);
+            userRepo.save(user); // Save the user with the new training plan
+            System.out.println("Successfully Added");
+        } else {
+            System.out.println("Attempted to add training plan to a null User.");
+        }
         return "redirect:/dashboard";
     }
 
-    @GetMapping("/trainingPlan/add")
-    public String trainingPlanTest(HttpSession session, HttpServletResponse response, Model model) {
-        try {
-            int userId = (int) session.getAttribute("userId");
-            User user = userRepo.findByUid(userId);
-            if (user != null) {
-                model.addAttribute("user", user);
-                model.addAttribute("userId", userId);
-                return "training_plans/addTrainingPlan";
-            } else {
-                // Handling case where user does not exist
-                response.setStatus(404); // Not Found
-                model.addAttribute("error", "User does not exist");
-                return "training_plans/addTrainingPlan";
-            }
-        } catch (NumberFormatException e) {
-            // Handling case where userId is not a valid integer
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Invalid User ID");
-            return "users/addTrainingPlan";
-        }
-    }
-
-    @GetMapping("/trainingPlan/viewAll")
-    public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response,
-            Model model) {
-        Integer userId = Integer.parseInt(newUser.get("userId"));
-        User user = userRepo.findByUid(userId);
-        model.addAttribute("user", user);
-        List<TrainingPlan> trainingPlans = user.getTrainingPlans();
-        for (TrainingPlan plan : trainingPlans) {
-            System.out.println("Plan: " + plan.getName());
-            for (TrainingSession session : plan.getTrainingSessions()) {
-                System.out.println("  Session: " + session.getName());
-                for (Exercise exercise : session.getExercises()) {
-                    System.out.println("    Exercise: " + exercise.getName());
-                }
-            }
-        }
-        model.addAttribute("trainingPlans", trainingPlans);
-
-        if (!trainingPlans.isEmpty()) {
-            // Accessing the first training plan if the list is not empty
-            System.out.println(trainingPlans.get(0).getName() + " plan :");
-            System.out.println(trainingPlans.get(0).getTrainingSessions());
-        }
-        return "training_plans/viewAllTrainingPlan";
-    }
-
     @PostMapping("/trainingPlan/delete")
-    public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model) {
-        int userId = Integer.parseInt(deleteForm.get("userId"));
+    public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model, HttpSession session) {
+        // check if user is logged in
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
+        int userId = (int) session.getAttribute("userId");
         int tpid = Integer.parseInt(deleteForm.get("tpid"));
 
         User user = userRepo.findByUid(userId);
@@ -189,7 +200,7 @@ public class TrainingPlanController {
         } else {
             model.addAttribute("error", "User not found");
         }
-        return "redirect:/trainingPlan/viewAll?userId=" + userId;
+        return "redirect:/trainingPlan/viewAll";
     }
 
 }
