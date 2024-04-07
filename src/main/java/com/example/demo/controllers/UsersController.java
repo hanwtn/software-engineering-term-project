@@ -86,40 +86,15 @@ public class UsersController {
         String newUsername = newUser.get("username");
         String newPassword = newUser.get("password");
 
-        // Check if username and password are present
-        if (newUsername.isEmpty() || newPassword.isEmpty()) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username or password not provided");
-            return "users/loginPage";
-        }
-
-        // Check if username reaches minimum length
-        if (newUsername.length() < USERNAME_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
-            return "users/loginPage";
-        }
-
-        // Check if password reaches minimum length
-        if (newPassword.length() < PASSWORD_MIN_LENGTH) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH + " characters");
-            return "users/loginPage";
-        }
-
-        User user = userRepo.findByUsername(newUsername);
-        if (user == null) {
-            response.setStatus(404); // Not Found
-            model.addAttribute("error", "Invalid username");
-            return "users/loginPage";
-        }
-        if (!user.getPassword().equals(newPassword)) {
-            response.setStatus(401); // Unauthorized
-            model.addAttribute("error", "Invalid password");
+        Error validation = userService.validateLogin(newUsername, newPassword);
+        if (validation.isError) {
+            response.setStatus(validation.status);
+            model.addAttribute("error", validation.message);
             return "users/loginPage";
         }
 
         // login successful
+        User user = userRepo.findByUsername(newUsername);
         session.setAttribute("userId", user.getUid());
 
         // if 0 go to user page
@@ -151,23 +126,11 @@ public class UsersController {
         int newStatus = Integer.parseInt(newUser.getOrDefault("status", "0"));
         String newPassword = newUser.get("password");
 
-        Error usernameValidation = userService.validateUsername(newUsername);
-        if (usernameValidation.isError == true) {
-            response.setStatus(usernameValidation.status);
-            model.addAttribute("error", usernameValidation.message);
-            return "users/registerPage";
-        }
-        // Check if username and password are present
-        if (newPassword.isEmpty()) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Username or password not provided");
-            return "users/registerPage";
-        }
-
-        if (!userService.isValidPassword(newPassword)) {
-            response.setStatus(400);
-            model.addAttribute("error", "Password must be at least " + PASSWORD_MIN_LENGTH +
-                    " characters and include at least one uppercase letter, one lowercase letter, and one symbol");
+        // Username and password validation
+        Error validation = userService.validateRegistration(newUsername, newPassword);
+        if (validation.isError) {
+            response.setStatus(validation.status);
+            model.addAttribute("error", validation.message);
             return "users/registerPage";
         }
 
