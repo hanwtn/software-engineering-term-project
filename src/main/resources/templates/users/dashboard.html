@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/users/dashboard.css}" />
     <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/users/dashboard.css}" />
     <link href='https://unpkg.com/fullcalendar@5/main.min.css' rel='stylesheet' />
     <script src='https://unpkg.com/fullcalendar@5/main.min.js'></script>
     <style>
@@ -13,46 +13,100 @@
             cursor: pointer;
         }
     </style>
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('training-calendar');
-
-
-            var trainingPlans = JSON.parse(/*[[${trainingPlansJson}]]*/ '[]');
-
-            var calendarEvents = trainingPlans.map(plan => ({
-                title: plan.name,
-                start: plan.startDate,
-                end: plan.endDate,
-                description: plan.description
-            }));
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: calendarEvents,
-                eventClick: function (info) {
-                    alert(info.event.extendedProps.description);
-                }
-            });
-            calendar.render();
-        });
-    </script>
 </head>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var trainingPlans = JSON.parse(/*[[${trainingPlansJson}]]*/ '[]');
+        var calendarEl = document.getElementById('training-calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: [],
+            eventClick: function(info) {
+                alert(info.event.title + "\nStart: " + info.event.start + "\nEnd: " + info.event.end);
+            }
+        });
+        calendar.render();
+        
+        var selector = document.getElementById('training-plan-selector');
+        
+        trainingPlans.forEach(plan => {
+            var option = new Option(plan.name, plan.tpid.toString());
+            selector.add(option);
+        });
 
+        function populateCalendarWithAllEvents() {
+            calendar.removeAllEvents(); 
+            trainingPlans.forEach(plan => {
+                createSessionEvents(plan.sessions, plan.startDate, plan.endDate).forEach(event => calendar.addEvent(event));
+            });
+        }
+        
+        selector.addEventListener('change', function() {
+            calendar.removeAllEvents();
+            if (this.value === "") {
+                populateCalendarWithAllEvents();
+            } else {
+                var selectedPlanId = parseInt(this.value, 10);
+                var selectedPlan = trainingPlans.find(plan => plan.tpid === selectedPlanId);
+                if (selectedPlan) {
+                    createSessionEvents(selectedPlan.sessions, selectedPlan.startDate, selectedPlan.endDate).forEach(event => calendar.addEvent(event));
+                }
+            }
+        });
+
+        populateCalendarWithAllEvents();
+
+    
+        function createSessionEvents(sessions, planStartDate, planEndDate) {
+            let events = [];
+            let planStart = new Date(planStartDate);
+            let planEnd = new Date(planEndDate);
+
+            const dayMap = { "SUNDAY": 6, "MONDAY": 0, "TUESDAY": 1, "WEDNESDAY": 2, "THURSDAY": 3, "FRIDAY": 4, "SATURDAY": 5 };
+
+            sessions.forEach(session => {
+                session.daysOfWeek.forEach(dayName => {
+                    var dayNumber = dayMap[dayName];
+
+                    let firstSessionDate = new Date(planStart);
+                    let diff = (dayNumber - firstSessionDate.getDay() + 7) % 7;
+                    firstSessionDate.setDate(firstSessionDate.getDate() + diff);
+
+                    for (let sessionDate = new Date(firstSessionDate); sessionDate <= planEnd; sessionDate.setDate(sessionDate.getDate() + 7)) {
+                        let eventDate = sessionDate.toISOString().split('T')[0]; 
+                        let startTime = session.startTime.substr(0, 5); 
+                        let endTime = session.endTime.substr(0, 5); 
+
+                        events.push({
+                            title: session.name,
+                            start: `${eventDate}T${startTime}`,
+                            end: `${eventDate}T${endTime}`
+                        });
+                    }
+                });
+            });
+
+            return events;
+        }
+
+
+
+    });
+
+    </script>
+    
 <body>
     <div class="container mt-5">
         <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
         <div class="mt-4">
-            <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account
-                Details</a>
+            <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
         </div>
         <div class="mt-2">
             <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
         </div>
 
-
         <div class="actions">
-            <div class="card">
+           <div class="card">
                 <form action="/trainingPlan/viewAll" method="get">
                     <input type="hidden" name="userId" th:value="${user.uid}">
                     <button type="submit" class="btn btn-secondary">View Training Plans</button>
@@ -76,12 +130,18 @@
                     <button type="submit" class="btn btn-secondary">Add Exercise</button>
                 </form>
             </div>
-            
+        </div>
+
+        <div class="dropdown-container">
+            <label for="training-plan-selector">Select a Training Plan:</label>
+            <select id="training-plan-selector" class="form-control">
+                <option value="">All Training Plans</option>
+             </select>
         </div>
         <div id="training-calendar"></div>
+    </div>
 
-    </div>
-    </div>
+    
 </body>
 
 </html>

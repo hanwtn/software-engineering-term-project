@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.sql.Time;
 
 @Entity
@@ -18,12 +21,14 @@ public class TrainingSession {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "trainingSession")
     private List<Exercise> exercises = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_plan_id")
+    @JsonBackReference
     private TrainingPlan trainingPlan;
+
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
