@@ -108,7 +108,7 @@ public class TrainingPlanController {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Name or description are not provided");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "redirect:/trainingPlan/add";
         }
 
         // Check if user exists
@@ -116,7 +116,7 @@ public class TrainingPlanController {
             response.setStatus(404); // Not Found
             model.addAttribute("error", "User does not exist");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "redirect:/trainingPlan/add";
         }
 
         String startDateStr = newPlan.get("sdate");

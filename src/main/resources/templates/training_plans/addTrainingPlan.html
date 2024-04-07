@@ -45,7 +45,12 @@
                             </div>
                         </div>
 
-                        <!-- login button -->
+                        <!-- Display error message -->
+                        <div th:if="${error}" class="alert alert-danger mb-3">
+                            <p th:text="${error}">Error</p>
+                        </div>
+
+                        <!-- create plan button -->
                         <div class="col-md-10">
                             <button type="submit" class="btn btn-success mb-3 d-block w-100 text-center">Create
                                 Plan!</button>
