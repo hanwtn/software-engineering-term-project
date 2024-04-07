@@ -4,6 +4,7 @@ import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UserService {
@@ -78,6 +79,13 @@ public class UserService {
         User user = userRepository.findByUsername(newUsername);
         boolean userNotFound = (user == null);
         boolean incorrectPassword = true;
+        //System.out.print("INCOMING PASSWORD LOGIN: " + newPassword);
+        RestTemplate restTemplate = new RestTemplate();
+        String hashifyUrl = "https://api.hashify.net/hash/md5/hex?value=" + newPassword;
+        String hashifyResponse = restTemplate.getForObject(hashifyUrl, String.class);
+
+        newPassword = extractMD5Hash(hashifyResponse);
+        System.out.println("CONVERTED PASSSWROD TO: " + newPassword);
         if (user != null) {
             incorrectPassword = !user.getPassword().equals(newPassword);
         }
@@ -95,5 +103,11 @@ public class UserService {
             }
         }
         return new Error();
+    }
+
+    private String extractMD5Hash(String responseJson) {
+        int startIndex = responseJson.indexOf(":") + 2;
+        int endIndex = responseJson.indexOf("\",");
+        return responseJson.substring(startIndex, endIndex);
     }
 }
