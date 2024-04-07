@@ -133,8 +133,15 @@ public class AdminController {
             return "redirect:/admin/adminEdit/" + uId;
         }
 
+        String newPassword = params.get("password");
+        RestTemplate restTemplate = new RestTemplate();
+        String hashifyUrl = "https://api.hashify.net/hash/md5/hex"; 
+        newPassword = restTemplate.postForObject(hashifyUrl, newPassword, String.class);
+        //System.out.println("SAVED PASSWORD AS: " + extractMD5Hash(newPassword) + newPassword);
+        newPassword = extractMD5Hash(newPassword);
+
         user.setUsername(newUsername);
-        user.setPassword(params.get("password"));
+        user.setPassword(newPassword);
         user.setWeight(Double.valueOf(params.get("weight")));
         user.setHeight(Double.valueOf(params.get("height")));
         user.setStatus(Integer.valueOf(params.get("status")));
