@@ -1,12 +1,10 @@
 package com.example.demo.controllers;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,13 +19,10 @@ import org.springframework.web.client.RestTemplate;
 import com.example.demo.dto.TrainingPlanDTO;
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
-import com.example.demo.models.TrainingSession;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
-// import com.example.quizapp2.models.Users;
 import com.example.demo.service.UserService;
 import com.example.demo.service.TrainingPlanService;
-import com.example.demo.service.*;
 import com.example.demo.service.Validation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,12 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 
 @Controller
 public class UsersController {
-    private final int USERNAME_MIN_LENGTH = 4;
-    private final int PASSWORD_MIN_LENGTH = 8;
 
     @Autowired
     private UserRepository userRepo;

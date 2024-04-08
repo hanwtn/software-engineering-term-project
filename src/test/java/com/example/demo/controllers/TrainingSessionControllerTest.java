@@ -9,15 +9,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.models.ExerciseRepository;
-import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.TrainingSessionRepository;
 import com.example.demo.models.UserRepository;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
