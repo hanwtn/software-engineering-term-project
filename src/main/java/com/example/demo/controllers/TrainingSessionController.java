@@ -2,11 +2,14 @@ package com.example.demo.controllers;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.time.DayOfWeek;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.sql.Time;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +45,9 @@ public class TrainingSessionController {
     private TrainingSessionRepository trainingSessionRepo;
     @Autowired
     private ExerciseRepository exerciseRepository;
-    private UserService userService = null;
+    @Autowired
+    private UserService userService;
+
 
     @Autowired
     public void UserController(UserService userService) {
@@ -53,31 +58,61 @@ public class TrainingSessionController {
     public String addSession(@RequestParam Map<String, String> newSession,
             @RequestParam("tpid") int tpid,
             @RequestParam(value = "exercises", required = false) String[] selectedExercises,
-            HttpServletResponse response, Model model) {
+            HttpServletResponse response, Model model,
+                            @RequestParam("startTime") String startTimeString, 
+                            @RequestParam("endTime") String endTimeString, 
+                            @RequestParam(value = "daysOfWeek", required = false) String[] daysOfWeekArray) {
 
+        Time startTime = Time.valueOf(startTimeString);
+        Time endTime = Time.valueOf(endTimeString);
         String name = newSession.get("name");
         List<Exercise> exercises = new ArrayList<>();
-
+        System.out.println("Training add submit called");
         if (selectedExercises != null) {
             for (String exerciseId : selectedExercises) {
-                System.out.println(exerciseId);
-                exercises.add(exerciseRepository.findByEid(Integer.parseInt(exerciseId)));
+                System.out.println("Selected Exercise ID: " + exerciseId);
+                Exercise exercise = exerciseRepository.findByEid(Integer.parseInt(exerciseId));
+                exercises.add(exercise);
+                // Log the details of the fetched exercise
+                System.out.println("Fetched Exercise: " + exercise.getName() + ", Sets: " + exercise.getSets() + ", Reps: " + exercise.getReps());
             }
         }
+        Set<DayOfWeek> daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf).collect(Collectors.toSet());
 
-        // Default for now (Dont understand)
-        Set<DayOfWeek> dayOfWeeks = new HashSet<>();
-        dayOfWeeks.add(DayOfWeek.WEDNESDAY);
-        dayOfWeeks.add(DayOfWeek.SATURDAY);
-        Time startTime = Time.valueOf("09:00:00");
-        Time endTime = Time.valueOf("10:00:00");
-
-        TrainingSession newTrainingSession = new TrainingSession(exercises, dayOfWeeks, startTime, endTime, name);
+        
 
         // HardCoded for now :3
-        TrainingPlan addToThisTrainingPlan = trainingPlanRepo.findBytpid(tpid);
-        addToThisTrainingPlan.addTrainingSession(newTrainingSession);
-        trainingPlanRepo.save(addToThisTrainingPlan);
+        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(tpid);
+
+
+        // Check for overlapping days
+        // boolean overlapFound = false;
+        // for (TrainingSession session : trainingPlan.getTrainingSessions()) {
+        //     Set<DayOfWeek> existingDays = session.getDaysOfWeek();
+        //     if (!Collections.disjoint(daysOfWeek, existingDays)) {
+        //         model.addAttribute("error", "Overlapping days with existing sessions. Please select non-overlapping days.");
+        //         overlapFound = true;
+        //         break; // No need to check further if overlap is found
+        //     }
+        // }
+
+        // if (overlapFound) {
+        //     // If overlap is found, return to the form with error messages and preserve user input
+        //     model.addAttribute("trainingSession", newSession); // Consider creating a DTO class for better structure
+        //     model.addAttribute("selectedExercises", selectedExercises); // Add other necessary attributes similarly
+        //     model.addAttribute("startTime", startTimeString);
+        //     model.addAttribute("tpid", tpid);
+        //     model.addAttribute("endTime", endTimeString);
+        //     model.addAttribute("daysOfWeek", daysOfWeekArray); // You may need to handle conversion for display
+        //     // Load additional necessary data for the form
+        //     // e.g., available exercises, etc., that are needed to render the form properly
+        //     return "training_sessions/addTrainingSession"; // Return the view name of the form
+        // }
+
+        TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, startTime, endTime, name);
+
+        trainingPlan.addTrainingSession(newTrainingSession);
+        trainingPlanRepo.save(trainingPlan);
         response.setStatus(200); // OK
         return "redirect:/dashboard";
     }
@@ -86,10 +121,7 @@ public class TrainingSessionController {
     public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
             HttpServletResponse response,
             Model model) {
-        int userId = (int) session.getAttribute("userId");
-        User user = userRepo.findByUid(userId);
-        model.addAttribute("user", user);
-        model.addAttribute("tpid", tpid);
+         model.addAttribute("tpid", tpid);
         String search = "";
         List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
         model.addAttribute("exercises", allExercises);
@@ -109,7 +141,7 @@ public class TrainingSessionController {
     }
 
     @GetMapping("/trainingSession/view")
-    public String viewTrainingSessionView(@RequestParam Map<String, String> newUser, HttpServletResponse response,
+    public String viewTrainingSessionView(@RequestParam Map<String, String> newSession, HttpServletResponse response,
             Model model) {
         List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
         model.addAttribute("trainingSessions", trainingSessions);
@@ -119,14 +151,21 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam Map<String, String> deleteForm, Model model) {
-        int tsid = Integer.parseInt(deleteForm.get("tsid"));
+    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid, Model model) {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
-        System.out.println(tsid);
-        System.out.println(ts.getTsid());
 
+        if (ts == null) {
+            model.addAttribute("error", "Training session not found");
+            Integer userId = Integer.parseInt(newSession.get("userId"));
+            return "redirect:/trainingPlan/viewAll?userId=" + userId;// fix it
+        }
+        for (Exercise exercise : ts.getExercises()) {
+            exercise.setTrainingSession(null); // Assuming there's a setter to dissociate
+            exerciseRepository.save(exercise); // Save the exercise to update its state in the database
+        }
         trainingSessionRepo.delete(ts);
-        return "redirect:/dashboard";
+        Integer userId = Integer.parseInt(newSession.get("userId"));
+        return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
 
 }
