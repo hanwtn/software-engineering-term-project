@@ -18,12 +18,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.dto.TrainingPlanDTO;
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.TrainingPlanRepository;
 import com.example.demo.models.TrainingSession;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 // import com.example.quizapp2.models.Users;
+import com.example.demo.service.UserService;
+import com.example.demo.service.TrainingPlanService;
 import com.example.demo.service.*;
 import com.example.demo.service.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,7 +49,8 @@ public class UsersController {
     private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
-
+    @Autowired
+    private TrainingPlanService trainingPlanService;
     @Autowired
     public void UserController(UserService userService) {
         this.userService = userService;
@@ -174,8 +178,8 @@ public class UsersController {
 
         model.addAttribute("user", loggedInUser);
         List<TrainingPlan> trainingPlans = trainingPlanRepo.getAllTrainingPlansByUser(loggedInUser);
-
-        String trainingPlansJson = convertToJson(trainingPlans);
+        List<TrainingPlanDTO> planDTOs = trainingPlanService.toPlanDtoList(trainingPlans);
+        String trainingPlansJson = convertToJson(planDTOs);
         model.addAttribute("trainingPlansJson", trainingPlansJson);
 
         return "users/dashboard";
