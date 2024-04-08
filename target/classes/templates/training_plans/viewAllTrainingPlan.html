@@ -6,55 +6,121 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Training Plans</title>
+    <link rel="stylesheet" href="path/to/your/css/file.css">
+    <link rel="stylesheet" th:href="@{/css/users/dashboard.css}" />
 </head>
 
 <body>
-    <h1>Training Plans for <span th:text="${user.username}"></span></h1>
+    <div class="container">
+        <div class="header">
+            <h1>Training Plans for <span th:text="${user.username}"></span></h1>
+        </div>
 
-    <!-- Check if trainingPlans is empty -->
-    <th:block th:if="${#lists.isEmpty(trainingPlans)}">
-        <p>No training plans found.</p>
-    </th:block>
-
-    <!-- If trainingPlans is not empty, iterate over it -->
-    <ul th:unless="${#lists.isEmpty(trainingPlans)}">
-        <li th:each="plan : ${trainingPlans}">
-
-            <p>tpid: <span th:text="${plan.tpid}"></span></p>
-            <p>Name: <span th:text="${plan.name}"></span></p>
-            <p>Description: <span th:text="${plan.description}"></span></p>
-            <p>Start Date: <span th:text="${plan.startDate}"></span></p>
-            <p>End Date: <span th:text="${plan.endDate}"></span></p>
-            <p>Training Sessions:</p>
-
-            <!-- Iterate over trainingSessions related to the current plan -->
-            <div th:each="s : ${plan.getTrainingSessions}">
-                <p>Name: <span th:text="${s.name}"></span></p>
-                <p>Exercises:
-                    <span th:each="exercise : ${s.exercises}" th:text="${exercise.name + ', '}"></span>
-                </p>
-                <p>Days of Week:
-                    <span th:each="day : ${s.daysOfWeek}" th:text="${day + ', '}"></span>
-                </p>
-                <form th:action="@{/trainingSession/delete}" method="post">
-                    <input type="hidden" name="tsid" th:value="${s.tsid}" />
-                    <input type="hidden" name="userId" th:value="${user.uid}" />
-                    <button type="submit">Delete Session</button>
-                </form><br>
+        <nav class="navbar">
+            <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
+            <div class="nav-menu" id="nav-menu">
+                <div class="mt-4">
+                    <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
+                </div>
+                <div class="mt-2">
+                    <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
+                </div>
+                <div class="mt-3">
+                    <a th:href="@{/dashboard}" class="btn btn-danger">Home</a>
+                </div>
+                <div class="actions">
+                    <div class="card">
+                        <form action="/trainingPlan/viewAll" method="get">
+                            <input type="hidden" name="userId" th:value="${user.uid}">
+                            <button type="submit" class="btn btn-secondary">View Training Plans</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <form action="/trainingPlan/add" method="get">
+                            <input type="hidden" name="userId" th:value="${user.uid}">
+                            <button type="submit" class="btn btn-secondary">Add Training Plan</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <form action="/exercise/view" method="get">
+                            <input type="hidden" name="userId" th:value="${user.uid}">
+                            <button type="submit" class="btn btn-secondary">View Exercise</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <form action="/exercise/add" method="post">
+                            <input type="hidden" name="userId" th:value="${user.uid}">
+                            <button type="submit" class="btn btn-secondary">Add Exercise</button>
+                        </form>
+                    </div>
+                </div>
             </div>
+        </nav>
 
-            <form th:action="@{/trainingSession/add}" method="get">
-                <input type="hidden" name="tpid" th:value="${plan.tpid}" />
-                <button type="submit">Add Training Session</button>
-            </form>
+        <div class="bodyContent" style="display: none;"> <!-- Initially hidden -->
+            <!-- Check if trainingPlans is empty -->
+            <th:block th:if="${#lists.isEmpty(trainingPlans)}">
+                <p>No training plans found.</p>
+            </th:block>
+            <!-- If trainingPlans is not empty, iterate over it -->
+            <ul class="main-content" th:unless="${#lists.isEmpty(trainingPlans)}">
+                <li th:each="plan : ${trainingPlans}" class="card">
+                    <p>tpid: <span th:text="${plan.tpid}"></span></p>
+                    <p>Name: <span th:text="${plan.name}"></span></p>
+                    <p>Description: <span th:text="${plan.description}"></span></p>
+                    <p>Start Date: <span th:text="${plan.startDate}"></span></p>
+                    <p>End Date: <span th:text="${plan.endDate}"></span></p>
+                    <p>Training Sessions:</p>
+                    <!-- Iterate over trainingSessions related to the current plan -->
+                    <div th:each="s : ${plan.getTrainingSessions}">
+                        <p>Name: <span th:text="${s.name}"></span></p>
+                        <p>Exercises:
+                            <span th:each="exercise : ${s.exercises}" th:text="${exercise.name + ', '}"></span>
+                        </p>
+                        <p>Days of Week:
+                            <span th:each="day : ${s.daysOfWeek}" th:text="${day + ', '}"></span>
+                        </p>
+                        <form th:action="@{/trainingSession/delete}" method="post">
+                            <input type="hidden" name="tsid" th:value="${s.tsid}" />
+                            <input type="hidden" name="userId" th:value="${user.uid}" />
+                            <button type="submit">Delete Session</button>
+                        </form><br>
+                    </div>
+                    <form th:action="@{/trainingSession/add}" method="get">
+                        <input type="hidden" name="tpid" th:value="${plan.tpid}" />
+                        <button type="submit">Add Training Session</button>
+                    </form>
+                    <form th:action="@{/trainingPlan/delete}" method="post">
+                        <input type="hidden" name="userId" th:value="${user.uid}" />
+                        <input type="hidden" name="tpid" th:value="${plan.tpid}" />
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-            <form th:action="@{/trainingPlan/delete}" method="post">
-                <input type="hidden" name="userId" th:value="${user.uid}" />
-                <input type="hidden" name="tpid" th:value="${plan.tpid}" />
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    </ul>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure that the menu is initially closed
+            var navMenu = document.getElementById('nav-menu');
+            navMenu.style.display = 'none';
+
+            var bodyContent = document.querySelector('.bodyContent');
+            bodyContent.style.display = 'block';
+
+            // Toggle menu display when the button is clicked
+            document.getElementById('nav-toggle').addEventListener('click', function() {
+                navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Toggle body content display when the button is clicked
+            document.getElementById('nav-toggle').addEventListener('click', function() {
+                var bodyContent = document.querySelector('.bodyContent');
+                bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+    </script>
 </body>
 
 </html>

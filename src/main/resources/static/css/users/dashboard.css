@@ -1,74 +1,104 @@
-/* Resets */
+/* General Resets */
 * {
     box-sizing: border-box;
     margin: 0;
-    padding: 0;
+    padding: 10px;
+    font-family: 'Roboto', sans-serif; /* Roboto is a modern font */
 }
 
+/* Body and html styling for a full height layout with modern fonts */
 body, html {
     height: 100%;
-    font-family: Arial, sans-serif;
+    background-color: #f7f7f7; /* Light grey background for a modern look */
 }
 
-/* Dashboard Layout */
+/* Modern looking container for the dashboard */
 .dashboard {
-    padding: 20px;
-    height: calc(100% - 40px);
+    padding: 2% 5%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+/* Header with shadow for depth */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
     margin-bottom: 20px;
 }
 
+/* Grid layout for main content with more spacing */
 .main-content {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
-    height: 80%;
+    padding-bottom: 20px;
 }
 
-.account-details {
-    background-color: #f0f0f0;
+/* Styling for account details and action cards with modern touches */
+.account-details, .actions .card {
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    margin-top: 20px;
 }
 
 .actions {
-    display: grid;
-    gap: 20px;
-    height: fit-content;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-.card {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-/* Buttons */
+/* Buttons with modern colors and hover effects */
 .btn {
     display: inline-block;
-    text-decoration: none;
     padding: 10px 20px;
     border-radius: 4px;
     margin-top: 10px;
     font-weight: bold;
+    border: none; /* Remove borders for a modern flat design */
+    transition: background-color 0.3s ease; /* Smooth transition for button hover */
 }
 
 .btn-danger {
-    background-color: #d9534f;
+    background-color: #ff5252;
     color: white;
 }
 
 .btn-secondary {
-    background-color: #6c757d;
+    background-color: #00bcd4;
     color: white;
 }
 
 .btn-danger:hover, .btn-secondary:hover {
-    opacity: 0.8;
+    opacity: 0.9;
+}
+
+/* Modern form elements */
+input[type="text"], select, button {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+/* Custom calendar styling */
+.fc-toolbar {
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+}
+
+.fc-daygrid-event {
+    background-color: #00bcd4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85em;
+    padding: 4px 8px;
 }
