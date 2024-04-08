@@ -1,7 +1,6 @@
 /**
  * This class represents a validation error. Intended to store a response status and a message, for validating user inputs wherever necessary.
- * Default constructor represents the case where there is no error. It might be a bad choice of design to have an Error object represent a
- * non-error situation.
+ * Default constructor represents the case where there is no error (sus).
  */
 package com.example.demo.service;
 
