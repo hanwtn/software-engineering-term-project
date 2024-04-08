@@ -138,7 +138,7 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tpid") int tpid,
+    public String deleteTrainingSession(@RequestParam Map<String, String> newSession,
             @RequestParam("tsid") int tsid,
             Model model) {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
