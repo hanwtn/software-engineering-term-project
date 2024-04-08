@@ -1,6 +1,5 @@
 package com.example.demo.controllers;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -11,16 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.Exercise;
 import com.example.demo.models.ExerciseRepository;
-import com.example.demo.models.TrainingPlanRepository;
-import com.example.demo.models.TrainingSession;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
-import com.example.demo.service.UserService;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -28,14 +22,6 @@ public class ExerciseController {
 
     @Autowired
     private UserRepository userRepo;
-    @Autowired
-    private TrainingPlanRepository trainingPlanRepo;
-    private UserService userService = null;
-
-    @Autowired
-    public void UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @Autowired
     private ExerciseRepository exerciseRepo;

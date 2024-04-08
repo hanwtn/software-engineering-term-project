@@ -1,13 +1,10 @@
 package com.example.demo.controllers;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.time.DayOfWeek;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.sql.Time;
@@ -16,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -30,11 +26,6 @@ import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 import com.example.demo.service.TrainingSessionService;
 import com.example.demo.service.Validation;
-
-import io.micrometer.core.ipc.http.HttpSender.Response;
-
-// import com.example.quizapp2.models.Users;
-import com.example.demo.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -50,13 +41,7 @@ public class TrainingSessionController {
     private TrainingSessionRepository trainingSessionRepo;
     @Autowired
     private ExerciseRepository exerciseRepository;
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    public void UserController(UserService userService) {
-        this.userService = userService;
-    }
+    
 
     @GetMapping("/trainingSession/add")
     public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
@@ -119,39 +104,7 @@ public class TrainingSessionController {
             }
         }
 
-        // HardCoded for now :3
         TrainingPlan trainingPlan = trainingPlanRepo.findByTpid(tpid);
-
-        // Check for overlapping days
-        // boolean overlapFound = false;
-        // for (TrainingSession session : trainingPlan.getTrainingSessions()) {
-        // Set<DayOfWeek> existingDays = session.getDaysOfWeek();
-        // if (!Collections.disjoint(daysOfWeek, existingDays)) {
-        // model.addAttribute("error", "Overlapping days with existing sessions. Please
-        // select non-overlapping days.");
-        // overlapFound = true;
-        // break; // No need to check further if overlap is found
-        // }
-        // }
-
-        // if (overlapFound) {
-        // // If overlap is found, return to the form with error messages and preserve
-        // user input
-        // model.addAttribute("trainingSession", newSession); // Consider creating a DTO
-        // class for better structure
-        // model.addAttribute("selectedExercises", selectedExercises); // Add other
-        // necessary attributes similarly
-        // model.addAttribute("startTime", startTimeString);
-        // model.addAttribute("tpid", tpid);
-        // model.addAttribute("endTime", endTimeString);
-        // model.addAttribute("daysOfWeek", daysOfWeekArray); // You may need to handle
-        // conversion for display
-        // // Load additional necessary data for the form
-        // // e.g., available exercises, etc., that are needed to render the form
-        // properly
-        // return "training_sessions/addTrainingSession"; // Return the view name of the
-        // form
-        // }
 
         TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, startTime, endTime, name);
 

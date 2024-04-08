@@ -1,7 +1,6 @@
 package com.example.demo.controllers;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,17 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.models.Exercise;
 import com.example.demo.models.TrainingPlan;
-import com.example.demo.models.TrainingPlanRepository;
-import com.example.demo.models.TrainingSession;
-import com.example.demo.models.TrainingSessionRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 import com.example.demo.service.Validation;
 import com.example.demo.service.TrainingPlanService;
-// import com.example.quizapp2.models.Users;
-import com.example.demo.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -32,16 +25,7 @@ public class TrainingPlanController {
 
     @Autowired
     private UserRepository userRepo;
-    @Autowired
-    private TrainingPlanRepository trainingPlanRepo;
-    @Autowired
-    private TrainingSessionRepository trainingSessionRepo;
-    private UserService userService = null;
 
-    @Autowired
-    public void UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/trainingPlan/viewAll")
     public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response,
