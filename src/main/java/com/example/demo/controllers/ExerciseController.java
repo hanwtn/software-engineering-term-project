@@ -25,13 +25,12 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ExerciseController {
-    
+
     @Autowired
     private UserRepository userRepo;
     @Autowired
     private TrainingPlanRepository trainingPlanRepo;
-    private UserService userService = null;   
-
+    private UserService userService = null;
 
     @Autowired
     public void UserController(UserService userService) {
@@ -57,7 +56,7 @@ public class ExerciseController {
         }
 
         // Fetch exercises added by the logged-in user
-        List<Exercise> exercises = exerciseRepo.findByUser(user);
+        List<Exercise> exercises = user.getExercises();
         model.addAttribute("user", user);
         model.addAttribute("exercises", exercises);
 
@@ -77,14 +76,14 @@ public class ExerciseController {
             return "redirect:/login";
         }
         model.addAttribute("user", user);
-            return "exercises/addExercise";
+        return "exercises/addExercise";
     }
 
     @PostMapping("/exercise/add/submit")
     public String addExerciseSubmit(@RequestParam Map<String, String> newExercise, HttpSession session, Model model) {
         Integer userId = (Integer) session.getAttribute("userId");
+        // Check if user is logged in
         if (userId == null) {
-            // User is not logged in, redirect to login page
             return "redirect:/login";
         }
         User user = userRepo.findById(userId).orElse(null);
@@ -102,14 +101,9 @@ public class ExerciseController {
         // Validate the exercise details here (e.g., check if name is empty)
 
         Exercise exercise = new Exercise(name, description, sets, reps, intensity, duration);
-        exercise.setUser(user); // Associate the exercise with the logged-in user
-        exerciseRepo.save(exercise); //for now I am ttrying to re-implment Nolan's approach cuz my approach is not great for memory managment
 
         // Add the new exercise to the user's list of exercises
-        user.getExercises().add(exercise);
-
-        // Save the exercise and the user to update the database
-        exerciseRepo.save(exercise);
+        user.addExercise(exercise);
         userRepo.save(user);
 
         model.addAttribute("success", "Exercise added successfully");
@@ -120,32 +114,31 @@ public class ExerciseController {
 
     @PostMapping("/exercise/delete")
     public String deleteExercise(@RequestParam("eid") int exerciseId, HttpSession session, Model model) {
-    Integer userId = (Integer) session.getAttribute("userId");
-    if (userId == null) {
-        // User is not logged in, redirect to login page
-        return "redirect:/login";
-    }
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            // User is not logged in, redirect to login page
+            return "redirect:/login";
+        }
 
-    User user = userRepo.findById(userId).orElse(null);
-    if (user == null) {
-        // User not found, redirect to login page
-        return "redirect:/login";
-    }
+        User user = userRepo.findById(userId).orElse(null);
+        if (user == null) {
+            // User not found, redirect to login page
+            return "redirect:/login";
+        }
 
-    Exercise exercise = exerciseRepo.findById(exerciseId).orElse(null);
-    if (exercise == null || exercise.getUser().getUid() != userId) {
-        // Exercise not found or does not belong to the user, handle this case appropriately
-        model.addAttribute("error", "Exercise not found or not owned by user");
+        Exercise exercise = exerciseRepo.findById(exerciseId).orElse(null);
+        if (exercise == null /* || exercise.getUser().getUid() != userId */) {
+            // Exercise not found or does not belong to the user, handle this case
+            // appropriately
+            model.addAttribute("error", "Exercise not found or not owned by user");
+            return "redirect:/exercise/view";
+        }
+
+        user.removeExercise(exercise);
+        exerciseRepo.delete(exercise);
+        userRepo.save(user);
+
         return "redirect:/exercise/view";
     }
-
-    user.removeExercise(exercise);
-    exerciseRepo.delete(exercise);
-    userRepo.save(user);
-
-    return "redirect:/exercise/view";
-}
-
-
 
 }

@@ -33,9 +33,9 @@ public class User {
     private List<TrainingPlan> trainingPlans = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Exercise> exercises;
+    private List<Exercise> exercises = new ArrayList<>();
 
-    //make method to add training plan
+    // make method to add training plan
     // each user holds a list of training plans
     public void addTrainingPlan(TrainingPlan trainingPlan) {
         if (trainingPlans == null) {
@@ -49,29 +49,21 @@ public class User {
         if (trainingPlans != null) {
             trainingPlans.remove(trainingPlan);
             trainingPlan.setUser(null);
-            //do that in controller
+            // do that in controller
             // trainingPlanRepository.delete(trainingPlan);
         }
     }
 
-    
     public List<TrainingPlan> getTrainingPlans() {
         return this.trainingPlans;
     }
 
     public void addExercise(Exercise exercise) {
-        if (exercises == null) {
-            exercises = new ArrayList<>();
-        }
         exercises.add(exercise);
-        exercise.setUser(this);
     }
 
     public void removeExercise(Exercise exercise) {
-        if (exercises != null) {
-            exercises.remove(exercise);
-            exercise.setUser(null);
-        }
+        exercises.remove(exercise);
     }
 
     public List<Exercise> getExercises() {

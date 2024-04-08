@@ -19,7 +19,7 @@
     <!-- If trainingPlans is not empty, iterate over it -->
     <ul th:unless="${#lists.isEmpty(trainingPlans)}">
         <li th:each="plan : ${trainingPlans}">
-            
+
             <p>tpid: <span th:text="${plan.tpid}"></span></p>
             <p>Name: <span th:text="${plan.name}"></span></p>
             <p>Description: <span th:text="${plan.description}"></span></p>
@@ -31,10 +31,10 @@
             <div th:each="s : ${plan.getTrainingSessions}">
                 <p>Name: <span th:text="${s.name}"></span></p>
                 <p>Exercises:
-                    <span th:each="exercise : ${s.exercises}" th:text="${exercise.name + ', '}" ></span>
+                    <span th:each="exercise : ${s.exercises}" th:text="${exercise.name + ', '}"></span>
                 </p>
                 <p>Days of Week:
-                    <span th:each="day : ${s.daysOfWeek}" th:text="${day + ', '}" ></span>
+                    <span th:each="day : ${s.daysOfWeek}" th:text="${day + ', '}"></span>
                 </p>
                 <form th:action="@{/trainingSession/delete}" method="post">
                     <input type="hidden" name="tsid" th:value="${s.tsid}" />

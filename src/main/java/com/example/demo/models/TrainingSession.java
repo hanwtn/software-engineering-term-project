@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import java.sql.Time;
 
 @Entity
@@ -21,14 +18,12 @@ public class TrainingSession {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_plan_id")
-    @JsonBackReference
     private TrainingPlan trainingPlan;
-
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
@@ -52,9 +47,6 @@ public class TrainingSession {
         this.startTime = startTime;
         this.endTime = endTime;
         this.name = name;
-        for (Exercise exercise : this.exercises) {
-            exercise.setTrainingSession(this);  // Set the training session for each exercise
-        }
     }
 
     public int getTsid() {

@@ -26,22 +26,6 @@ public class Exercise {
     @Column(nullable = true)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "training_session_id")
-    private TrainingSession trainingSession;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Exercise() {
     }
 
@@ -52,10 +36,6 @@ public class Exercise {
         this.reps = reps;
         this.intensity = intensity;
         this.duration = duration;
-    }
-
-    public void setTrainingSession(TrainingSession trainingSession) {
-        this.trainingSession = trainingSession;
     }
 
     public String getName() {
@@ -100,10 +80,6 @@ public class Exercise {
 
     public int getEid() {
         return eid;
-    }
-
-    public void setEid(int eid) {
-        this.eid = eid;
     }
 
     public int getDuration() {

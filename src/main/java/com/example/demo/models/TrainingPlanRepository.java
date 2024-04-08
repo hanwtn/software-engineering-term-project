@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 public interface TrainingPlanRepository extends JpaRepository<TrainingPlan,Integer> {
     ArrayList<TrainingPlan> getAllTrainingPlansByUser(User user);
-    TrainingPlan findBytpid(int tpid);
+    TrainingPlan findByTpid(int tpid);
 
 } 

@@ -28,6 +28,11 @@ import com.example.demo.models.TrainingSession;
 import com.example.demo.models.TrainingSessionRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
+import com.example.demo.service.TrainingSessionService;
+import com.example.demo.service.Validation;
+
+import io.micrometer.core.ipc.http.HttpSender.Response;
+
 // import com.example.quizapp2.models.Users;
 import com.example.demo.service.UserService;
 
@@ -48,10 +53,20 @@ public class TrainingSessionController {
     @Autowired
     private UserService userService;
 
-
     @Autowired
     public void UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/trainingSession/add")
+    public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
+            HttpServletResponse response,
+            Model model) {
+        model.addAttribute("tpid", tpid);
+        String search = "";
+        List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
+        model.addAttribute("exercises", allExercises);
+        return "training_sessions/addTrainingSession";
     }
 
     @PostMapping("/trainingSession/add/submit")
@@ -59,14 +74,39 @@ public class TrainingSessionController {
             @RequestParam("tpid") int tpid,
             @RequestParam(value = "exercises", required = false) String[] selectedExercises,
             HttpServletResponse response, Model model,
-                            @RequestParam("startTime") String startTimeString, 
-                            @RequestParam("endTime") String endTimeString, 
-                            @RequestParam(value = "daysOfWeek", required = false) String[] daysOfWeekArray) {
+            @RequestParam("startTime") String startTimeString,
+            @RequestParam("endTime") String endTimeString,
+            @RequestParam(value = "daysOfWeek", required = false) String[] daysOfWeekArray) {
 
         Time startTime = Time.valueOf(startTimeString);
         Time endTime = Time.valueOf(endTimeString);
         String name = newSession.get("name");
         List<Exercise> exercises = new ArrayList<>();
+        Set<DayOfWeek> daysOfWeek;
+        if (daysOfWeekArray != null) {
+            daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
+                    .collect(Collectors.toSet());
+        } else {
+            daysOfWeek = null;
+        }
+
+        Validation validate = TrainingSessionService.validate(name, daysOfWeek, startTime, endTime);
+        if (validate.isError) {
+            response.setStatus(validate.status);
+            model.addAttribute("error", validate.message);
+            model.addAttribute("name", name);
+            if (daysOfWeekArray != null) {
+                for (String day : daysOfWeekArray) {
+                    model.addAttribute(day, true);
+                }
+            }
+            model.addAttribute("tpid", tpid);
+            String search = "";
+            List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
+            model.addAttribute("exercises", allExercises);
+            return "training_sessions/addTrainingSession";
+        }
+
         System.out.println("Training add submit called");
         if (selectedExercises != null) {
             for (String exerciseId : selectedExercises) {
@@ -74,39 +114,43 @@ public class TrainingSessionController {
                 Exercise exercise = exerciseRepository.findByEid(Integer.parseInt(exerciseId));
                 exercises.add(exercise);
                 // Log the details of the fetched exercise
-                System.out.println("Fetched Exercise: " + exercise.getName() + ", Sets: " + exercise.getSets() + ", Reps: " + exercise.getReps());
+                System.out.println("Fetched Exercise: " + exercise.getName() + ", Sets: " + exercise.getSets()
+                        + ", Reps: " + exercise.getReps());
             }
         }
-        Set<DayOfWeek> daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf).collect(Collectors.toSet());
-
-        
 
         // HardCoded for now :3
-        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(tpid);
-
+        TrainingPlan trainingPlan = trainingPlanRepo.findByTpid(tpid);
 
         // Check for overlapping days
         // boolean overlapFound = false;
         // for (TrainingSession session : trainingPlan.getTrainingSessions()) {
-        //     Set<DayOfWeek> existingDays = session.getDaysOfWeek();
-        //     if (!Collections.disjoint(daysOfWeek, existingDays)) {
-        //         model.addAttribute("error", "Overlapping days with existing sessions. Please select non-overlapping days.");
-        //         overlapFound = true;
-        //         break; // No need to check further if overlap is found
-        //     }
+        // Set<DayOfWeek> existingDays = session.getDaysOfWeek();
+        // if (!Collections.disjoint(daysOfWeek, existingDays)) {
+        // model.addAttribute("error", "Overlapping days with existing sessions. Please
+        // select non-overlapping days.");
+        // overlapFound = true;
+        // break; // No need to check further if overlap is found
+        // }
         // }
 
         // if (overlapFound) {
-        //     // If overlap is found, return to the form with error messages and preserve user input
-        //     model.addAttribute("trainingSession", newSession); // Consider creating a DTO class for better structure
-        //     model.addAttribute("selectedExercises", selectedExercises); // Add other necessary attributes similarly
-        //     model.addAttribute("startTime", startTimeString);
-        //     model.addAttribute("tpid", tpid);
-        //     model.addAttribute("endTime", endTimeString);
-        //     model.addAttribute("daysOfWeek", daysOfWeekArray); // You may need to handle conversion for display
-        //     // Load additional necessary data for the form
-        //     // e.g., available exercises, etc., that are needed to render the form properly
-        //     return "training_sessions/addTrainingSession"; // Return the view name of the form
+        // // If overlap is found, return to the form with error messages and preserve
+        // user input
+        // model.addAttribute("trainingSession", newSession); // Consider creating a DTO
+        // class for better structure
+        // model.addAttribute("selectedExercises", selectedExercises); // Add other
+        // necessary attributes similarly
+        // model.addAttribute("startTime", startTimeString);
+        // model.addAttribute("tpid", tpid);
+        // model.addAttribute("endTime", endTimeString);
+        // model.addAttribute("daysOfWeek", daysOfWeekArray); // You may need to handle
+        // conversion for display
+        // // Load additional necessary data for the form
+        // // e.g., available exercises, etc., that are needed to render the form
+        // properly
+        // return "training_sessions/addTrainingSession"; // Return the view name of the
+        // form
         // }
 
         TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, startTime, endTime, name);
@@ -115,17 +159,6 @@ public class TrainingSessionController {
         trainingPlanRepo.save(trainingPlan);
         response.setStatus(200); // OK
         return "redirect:/dashboard";
-    }
-
-    @GetMapping("/trainingSession/add")
-    public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
-            HttpServletResponse response,
-            Model model) {
-         model.addAttribute("tpid", tpid);
-        String search = "";
-        List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
-        model.addAttribute("exercises", allExercises);
-        return "training_sessions/addTrainingSession";
     }
 
     @GetMapping("/trainingSession/add/search")
@@ -151,7 +184,9 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid, Model model) {
+    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tpid") int tpid,
+            @RequestParam("tsid") int tsid,
+            Model model) {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
 
         if (ts == null) {
@@ -159,11 +194,10 @@ public class TrainingSessionController {
             Integer userId = Integer.parseInt(newSession.get("userId"));
             return "redirect:/trainingPlan/viewAll?userId=" + userId;// fix it
         }
-        for (Exercise exercise : ts.getExercises()) {
-            exercise.setTrainingSession(null); // Assuming there's a setter to dissociate
-            exerciseRepository.save(exercise); // Save the exercise to update its state in the database
-        }
-        trainingSessionRepo.delete(ts);
+        // remove in the training plan
+        TrainingPlan tp = trainingPlanRepo.findByTpid(tpid);
+        tp.removeTrainingSession(ts);
+        trainingPlanRepo.save(tp);
         Integer userId = Integer.parseInt(newSession.get("userId"));
         return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }

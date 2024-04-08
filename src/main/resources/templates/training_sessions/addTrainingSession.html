@@ -9,7 +9,7 @@
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var startTimeSelect = document.getElementById("startTime");
         var endTimeSelect = document.getElementById("endTime");
         var serverErrorMessage = document.getElementById("serverErrorMessage").value;
@@ -27,9 +27,9 @@
                 endTimeOptions[i].disabled = optionValue <= selectedStartTime;
             }
 
-            if(endTimeSelect.value <= selectedStartTime) {
-                for(var i = 0; i < endTimeOptions.length; i++) {
-                    if(endTimeOptions[i].disabled === false) {
+            if (endTimeSelect.value <= selectedStartTime) {
+                for (var i = 0; i < endTimeOptions.length; i++) {
+                    if (endTimeOptions[i].disabled === false) {
                         endTimeSelect.value = endTimeOptions[i].value;
                         break;
                     }
@@ -46,7 +46,7 @@
     }
 
 </script>
-    
+
 <body>
     <main class="container-fluid">
         <div class="row justify-content-center">
@@ -63,7 +63,8 @@
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
 
                         <div class="mb-3">
-                            <input type="text" name="name" class="form-control form-control-lg" placeholder="Name :">
+                            <input type="text" name="name" class="form-control form-control-lg" placeholder="Name :"
+                                th:value="${name}">
                         </div>
                         <div class="mb-3">
                             <h2>Add Exercises!</h2>
@@ -79,13 +80,20 @@
                         <div class="mb-3">
                             <h2>Days of the Week:</h2>
                             <div>
-                                <label><input type="checkbox" name="daysOfWeek" value="MONDAY"> Monday</label>
-                                <label><input type="checkbox" name="daysOfWeek" value="TUESDAY"> Tuesday</label>
-                                <label><input type="checkbox" name="daysOfWeek" value="WEDNESDAY"> Wednesday</label>
-                                <label><input type="checkbox" name="daysOfWeek" value="THURSDAY"> Thursday</label>
-                                <label><input type="checkbox" name="daysOfWeek" value="FRIDAY"> Friday</label>
-                                <label><input type="checkbox" name="daysOfWeek" value="SATURDAY"> Saturday</label>
-                                <label><input type="checkbox" name="daysOfWeek" value="SUNDAY"> Sunday</label>
+                                <label><input type="checkbox" name="daysOfWeek" value="MONDAY" th:checked="${MONDAY}">
+                                    Monday</label>
+                                <label><input type="checkbox" name="daysOfWeek" value="TUESDAY" th:checked="${TUESDAY}">
+                                    Tuesday</label>
+                                <label><input type="checkbox" name="daysOfWeek" value="WEDNESDAY"
+                                        th:checked="${WEDNESDAY}"> Wednesday</label>
+                                <label><input type="checkbox" name="daysOfWeek" value="THURSDAY"
+                                        th:checked="${THURSDAY}"> Thursday</label>
+                                <label><input type="checkbox" name="daysOfWeek" value="FRIDAY" th:checked="${FRIDAY}">
+                                    Friday</label>
+                                <label><input type="checkbox" name="daysOfWeek" value="SATURDAY"
+                                        th:checked="${SATURDAY}"> Saturday</label>
+                                <label><input type="checkbox" name="daysOfWeek" value="SUNDAY" th:checked="${SUNDAY}">
+                                    Sunday</label>
                             </div>
                         </div>
 
@@ -110,7 +118,7 @@
                                 <option value="22:00:00">10:00 PM</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="endTime" class="form-label">End Time:</label>
                             <select id="endTime" name="endTime" class="form-select">
@@ -132,23 +140,25 @@
                                 <option value="22:00:00">10:00 PM</option>
                             </select>
                         </div>
-                        
+
 
                         <div class="mb-3">
                             <textarea style="height: 20vh;" type="text" id="description" name="description"
                                 class="form-control form-control-lg" placeholder="Description"></textarea>
                         </div>
 
-                        
+
                         <input type="hidden" id="tpid" name="tpid" th:value="${tpid}">
+
+                        <!-- Display error message -->
+                        <div th:if="${error}" class="alert alert-danger mb-3">
+                            <p th:text="${error}">Error</p>
+                        </div>
 
                         <div class="col-md-10">
                             <button type="submit" class="btn btn-success mb-3 d-block w-100 text-center">Add Training
                                 Session!</button>
                         </div>
-                        <input type="hidden" id="serverErrorMessage" value="" />
-
-
                     </form>
 
                 </div>

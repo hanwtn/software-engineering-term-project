@@ -169,8 +169,6 @@ public class TrainingPlanController {
             if (planToDelete != null) {
                 user.removeTrainingPlan(planToDelete);
                 userRepo.save(user); // Save the user to update the training plan list
-                // unnessesary apparently
-                // trainingPlanRepo.delete(planToDelete);
                 model.addAttribute("success", "Training plan deleted successfully");
             } else {
                 model.addAttribute("error", "Training plan not found");

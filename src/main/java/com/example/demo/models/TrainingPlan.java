@@ -37,9 +37,7 @@ public class TrainingPlan {
     @JsonManagedReference
     private List<TrainingSession> trainingSessions;
 
-
     public TrainingPlan() {
-
     }
 
     // Lets remove user, training plan no longer knows its user
@@ -111,6 +109,10 @@ public class TrainingPlan {
         }
         trainingSessions.add(trainingSession);
         trainingSession.setTrainingPlan(this);
+    }
+
+    public void removeTrainingSession(TrainingSession trainingSession) {
+        trainingSessions.remove(trainingSession);
     }
 
     public List<TrainingSession> getTrainingSessions() {
