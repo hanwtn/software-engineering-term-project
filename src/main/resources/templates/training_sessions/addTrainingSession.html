@@ -9,7 +9,7 @@
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         var startTimeSelect = document.getElementById("startTime");
         var endTimeSelect = document.getElementById("endTime");
         var serverErrorMessage = document.getElementById("serverErrorMessage").value;
@@ -153,6 +153,8 @@
                             <button type="submit" class="btn btn-success mb-3 d-block w-100 text-center">Add Training
                                 Session!</button>
                         </div>
+                        <input type="hidden" id="serverErrorMessage" value="" />
+
                     </form>
 
                 </div>
