@@ -28,7 +28,7 @@ import com.example.demo.models.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.service.TrainingPlanService;
 import com.example.demo.service.*;
-import com.example.demo.service.Error;
+import com.example.demo.service.Validation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,6 +51,7 @@ public class UsersController {
     private ObjectMapper objectMapper;
     @Autowired
     private TrainingPlanService trainingPlanService;
+
     @Autowired
     public void UserController(UserService userService) {
         this.userService = userService;
@@ -91,7 +92,7 @@ public class UsersController {
         String newUsername = newUser.get("username");
         String newPassword = newUser.get("password");
 
-        Error validation = userService.validateLogin(newUsername, newPassword);
+        Validation validation = userService.validateLogin(newUsername, newPassword);
         if (validation.isError) {
             response.setStatus(validation.status);
             model.addAttribute("error", validation.message);
@@ -132,16 +133,17 @@ public class UsersController {
         String newPassword = newUser.get("password");
 
         // Username and password validation
-        Error validation = userService.validateRegistration(newUsername, newPassword);
+        Validation validation = userService.validateRegistration(newUsername, newPassword);
         if (validation.isError) {
             response.setStatus(validation.status);
             model.addAttribute("error", validation.message);
             return "users/registerPage";
         }
         RestTemplate restTemplate = new RestTemplate();
-        String hashifyUrl = "https://api.hashify.net/hash/md5/hex"; 
+        String hashifyUrl = "https://api.hashify.net/hash/md5/hex";
         newPassword = restTemplate.postForObject(hashifyUrl, newPassword, String.class);
-        //System.out.println("SAVED PASSWORD AS: " + extractMD5Hash(newPassword) + newPassword);
+        // System.out.println("SAVED PASSWORD AS: " + extractMD5Hash(newPassword) +
+        // newPassword);
         newPassword = extractMD5Hash(newPassword);
 
         userRepo.save(new User(newUsername, newPassword, newStatus));

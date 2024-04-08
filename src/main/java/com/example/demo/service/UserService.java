@@ -32,45 +32,45 @@ public class UserService {
         return hasUppercase && hasLowercase && hasSymbol && isLongEnough;
     }
 
-    public Error validatePassword(String newPassword) {
-        Error toRet = new Error();
+    public Validation validatePassword(String newPassword) {
+        Validation toRet = new Validation();
         if (newPassword.isEmpty()) {
-            return new Error(400, "Password must be provided");
+            return new Validation(400, "Password must be provided");
         } else if (newPassword.length() < PASSWORD_MIN_LENGTH) {
-            return new Error(400, "Password must be at least " + PASSWORD_MIN_LENGTH + " characters");
+            return new Validation(400, "Password must be at least " + PASSWORD_MIN_LENGTH + " characters");
         } else if (!isValidPassword(newPassword)) {
-            return new Error(400,
+            return new Validation(400,
                     "Password must include at least one uppercase letter, one lowercase letter, and one symbol");
         }
         return toRet;
     }
 
-    public Error validateUsername(String newUsername) {
+    public Validation validateUsername(String newUsername) {
         if (newUsername.isEmpty()) {
-            return new Error(400, "Username must be provided");
+            return new Validation(400, "Username must be provided");
         } else if (newUsername.length() < USERNAME_MIN_LENGTH) {
-            return new Error(400, "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
+            return new Validation(400, "Username must be at least " + USERNAME_MIN_LENGTH + " characters");
         } else if (userRepository.existsByUsername(newUsername)) {
-            return new Error(409, "Username already exists");
+            return new Validation(409, "Username already exists");
         }
 
         // default constructor creates a non-error (valid)
-        return new Error();
+        return new Validation();
     }
 
     // login version, bypass the error of username already exists
-    public Error validateUsernameLogin(String newUsername) {
-        Error error = validateUsername(newUsername);
+    public Validation validateUsernameLogin(String newUsername) {
+        Validation error = validateUsername(newUsername);
         if (error.message.equals("Username already exists")) {
-            return new Error();
+            return new Validation();
         } else {
             return error;
         }
     }
 
-    public Error validateLogin(String newUsername, String newPassword) {
-        Error[] validations = { validateUsernameLogin(newUsername), validatePassword(newPassword) };
-        for (Error validation : validations) {
+    public Validation validateLogin(String newUsername, String newPassword) {
+        Validation[] validations = { validateUsernameLogin(newUsername), validatePassword(newPassword) };
+        for (Validation validation : validations) {
             if (validation.isError) {
                 return validation;
             }
@@ -79,29 +79,29 @@ public class UserService {
         User user = userRepository.findByUsername(newUsername);
         boolean userNotFound = (user == null);
         boolean incorrectPassword = true;
-        //System.out.print("INCOMING PASSWORD LOGIN: " + newPassword);
+        // System.out.print("INCOMING PASSWORD LOGIN: " + newPassword);
         RestTemplate restTemplate = new RestTemplate();
         String hashifyUrl = "https://api.hashify.net/hash/md5/hex?value=" + newPassword;
         String hashifyResponse = restTemplate.getForObject(hashifyUrl, String.class);
         newPassword = extractMD5Hash(hashifyResponse);
-        //System.out.println("CONVERTED PASSSWROD TO: " + newPassword);
+        // System.out.println("CONVERTED PASSSWROD TO: " + newPassword);
         if (user != null) {
             incorrectPassword = !user.getPassword().equals(newPassword);
         }
         if (userNotFound || incorrectPassword) {
-            return new Error(401, "Incorrect username or password.");
+            return new Validation(401, "Incorrect username or password.");
         }
-        return new Error();
+        return new Validation();
     }
 
-    public Error validateRegistration(String newUsername, String newPassword) {
-        Error[] validations = { validateUsername(newUsername), validatePassword(newPassword) };
-        for (Error validation : validations) {
+    public Validation validateRegistration(String newUsername, String newPassword) {
+        Validation[] validations = { validateUsername(newUsername), validatePassword(newPassword) };
+        for (Validation validation : validations) {
             if (validation.isError) {
                 return validation;
             }
         }
-        return new Error();
+        return new Validation();
     }
 
     private String extractMD5Hash(String responseJson) {

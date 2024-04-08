@@ -19,20 +19,21 @@
                         <div class="mb-3">
                             <h2>Plan Name:</h2>
                             <input type="text" id="name" name="name" class="form-control form-control-lg"
-                                placeholder="Name:">
+                                placeholder="Name:" th:value="${name}">
                         </div>
                         <div class="mb-3">
                             <h2>Description</h2>
                             <textarea style="height: 20vh;" type="text" id="description" name="description"
-                                class="form-control form-control-lg" placeholder="Description"></textarea>
+                                class="form-control form-control-lg" placeholder="Description"
+                                th:text="${description}"></textarea>
                         </div>
                         <div class="mb-3">
                             <h2>Start Date:</h2>
                             <input type="date" id="sdate" name="sdate" class="form-control form-control-lg"
-                                placeholder="DD/MM/YY">
+                                placeholder="DD/MM/YY" th:value="${{sDate}}">
                             <h2>End Date:</h2>
                             <input type="date" id="edate" name="edate" class="form-control form-control-lg"
-                                placeholder="DD/MM/YY">
+                                placeholder="DD/MM/YY" th:value="${{eDate}}">
                         </div>
                         <div class="mb-3">
                             <h2>Add Training Sessions!</h2>

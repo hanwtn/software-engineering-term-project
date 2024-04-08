@@ -19,6 +19,8 @@ import com.example.demo.models.TrainingSession;
 import com.example.demo.models.TrainingSessionRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
+import com.example.demo.service.Validation;
+import com.example.demo.service.TrainingPlanService;
 // import com.example.quizapp2.models.Users;
 import com.example.demo.service.UserService;
 
@@ -85,7 +87,7 @@ public class TrainingPlanController {
             // Handling case where userId is not a valid integer
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Invalid User ID");
-            return "users/addTrainingPlan";
+            return "training_plans/addTrainingPlan";
         }
     }
 
@@ -100,56 +102,33 @@ public class TrainingPlanController {
         }
 
         int userId = (int) session.getAttribute("userId");
-        String newName = newPlan.get("name");
-        String newDesc = newPlan.get("description");
-
-        // Check if name and description are present
-        if (newName.isEmpty() || newDesc.isEmpty()) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Name or description are not provided");
-            model.addAttribute("userId", userId);
-            return "redirect:/trainingPlan/add";
-        }
-
-        // Check if user exists
-        if (!userRepo.existsByUid(userId)) {
-            response.setStatus(404); // Not Found
-            model.addAttribute("error", "User does not exist");
-            model.addAttribute("userId", userId);
-            return "redirect:/trainingPlan/add";
-        }
-
+        String newName = newPlan.get("name").strip();
+        String newDesc = newPlan.get("description").strip();
         String startDateStr = newPlan.get("sdate");
         String endDateStr = newPlan.get("edate");
 
-        if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Start date or end date is not provided");
+        Validation validate = TrainingPlanService.validateTrainingPlan(userRepo, userId, newName, newDesc, startDateStr,
+                endDateStr);
+
+        // Check if name and description are present
+        if (validate.isError) {
+            response.setStatus(validate.status); // Bad Request
+            model.addAttribute("error", validate.message);
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            model.addAttribute("name", newName);
+            model.addAttribute("description", newDesc);
+            model.addAttribute("sDate", startDateStr);
+            model.addAttribute("eDate", endDateStr);
+            return "training_plans/addTrainingPlan";
         }
+
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
 
-        // check if start date is before end date
-        if (startDate.isAfter(endDate)) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Start date is after end date");
-            model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
-        }
-        // check if start date and end date are valid
-        // TO DO: I think we should allow users to add start date and end dates before
-        // the current date, give them more freedom
-        if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
-            response.setStatus(400); // Bad Request
-            model.addAttribute("error", "Start or end date is before today");
-            return "users/loginPage";
-        }
         TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
         User user = userRepo.findByUid(userId);
-        System.out.println("Training Session Names:");
 
+        // System.out.println("Training Session Names:");
         /*
          * for (int i = 0; i < ts.size(); i++) {
          * System.out.println(ts.get(i).getName());
@@ -160,7 +139,6 @@ public class TrainingPlanController {
          * }
          */
 
-        // add error-check for getting user
         if (user != null) {
             user.addTrainingPlan(newTrainingPlan);
             userRepo.save(user); // Save the user with the new training plan
