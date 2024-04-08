@@ -20,36 +20,44 @@
                 <h2>Add a New Exercise</h2>
                 <form action="/exercise/add/submit" method="post">
                     <div class="mb-3">
-                        <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Exercise Name">
+                        <input type="text" id="name" name="name" class="form-control form-control-lg"
+                            placeholder="Exercise Name" th:value="${name}">
                     </div>
 
                     <div class="mb-3">
-                        <textarea id="description" name="description" class="form-control form-control-lg" placeholder="Description"></textarea>
+                        <textarea id="description" name="description" class="form-control form-control-lg"
+                            placeholder="Description" th:text="${description}"></textarea>
                     </div>
 
                     <div class="mb-3">
                         <h2>Intensity:</h2>
                         <label for="Easy">
-                            <input type="radio" id="Easy" name="intensity" class="form-check-input" placeholder="Intensity" value="Easy">Easy
+                            <input type="radio" id="Easy" name="intensity" class="form-check-input"
+                                placeholder="Intensity" value="Easy">Easy
                         </label></br>
                         <label for="Medium">
-                            <input type="radio" id="Medium" name="intensity" class="form-check-input" placeholder="Intensity" value="Medium">Medium
+                            <input type="radio" id="Medium" name="intensity" class="form-check-input"
+                                placeholder="Intensity" value="Medium">Medium
                         </label></br>
                         <label for="Hard">
-                            <input type="radio" id="Hard" name="intensity" class="form-check-input" placeholder="Intensity" value="Hard">Hard
+                            <input type="radio" id="Hard" name="intensity" class="form-check-input"
+                                placeholder="Intensity" value="Hard">Hard
                         </label></br>
                     </div>
 
                     <div class="mb-3">
-                        <input type="number" id="sets" name="sets" class="form-control form-control-lg" placeholder="Sets">
+                        <input type="number" id="sets" name="sets" class="form-control form-control-lg"
+                            placeholder="Sets" th:value="${sets}">
                     </div>
 
                     <div class="mb-3">
-                        <input type="number" id="reps" name="reps" class="form-control form-control-lg" placeholder="Reps">
+                        <input type="number" id="reps" name="reps" class="form-control form-control-lg"
+                            placeholder="Reps" th:value="${reps}">
                     </div>
 
                     <div class="mb-3">
-                        <input type="number" id="duration" name="duration" class="form-control form-control-lg" placeholder="Duration (in seconds)">
+                        <input type="number" id="duration" name="duration" class="form-control form-control-lg"
+                            placeholder="Duration (in seconds)" th:value="${duration}">
                     </div>
 
                     <!-- Display error message -->

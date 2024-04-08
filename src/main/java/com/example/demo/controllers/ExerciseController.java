@@ -14,7 +14,11 @@ import com.example.demo.models.Exercise;
 import com.example.demo.models.ExerciseRepository;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
+import com.example.demo.service.ExerciseService;
+import com.example.demo.service.Validation;
 
+import io.micrometer.core.ipc.http.HttpSender.Response;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -49,6 +53,7 @@ public class ExerciseController {
         return "exercises/viewExercise";
     }
 
+    // Shouldn't this be a Get mapping(?)
     @PostMapping("/exercise/add")
     public String addExercise(HttpSession session, Model model) {
         Integer userId = (Integer) session.getAttribute("userId");
@@ -66,7 +71,8 @@ public class ExerciseController {
     }
 
     @PostMapping("/exercise/add/submit")
-    public String addExerciseSubmit(@RequestParam Map<String, String> newExercise, HttpSession session, Model model) {
+    public String addExerciseSubmit(@RequestParam Map<String, String> newExercise, HttpSession session,
+            HttpServletResponse response, Model model) {
         Integer userId = (Integer) session.getAttribute("userId");
         // Check if user is logged in
         if (userId == null) {
@@ -80,11 +86,35 @@ public class ExerciseController {
         String name = newExercise.get("name");
         String description = newExercise.get("description");
         String intensity = newExercise.get("intensity");
-        int sets = Integer.parseInt(newExercise.getOrDefault("sets", "0"));
-        int reps = Integer.parseInt(newExercise.getOrDefault("reps", "0"));
-        int duration = Integer.parseInt(newExercise.getOrDefault("duration", "0"));
+        int sets = 0;
+        String setsStr = newExercise.getOrDefault("sets", "0");
+        if (!setsStr.equals("")) {
+            sets = Integer.parseInt(setsStr);
+        }
+        int reps = 0;
+        String repsStr = newExercise.getOrDefault("reps", "0");
+        if (!setsStr.equals("")) {
+            reps = Integer.parseInt(repsStr);
+        }
+        int duration = 0;
+        String durationStr = newExercise.getOrDefault("duration", "0");
+        if (!durationStr.equals("")) {
+            duration = Integer.parseInt(durationStr);
+        }
 
         // Validate the exercise details here (e.g., check if name is empty)
+        Validation validate = ExerciseService.validate(name);
+        if (validate.isError) {
+            response.setStatus(validate.status);
+            model.addAttribute("error", validate.message);
+            model.addAttribute("name", name);
+            model.addAttribute("description", description);
+            model.addAttribute("intensity", intensity);
+            model.addAttribute("sets", sets);
+            model.addAttribute("reps", reps);
+            model.addAttribute("duration", duration);
+            return "exercises/addExercise";
+        }
 
         Exercise exercise = new Exercise(name, description, sets, reps, intensity, duration);
 

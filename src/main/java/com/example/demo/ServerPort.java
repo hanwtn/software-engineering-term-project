@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class ServerPort implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
 
     @Override
-    public void customize(ConfigurableServletWebServerFactory factory){
-        factory.setPort(8081); 
+    public void customize(ConfigurableServletWebServerFactory factory) {
+        factory.setPort(8081);
     }
 }
