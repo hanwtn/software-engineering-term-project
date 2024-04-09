@@ -2,12 +2,15 @@ package com.example.demo.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.time.DayOfWeek;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.sql.Time;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -156,6 +159,66 @@ public String deleteTrainingSession(@RequestParam Map<String, String> newSession
     Integer userId = Integer.parseInt(newSession.get("userId"));
     return "redirect:/trainingPlan/viewAll?userId=" + userId;
 }
+
+@GetMapping("/trainingSession/edit/{tsid}")
+public String editTrainingSessionForm(@PathVariable("tsid") int tsid, Model model) {
+    TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
+    model.addAttribute("trainingSession", trainingSession);
+    model.addAttribute("allExercises", exerciseRepository.findAll());
+    return "training_sessions/editTrainingSession";
+}
+@PostMapping("/trainingSession/edit/{tsid}")
+public String updateTrainingSession(@PathVariable("tsid") int tsid,
+                                    @RequestParam Map<String, String> updatedSession,
+                                    @RequestParam(value = "exercises", required = false) String[] selectedExercises,
+                                    @RequestParam(value = "daysOfWeek", required = false) String[] daysOfWeekArray,
+                                    Model model) {
+    TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
+
+    // Validate input data
+    String name = updatedSession.get("name");
+    String startTimeStr = updatedSession.get("startTime");
+    String endTimeStr = updatedSession.get("endTime");
+    if (name == null || name.isEmpty() || startTimeStr == null || startTimeStr.isEmpty() ||
+            endTimeStr == null || endTimeStr.isEmpty()) {
+        model.addAttribute("error", "Name, start time, and end time are required.");
+        model.addAttribute("trainingSession", trainingSession);
+        model.addAttribute("allExercises", exerciseRepository.findAll());
+        return "training_sessions/editTrainingSession";
+    }
+
+    // Update training session details
+    trainingSession.setName(name);
+    trainingSession.setStartTime(Time.valueOf(startTimeStr));
+    trainingSession.setEndTime(Time.valueOf(endTimeStr));
+
+    Set<DayOfWeek> daysOfWeek = new HashSet<>();
+    if (daysOfWeekArray != null) {
+        daysOfWeek = Arrays.stream(daysOfWeekArray)
+                .map(DayOfWeek::valueOf)
+                .collect(Collectors.toSet());
+    }
+    trainingSession.setDaysOfWeek(daysOfWeek);
+
+    // Update the list of exercises
+    List<Exercise> updatedExercises = new ArrayList<>();
+    if (selectedExercises != null) {
+        for (String exerciseId : selectedExercises) {
+            Exercise exercise = exerciseRepository.findById(Integer.parseInt(exerciseId))
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid exercise ID: " + exerciseId));
+            updatedExercises.add(exercise);
+        }
+    }
+    trainingSession.setExercises(updatedExercises);
+
+    trainingSessionRepo.save(trainingSession);
+    // Redirect to the viewAll page for the user
+    int userId = trainingSession.getTrainingPlan().getUser().getUid();
+    return "redirect:/trainingPlan/viewAll?userId=" + userId;
+}
+
 
 
 }
