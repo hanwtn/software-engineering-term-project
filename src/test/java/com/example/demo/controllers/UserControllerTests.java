@@ -1,6 +1,8 @@
 package com.example.demo.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import com.example.demo.service.*;
 
 import jakarta.transaction.Transactional;
 
@@ -68,6 +72,43 @@ public class UserControllerTests {
             .andReturn();
         MockHttpServletResponse response = result.getResponse();
         assertEquals(409, response.getStatus());
+    }
+
+    //Login Test
+    @Test
+    public void testLoginExistingUser() throws Exception {  
+        String username = "existingUsername";
+        String password = "Password123!";
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
+        .param("username", username)
+        .param("password", password)
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/login")
+        .param("username", username)
+        .param("password", password)
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        assertEquals(302, response.getStatus());
+    }
+
+    @Test
+    public void testLoginNonExistingUser() throws Exception {  
+        String username = "existingUsername";
+        String password = "Password123!";
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
+        .param("username", username)
+        .param("password", password)
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/login")
+        .param("username", username)
+        .param("password", "password")
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        assertEquals(400, response.getStatus());
     }
 
     
