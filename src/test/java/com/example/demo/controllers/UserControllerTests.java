@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +19,7 @@ import com.example.demo.service.*;
 
 import jakarta.transaction.Transactional;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.session.SessionAutoConfiguration")
 @AutoConfigureMockMvc
 @Transactional
 public class UserControllerTests {
@@ -109,6 +110,43 @@ public class UserControllerTests {
         .andReturn();
         MockHttpServletResponse response = result.getResponse();
         assertEquals(400, response.getStatus());
+    }
+
+    @Test
+    public void testClientDashboardNoLogin() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/dashboard")
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        assertEquals(302, response.getStatus());
+    }
+
+    @Test
+    public void testClientDashboardLogin() throws Exception {
+        String username = "existingUsername";
+        String password = "Password123!";
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
+        .param("username", username)
+        .param("password", password)
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/login")
+        .param("username", username)
+        .param("password", password)
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/dashboard")
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        int statusCode = response.getStatus();
+        if (statusCode == 302) { // If redirected
+            String redirectedUrl = response.getHeader("Location");
+            System.out.println("Redirected to: " + redirectedUrl);
+            assertTrue(redirectedUrl.endsWith("/dashboard")); // Assuming redirected to dashboard
+        } else {
+            assertEquals(200, statusCode); // No redirection, directly accessed dashboard
+        }
     }
 
     

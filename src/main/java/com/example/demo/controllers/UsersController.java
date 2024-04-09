@@ -94,7 +94,7 @@ public class UsersController {
         // login successful
         User user = userRepo.findByUsername(newUsername);
         session.setAttribute("userId", user.getUid());
-
+        System.out.println("NOLAN: " + session.getAttribute("userId"));
         // if 0 go to user page
         if (user.getStatus() == 0) {
             response.setStatus(200); // OK
@@ -159,8 +159,10 @@ public class UsersController {
         response.setDateHeader("Expires", 0);
 
         Integer uId = (Integer) session.getAttribute("userId");
+        System.out.println("NOLAN: " + uId);
+        System.out.println("NOLAN: " + session.getAttribute("userId"));
         if (uId == null) {
-            return "redirect:/login";
+            return "redirect:/";
         }
 
         Optional<User> uOptional = userRepo.findById(uId);
