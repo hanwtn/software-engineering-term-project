@@ -45,7 +45,7 @@ public class UsersController {
     private TrainingPlanService trainingPlanService;
 
     @Autowired
-    public void UserController(UserService userService) {
+    public UsersController(UserService userService) {
         this.userService = userService;
     }
 

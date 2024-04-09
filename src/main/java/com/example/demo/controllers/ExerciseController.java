@@ -17,7 +17,6 @@ import com.example.demo.models.UserRepository;
 import com.example.demo.service.ExerciseService;
 import com.example.demo.service.Validation;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
