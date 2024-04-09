@@ -216,5 +216,6 @@ public class TrainingPlanController {
 
         trainingPlanRepo.save(trainingPlan);
         return "redirect:/trainingPlan/viewAll?userId=" + trainingPlan.getUser().getUid();
+        
     }
 }
