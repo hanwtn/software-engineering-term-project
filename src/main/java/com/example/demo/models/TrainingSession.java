@@ -20,13 +20,21 @@ public class TrainingSession {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Exercise> exercises = new ArrayList<>();
+    // @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<Exercise> exercises = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_plan_id")
     @JsonBackReference
     private TrainingPlan trainingPlan;
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+        name = "training_session_exercises",
+        joinColumns = @JoinColumn(name = "training_session_tsid", referencedColumnName = "tsid"),
+        inverseJoinColumns = @JoinColumn(name = "exercises_eid", referencedColumnName = "eid")
+    )
+    private List<Exercise> exercises = new ArrayList<>();
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
@@ -50,9 +58,7 @@ public class TrainingSession {
         this.startTime = startTime;
         this.endTime = endTime;
         this.name = name;
-        for (Exercise exercise : this.exercises) {
-            exercise.setTrainingSession(this);  // Set the training session for each exercise
-        }
+        exercises.forEach(exercise -> exercise.getTrainingSessions().add(this));
     }
 
     public int getTsid() {
@@ -71,29 +77,39 @@ public class TrainingSession {
         this.exercises = new ArrayList<>(exercises);
     }
 
+
     public void addExercise(Exercise exercise) {
-        // Create a copy of the exercise and add it to the list
-        Exercise exerciseCopy = new Exercise(
-                exercise.getName(),
-                exercise.getDescription(),
-                exercise.getSets(),
-                exercise.getReps(),
-                exercise.getIntensity(),
-                exercise.getDuration());
-        this.exercises.add(exerciseCopy);
+        exercises.add(exercise);
+        exercise.getTrainingSessions().add(this);
     }
 
-    // TO DO: not sure if this is the right way to do this
-    // From what I know, orphanRemoval=true will automatically remove the Exercise
-    // from the database when we
-    // remove it from the List<Exercise>
-    public void removeExerciseById(int eIdToRemove) {
-        for (int i = 0; i < exercises.size(); i++) {
-            if (exercises.get(i).getEid() == eIdToRemove) {
-                exercises.remove(i);
-            }
-        }
+    public void removeExercise(Exercise exercise) {
+        exercises.remove(exercise);
+        exercise.getTrainingSessions().remove(this);
     }
+    // public void addExercise(Exercise exercise) {
+    //     // Create a copy of the exercise and add it to the list
+    //     Exercise exerciseCopy = new Exercise(
+    //             exercise.getName(),
+    //             exercise.getDescription(),
+    //             exercise.getSets(),
+    //             exercise.getReps(),
+    //             exercise.getIntensity(),
+    //             exercise.getDuration());
+    //     this.exercises.add(exerciseCopy);
+    // }
+
+    // // TO DO: not sure if this is the right way to do this
+    // // From what I know, orphanRemoval=true will automatically remove the Exercise
+    // // from the database when we
+    // // remove it from the List<Exercise>
+    // public void removeExerciseById(int eIdToRemove) {
+    //     for (int i = 0; i < exercises.size(); i++) {
+    //         if (exercises.get(i).getEid() == eIdToRemove) {
+    //             exercises.remove(i);
+    //         }
+    //     }
+    // }
 
     public Set<DayOfWeek> getDaysOfWeek() {
         return daysOfWeek;

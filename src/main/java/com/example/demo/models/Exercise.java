@@ -1,5 +1,6 @@
 package com.example.demo.models;
-
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
@@ -26,9 +27,12 @@ public class Exercise {
     @Column(nullable = true)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "training_session_id")
-    private TrainingSession trainingSession;
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "training_session_id")
+    // private TrainingSession trainingSession;
+
+    @ManyToMany(mappedBy = "exercises")
+    private List<TrainingSession> trainingSessions = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -54,10 +58,19 @@ public class Exercise {
         this.duration = duration;
     }
     
-    public void setTrainingSession(TrainingSession trainingSession) {
-        this.trainingSession = trainingSession;
+    public List<TrainingSession> getTrainingSessions() {
+        return trainingSessions;
     }
 
+
+    public void addTrainingSession(TrainingSession session) {
+        if (!trainingSessions.contains(session)) {
+            trainingSessions.add(session);
+            session.getExercises().add(this); 
+        }
+    }
+
+    
     public String getName() {
         return name;
     }

@@ -138,23 +138,24 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam Map<String, String> newSession,
-            @RequestParam("tsid") int tsid,
-            Model model) {
-        TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
+public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid, Model model) {
+    TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
 
-        if (ts == null) {
-            model.addAttribute("error", "Training session not found");
-            Integer userId = Integer.parseInt(newSession.get("userId"));
-            return "redirect:/trainingPlan/viewAll?userId=" + userId;// fix it
-        }
-        for (Exercise exercise : ts.getExercises()) {
-            exercise.setTrainingSession(null); 
-            exerciseRepository.save(exercise); 
-        }
-        trainingSessionRepo.delete(ts);
+    if (ts == null) {
+        model.addAttribute("error", "Training session not found");
         Integer userId = Integer.parseInt(newSession.get("userId"));
         return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
+
+    ts.getExercises().forEach(exercise -> {
+        exercise.getTrainingSessions().remove(ts);
+        exerciseRepository.save(exercise);
+    });
+
+    trainingSessionRepo.delete(ts);
+    Integer userId = Integer.parseInt(newSession.get("userId"));
+    return "redirect:/trainingPlan/viewAll?userId=" + userId;
+}
+
 
 }

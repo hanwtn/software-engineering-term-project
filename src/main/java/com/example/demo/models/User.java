@@ -32,7 +32,7 @@ public class User {
     @JsonManagedReference
     private List<TrainingPlan> trainingPlans = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises = new ArrayList<>();
 
     // make method to add training plan

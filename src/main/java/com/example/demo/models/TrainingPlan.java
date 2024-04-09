@@ -111,16 +111,12 @@ public class TrainingPlan {
         trainingSession.setTrainingPlan(this);
     }
 
-    public void removeTrainingSession(TrainingSession trainingSession) {
-        trainingSessions.remove(trainingSession);
-    }
+   
 
     public List<TrainingSession> getTrainingSessions() {
         return trainingSessions;
     }
 
-    public void setTrainingSessions(List<TrainingSession> sessions) {
-        this.trainingSessions = sessions;
-    }
+    
 
 }
