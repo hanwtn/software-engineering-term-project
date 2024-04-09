@@ -203,20 +203,29 @@ public String updateTrainingSession(@PathVariable("tsid") int tsid,
     }
     trainingSession.setDaysOfWeek(daysOfWeek);
 
-    // Modify the existing list of exercises instead of replacing it
+    // Modify the existing list of exercises
     trainingSession.getExercises().clear();
     if (selectedExercises != null) {
         for (String exerciseId : selectedExercises) {
-            Exercise exercise = exerciseRepository.findById(Integer.parseInt(exerciseId))
+            Exercise originalExercise = exerciseRepository.findById(Integer.parseInt(exerciseId))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid exercise ID: " + exerciseId));
-            trainingSession.getExercises().add(exercise);
+            Exercise exerciseCopy = new Exercise(
+                originalExercise.getName(),
+                originalExercise.getDescription(),
+                originalExercise.getSets(),
+                originalExercise.getReps(),
+                originalExercise.getIntensity(),
+                originalExercise.getDuration()
+            );
+            exerciseCopy.setTrainingSession(trainingSession);
+            trainingSession.getExercises().add(exerciseCopy);
         }
     }
 
     trainingSessionRepo.save(trainingSession);
-    return "redirect:/dashboard";
-    //temporarily redirect to dashboard
-    //"redirect:/trainingPlan/viewAll?userId=" + userId
+    // Redirect to the viewAll page for the user
+    int userId = trainingSession.getTrainingPlan().getUser().getUid();
+    return "redirect:/trainingPlan/viewAll?userId=" + userId;
 }
 
 
