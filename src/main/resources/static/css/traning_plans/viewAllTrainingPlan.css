@@ -1,25 +1,23 @@
-/* General Resets */
+ 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', sans-serif; /* Roboto is a modern font */
+    font-family: 'Roboto', sans-serif;  
 }
 
-/* Body and html styling for a full height layout with modern fonts */
+ 
 body, html {
     height: 100%;
-    background-color: #f7f7f7; /* Light grey background for a modern look */
+    background-color: #f7f7f7;  
 }
-
-/* Modern looking container for the dashboard */
+ 
 .container {
     padding: 2% 5%;
     max-width: 1200px;
     margin: 0 auto;
 }
-
-/* Header with shadow for depth */
+ 
 .header {
     display: flex;
     justify-content: space-between;
@@ -38,7 +36,7 @@ body, html {
     padding-bottom: 20px;
 }
 
-/* Styling for account details and action cards with modern touches */
+ 
 .account-details, .actions .card {
     background-color: #ffffff;
     padding: 20px;
@@ -51,15 +49,15 @@ body, html {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-/* Buttons with modern colors and hover effects */
+
 .btn {
     display: inline-block;
     padding: 10px 20px;
     border-radius: 4px;
     margin-top: 10px;
     font-weight: bold;
-    border: none; /* Remove borders for a modern flat design */
-    transition: background-color 0.3s ease; /* Smooth transition for button hover */
+    border: none; 
+    transition: background-color 0.3s ease; 
 }
 
 .btn-danger {
