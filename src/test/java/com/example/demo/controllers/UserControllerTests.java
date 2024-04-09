@@ -51,5 +51,24 @@ public class UserControllerTests {
         assertEquals(201, response.getStatus());
     }
 
+    @Test
+    public void testRegisterUserExistingUsername() throws Exception {
+        String username = "existingUsername";
+        String password = "Password123!";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
+            .param("username", username)
+            .param("password", password)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)).andReturn();
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
+            .param("username", username)
+            .param("password", password)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+            .andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        assertEquals(409, response.getStatus());
+    }
+
     
 }
