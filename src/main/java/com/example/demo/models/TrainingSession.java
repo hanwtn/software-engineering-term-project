@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.sql.Time;
 
 @Entity
@@ -40,17 +41,28 @@ public class TrainingSession {
         this.daysOfWeek = new HashSet<>();
     }
 
-    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime,
-            String name) {
-        this.exercises = new ArrayList<>(exercises);
+    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime, String name) {
+        this.exercises = new ArrayList<>();
         this.daysOfWeek = new HashSet<>(dayOfWeeks);
         this.startTime = startTime;
         this.endTime = endTime;
         this.name = name;
-        for (Exercise exercise : this.exercises) {
-            exercise.setTrainingSession(this);  // Set the training session for each exercise
+    
+        // Create a copy of each exercise and add it to the training session
+        for (Exercise exercise : exercises) {
+            Exercise exerciseCopy = new Exercise(
+                exercise.getName(),
+                exercise.getDescription(),
+                exercise.getSets(),
+                exercise.getReps(),
+                exercise.getIntensity(),
+                exercise.getDuration()
+            );
+            exerciseCopy.setTrainingSession(this);
+            this.exercises.add(exerciseCopy);
         }
     }
+    
 
     public int getTsid() {
         return tsid;
@@ -90,6 +102,10 @@ public class TrainingSession {
                 exercises.remove(i);
             }
         }
+    }
+
+    public String getDaysOfWeekAsString() {
+    return String.join(", ", this.daysOfWeek.stream().map(Enum::name).collect(Collectors.toList()));
     }
 
     public Set<DayOfWeek> getDaysOfWeek() {

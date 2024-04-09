@@ -33,9 +33,8 @@
                 <p>Exercises:
                     <span th:each="exercise : ${s.exercises}" th:text="${exercise.name + ', '}" ></span>
                 </p>
-                <p>Days of Week:
-                    <span th:each="day : ${s.daysOfWeek}" th:text="${day + ', '}" ></span>
-                </p>
+                <p>Days of Week: <span th:text="${s.daysOfWeekAsString}"></span></p>
+                
                 <form th:action="@{/trainingSession/delete}" method="post">
                     <input type="hidden" name="tsid" th:value="${s.tsid}" />
                     <input type="hidden" name="userId" th:value="${user.uid}" />

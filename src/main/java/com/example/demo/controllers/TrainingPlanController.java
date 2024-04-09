@@ -56,7 +56,7 @@ public class TrainingPlanController {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Name or description are not provided");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "training_plans/addTrainingPlan";
         }
 
         // Check if user exists
@@ -64,7 +64,7 @@ public class TrainingPlanController {
             response.setStatus(404); // Not Found
             model.addAttribute("error", "User does not exist");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "training_plans/addTrainingPlan";
         }
 
         String startDateStr = newPlan.get("sdate");
@@ -74,7 +74,7 @@ public class TrainingPlanController {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date or end date is not provided");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "training_plans/addTrainingPlan";
         }
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
@@ -84,7 +84,7 @@ public class TrainingPlanController {
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Start date is after end date");
             model.addAttribute("userId", userId);
-            return "users/addTrainingPlan";
+            return "training_plans/addTrainingPlan";
         }
         // check if start date and end date are valid
         //TO DO: I think we should allow users to add start date and end dates before the current date, give them more freedom
@@ -134,7 +134,7 @@ public class TrainingPlanController {
             // Handling case where userId is not a valid integer
             response.setStatus(400); // Bad Request
             model.addAttribute("error", "Invalid User ID");
-            return "users/addTrainingPlan";
+            return "redirect:/dashboard";
         }
     }
 
@@ -154,7 +154,19 @@ public class TrainingPlanController {
                 }
             }
         }
+        for (TrainingPlan plan : trainingPlans) {
+            System.out.println("Plan: " + plan.getName());
+            for (TrainingSession session : plan.getTrainingSessions()) {
+                System.out.println("  Session: " + session.getName());
+                // Log the days of the week for each session
+                System.out.println("    Days of Week: " + session.getDaysOfWeek());
+                for (Exercise exercise : session.getExercises()) {
+                    System.out.println("    Exercise: " + exercise.getName());
+                }
+            }
+        }
         model.addAttribute("trainingPlans", trainingPlans);
+
 
         if (!trainingPlans.isEmpty()) {
             // Accessing the first training plan if the list is not empty

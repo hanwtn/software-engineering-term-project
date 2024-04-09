@@ -53,54 +53,57 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/add/submit")
-    public String addSession(@RequestParam Map<String, String> newSession,
-            @RequestParam("tpid") int tpid,
-            @RequestParam(value = "exercises", required = false) String[] selectedExercises,
-            HttpServletResponse response, Model model) {
+public String addSession(@RequestParam Map<String, String> newSession,
+        @RequestParam("tpid") int tpid,
+        @RequestParam(value = "exercises", required = false) String[] selectedExercises,
+        @RequestParam(value = "daysOfWeek[]", required = false) String[] daysOfWeekArray,
+        HttpServletResponse response, Model model) {
 
-        String name = newSession.get("name");
-        List<Exercise> exercises = new ArrayList<>();
-        System.out.println("Training add submit called");
-        if (selectedExercises != null) {
-            for (String exerciseId : selectedExercises) {
-                System.out.println("Selected Exercise ID: " + exerciseId);
-                Exercise exercise = exerciseRepository.findByEid(Integer.parseInt(exerciseId));
-                exercises.add(exercise);
-                // Log the details of the fetched exercise
-                System.out.println("Fetched Exercise: " + exercise.getName() + ", Sets: " + exercise.getSets() + ", Reps: " + exercise.getReps());
-            }
+    String name = newSession.get("name");
+    List<Exercise> exercises = new ArrayList<>();
+    System.out.println("Training add submit called");
+    if (selectedExercises != null) {
+        for (String exerciseId : selectedExercises) {
+            System.out.println("Selected Exercise ID: " + exerciseId);
+            Exercise exercise = exerciseRepository.findByEid(Integer.parseInt(exerciseId));
+            exercises.add(exercise);
+            // Log the details of the fetched exercise
+            System.out.println("Fetched Exercise: " + exercise.getName() + ", Sets: " + exercise.getSets() + ", Reps: " + exercise.getReps());
         }
-
-        // Default for now 
-        Time startTime = Time.valueOf("09:00:00");
-        Time endTime = Time.valueOf("10:00:00");
-
-        
-
-        // HardCoded for now :3
-        TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(tpid);
-
-        Set<DayOfWeek> daysOfWeek = Arrays.stream(newSession.get("daysOfWeek").split(","))
-                                       .map(DayOfWeek::valueOf)
-                                       .collect(Collectors.toSet());
-
-        // Check for overlapping days
-        for (TrainingSession session : trainingPlan.getTrainingSessions()) {
-            Set<DayOfWeek> existingDays = session.getDaysOfWeek();
-            if (!Collections.disjoint(daysOfWeek, existingDays)) {
-                model.addAttribute("error", "Overlapping days with existing sessions");
-                return "redirect:/trainingSession/add";
-            }
-        }
-
-        TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, startTime, endTime, name);
-
-        trainingPlan.addTrainingSession(newTrainingSession);
-        trainingPlanRepo.save(trainingPlan);
-        response.setStatus(200); // OK
-        Integer userId = Integer.parseInt(newSession.get("userId"));
-        return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
+
+    // Default for now 
+    Time startTime = Time.valueOf("09:00:00");
+    Time endTime = Time.valueOf("10:00:00");
+
+    // HardCoded for now :3
+    TrainingPlan trainingPlan = trainingPlanRepo.findBytpid(tpid);
+
+    Set<DayOfWeek> daysOfWeek = new HashSet<>();
+    if (daysOfWeekArray != null) {
+        daysOfWeek = Arrays.stream(daysOfWeekArray)
+                           .map(DayOfWeek::valueOf)
+                           .collect(Collectors.toSet());
+    }
+
+    // Check for overlapping days
+    for (TrainingSession session : trainingPlan.getTrainingSessions()) {
+        Set<DayOfWeek> existingDays = session.getDaysOfWeek();
+        if (!Collections.disjoint(daysOfWeek, existingDays)) {
+            model.addAttribute("error", "Overlapping days with existing sessions");
+            return "redirect:/trainingSession/add";
+        }
+    }
+
+    TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, startTime, endTime, name);
+
+    trainingPlan.addTrainingSession(newTrainingSession);
+    trainingPlanRepo.save(trainingPlan);
+    response.setStatus(200); // OK
+    Integer userId = Integer.parseInt(newSession.get("userId"));
+    return "redirect:/trainingPlan/viewAll?userId=" + userId;
+}
+
 
     @GetMapping("/trainingSession/add")
     public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
@@ -139,18 +142,23 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid, Model model) {
-        TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
+public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid, Model model) {
+    TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
 
-        if (ts == null) {
-            model.addAttribute("error", "Training session not found");
-            Integer userId = Integer.parseInt(newSession.get("userId"));
-            return "redirect:/trainingPlan/viewAll?userId=" + userId;// fix it
-        }
-
-        trainingSessionRepo.delete(ts);
+    if (ts == null) {
+        model.addAttribute("error", "Training session not found");
         Integer userId = Integer.parseInt(newSession.get("userId"));
         return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
+
+    // Before deleting the training session, remove all associations with exercises
+    ts.getExercises().clear();
+    trainingSessionRepo.save(ts); // Save the changes to remove the associations
+
+    trainingSessionRepo.delete(ts); // Now it's safe to delete the training session
+    Integer userId = Integer.parseInt(newSession.get("userId"));
+    return "redirect:/trainingPlan/viewAll?userId=" + userId;
+}
+
 
 }
