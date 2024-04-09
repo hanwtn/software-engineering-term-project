@@ -67,13 +67,14 @@ public class TrainingSessionController {
         Time endTime = Time.valueOf(endTimeString);
         String name = newSession.get("name");
         List<Exercise> exercises = new ArrayList<>();
-        Set<DayOfWeek> daysOfWeek;
-        if (daysOfWeekArray != null) {
-            daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
-                    .collect(Collectors.toSet());
-        } else {
-            daysOfWeek = null;
-        }
+        Set<DayOfWeek> daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf).collect(Collectors.toSet());
+
+        // if (daysOfWeekArray != null) {
+        //     daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
+        //             .collect(Collectors.toSet());
+        // } else {
+        //     daysOfWeek = null;
+        // }
 
         Validation validate = TrainingSessionService.validate(name, daysOfWeek, startTime, endTime);
         if (validate.isError) {
@@ -137,7 +138,7 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tpid") int tpid,
+    public String deleteTrainingSession(@RequestParam Map<String, String> newSession,
             @RequestParam("tsid") int tsid,
             Model model) {
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
@@ -147,10 +148,11 @@ public class TrainingSessionController {
             Integer userId = Integer.parseInt(newSession.get("userId"));
             return "redirect:/trainingPlan/viewAll?userId=" + userId;// fix it
         }
-        // remove in the training plan
-        TrainingPlan tp = trainingPlanRepo.findByTpid(tpid);
-        tp.removeTrainingSession(ts);
-        trainingPlanRepo.save(tp);
+        for (Exercise exercise : ts.getExercises()) {
+            exercise.setTrainingSession(null); 
+            exerciseRepository.save(exercise); 
+        }
+        trainingSessionRepo.delete(ts);
         Integer userId = Integer.parseInt(newSession.get("userId"));
         return "redirect:/trainingPlan/viewAll?userId=" + userId;
     }
