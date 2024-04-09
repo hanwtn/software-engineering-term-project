@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.sql.Time;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -51,15 +52,15 @@ public class TrainingSession {
         this.daysOfWeek = new HashSet<>();
     }
 
-    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime,
-            String name) {
-        this.exercises = new ArrayList<>(exercises);
+    public TrainingSession(List<Exercise> exercises, Set<DayOfWeek> dayOfWeeks, Time startTime, Time endTime, String name) {
+        this.exercises = new ArrayList<>();
         this.daysOfWeek = new HashSet<>(dayOfWeeks);
         this.startTime = startTime;
         this.endTime = endTime;
         this.name = name;
         exercises.forEach(exercise -> exercise.getTrainingSessions().add(this));
     }
+    
 
     public int getTsid() {
         return tsid;
@@ -110,6 +111,10 @@ public class TrainingSession {
     //         }
     //     }
     // }
+
+    public String getDaysOfWeekAsString() {
+    return String.join(", ", this.daysOfWeek.stream().map(Enum::name).collect(Collectors.toList()));
+    }
 
     public Set<DayOfWeek> getDaysOfWeek() {
         return daysOfWeek;

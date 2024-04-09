@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -162,5 +163,53 @@ public class TrainingPlanController {
         }
         return "redirect:/trainingPlan/viewAll";
     }
+
+    @GetMapping("/trainingPlan/edit/{tpid}")
+    public String editTrainingPlanForm(@PathVariable("tpid") int tpid, Model model) {
+        TrainingPlan trainingPlan = trainingPlanRepo.findById(tpid)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid training plan ID: " + tpid));
+        model.addAttribute("trainingPlan", trainingPlan);
+        return "training_plans/editTrainingPlan";
+    }
+
+    @PostMapping("/trainingPlan/edit/{tpid}")
+    public String updateTrainingPlan(@PathVariable("tpid") int tpid,
+            @RequestParam Map<String, String> updatedPlan, Model model) {
+        TrainingPlan trainingPlan = trainingPlanRepo.findById(tpid)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid training plan ID: " + tpid));
+
+        String newName = updatedPlan.get("name");
+        String newDesc = updatedPlan.get("description");
+        String newStartDateStr = updatedPlan.get("startDate");
+        String newEndDateStr = updatedPlan.get("endDate");
+
+        // Validate input data
+        if (newName == null || newName.isEmpty() || newDesc == null || newDesc.isEmpty() ||
+                newStartDateStr == null || newStartDateStr.isEmpty() || newEndDateStr == null || newEndDateStr.isEmpty()) {
+            model.addAttribute("error", "All fields are required.");
+            model.addAttribute("trainingPlan", trainingPlan);
+            return "training_plans/editTrainingPlan";
+        }
+
+        LocalDate newStartDate = LocalDate.parse(newStartDateStr);
+        LocalDate newEndDate = LocalDate.parse(newEndDateStr);
+
+        if (newStartDate.isAfter(newEndDate)) {
+            model.addAttribute("error", "Start date must be before end date.");
+            model.addAttribute("trainingPlan", trainingPlan);
+            return "training_plans/editTrainingPlan";
+        }
+
+        // Update training plan
+        trainingPlan.setName(newName);
+        trainingPlan.setDescription(newDesc);
+        trainingPlan.setStartDate(newStartDate);
+        trainingPlan.setEndDate(newEndDate);
+
+        trainingPlanRepo.save(trainingPlan);
+        return "redirect:/trainingPlan/viewAll?userId=" + trainingPlan.getUser().getUid();
+    }
+
+
 
 }
