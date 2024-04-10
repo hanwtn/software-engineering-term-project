@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.models.Exercise;
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
