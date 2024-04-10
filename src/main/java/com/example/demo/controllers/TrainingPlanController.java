@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -172,6 +173,11 @@ public class TrainingPlanController {
         TrainingPlan trainingPlan = trainingPlanRepo.findById(tpid)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid training plan ID: " + tpid));
         model.addAttribute("trainingPlan", trainingPlan);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDateStr = trainingPlan.getStartDate().format(format);
+        String endDateStr = trainingPlan.getEndDate().format(format);
+        model.addAttribute("sDate", startDateStr);
+        model.addAttribute("eDate", endDateStr);
         return "training_plans/editTrainingPlan";
     }
 
@@ -196,6 +202,8 @@ public class TrainingPlanController {
             response.setStatus(validate.status);
             model.addAttribute("trainingPlan", trainingPlan);
             model.addAttribute("error", validate.message);
+            model.addAttribute("sDate", newStartDateStr);
+            model.addAttribute("eDate", newEndDateStr);
             return "training_plans/editTrainingPlan";
         }
 

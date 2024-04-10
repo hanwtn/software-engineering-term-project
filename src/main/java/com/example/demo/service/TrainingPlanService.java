@@ -58,7 +58,8 @@ public class TrainingPlanService {
         // endDate not before start date
         LocalDate startDate = LocalDate.parse(sDate);
         LocalDate endDate = LocalDate.parse(eDate);
-        if (startDate.isAfter(endDate)) {
+        boolean invalidDates = !startDate.isBefore(endDate);
+        if (invalidDates) {
             return new Validation(400, "Start date must be before end date.");
         }
         // User exists in repository
