@@ -21,12 +21,19 @@
 </head>
 
 <body>
-
     <div class="container mt-5">
+        
        
 
         <nav class="navbar">
-            <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
+            <div class="nav-container">
+            <div class="left-container">
+                <h1>ShapeUp</h1>
+            </div>
+            <div class="right-container">
+                <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
+            </div>
+        </div>
             <div class="nav-menu" id="nav-menu">
 
                 <div class="mt-4">
@@ -63,7 +70,33 @@
 
             </div>
         </nav>
-        </div>
+
+        
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ensure that the menu is initially closed
+            var navMenu = document.getElementById('nav-menu');
+            navMenu.style.display = 'none';
+
+            var bodyContent = document.querySelector('.bodyContent');
+            bodyContent.style.display = 'block';
+
+            // Toggle menu display when the button is clicked
+            document.getElementById('nav-toggle').addEventListener('click', function () {
+                navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Toggle body content display when the button is clicked
+            document.getElementById('nav-toggle').addEventListener('click', function () {
+                var bodyContent = document.querySelector('.bodyContent');
+                bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+    </script>
+
 
     <main class="container bodyContent">
 
@@ -132,23 +165,7 @@
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Ensure that the menu is initially closed
-            var navMenu = document.getElementById('nav-menu');
-            navMenu.style.display = 'none';
 
-            var bodyContent = document.querySelector('.bodyContent');
-            bodyContent.style.display = 'block';
-
-            // Toggle menu display and body content display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function () {
-                navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
-                var bodyContent = document.querySelector('.container');
-                bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
-            });
-        });
-    </script>
 </body>
 
 </html>

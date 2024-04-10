@@ -9,7 +9,7 @@
 /* Body and html styling for a full height layout with modern fonts */
 body, html {
     height: 100%;
-    background-color: #f7f7f7; /* Light grey background for a modern look */
+    background-color: #ffffff; /* Light grey background for a modern look */
 }
 
 /* Modern looking container for the dashboard */
@@ -103,5 +103,50 @@ input[type="text"], select, button {
 
 
 .nav-toggle {
-    background-color: #007bff;
+    background-color: #7db5ff;
 }
+
+.nav-container {
+    display: flex;
+    padding: 0 20px;
+}
+
+.left-container, .right-container {
+    flex: 1;
+}
+
+.right-container {
+    display: flex;
+    justify-content: flex-end;
+    
+}
+
+.nav-toggle {
+    cursor: pointer;
+    width: 110px;
+}
+
+.nav-menu {
+    display: none;
+}
+
+.nav-menu.active {
+    display: block;
+}
+
+.actions button {
+    cursor: pointer;
+}
+
+.fc .fc-button .fc-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fc-button .fc-icon {
+    display: flex; 
+    padding: 10px;
+}
+
+

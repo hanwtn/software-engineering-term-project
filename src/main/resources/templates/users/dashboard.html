@@ -118,10 +118,18 @@
 
 <body>
     <div class="container mt-5">
+        
        
 
         <nav class="navbar">
-            <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
+            <div class="nav-container">
+            <div class="left-container">
+                <h1>ShapeUp</h1>
+            </div>
+            <div class="right-container">
+                <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
+            </div>
+        </div>
             <div class="nav-menu" id="nav-menu">
 
                 <div class="mt-4">
@@ -159,11 +167,12 @@
             </div>
         </nav>
 
-        <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
+        
 
     </div>
 
     <div class="bodyContent">
+        <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
 
         <div class="dropdown-container">
             <label for="training-plan-selector">Select a Training Plan:</label>

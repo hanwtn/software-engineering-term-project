@@ -11,10 +11,18 @@
 <body>
     <div class="container">
         <div class="container mt-5">
+        
        
 
             <nav class="navbar">
-                <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
+                <div class="nav-container">
+                <div class="left-container">
+                    <h1>ShapeUp</h1>
+                </div>
+                <div class="right-container">
+                    <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
+                </div>
+            </div>
                 <div class="nav-menu" id="nav-menu">
     
                     <div class="mt-4">
@@ -51,8 +59,35 @@
     
                 </div>
             </nav>
-            </div>
+    
             
+    
+        </div>
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Ensure that the menu is initially closed
+                var navMenu = document.getElementById('nav-menu');
+                navMenu.style.display = 'none';
+    
+                var bodyContent = document.querySelector('.bodyContent');
+                bodyContent.style.display = 'block';
+    
+                // Toggle menu display when the button is clicked
+                document.getElementById('nav-toggle').addEventListener('click', function () {
+                    navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
+                });
+    
+                // Toggle body content display when the button is clicked
+                document.getElementById('nav-toggle').addEventListener('click', function () {
+                    var bodyContent = document.querySelector('.bodyContent');
+                    bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+        </script>
+    
+        <div class="bodyContent">
+
         <h1>Edit Training Plan</h1>
         <form th:action="@{/trainingPlan/edit}" th:object="${trainingPlan}" method="post">
             <div class="mb-3">
@@ -79,6 +114,7 @@
             <input type="hidden" name="tpid" th:value="${trainingPlan.tpid}" />
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
+    </div>
     </div>
 </body>
 
