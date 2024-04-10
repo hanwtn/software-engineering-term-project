@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 import com.example.demo.models.Exercise;
 import com.example.demo.models.ExerciseRepository;
 import com.example.demo.models.TrainingPlan;
@@ -43,7 +42,6 @@ public class TrainingSessionController {
     private TrainingSessionRepository trainingSessionRepo;
     @Autowired
     private ExerciseRepository exerciseRepository;
-    
 
     @GetMapping("/trainingSession/add")
     public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
@@ -69,13 +67,15 @@ public class TrainingSessionController {
         Time endTime = Time.valueOf(endTimeString);
         String name = newSession.get("name");
         List<Exercise> exercises = new ArrayList<>();
-        Set<DayOfWeek> daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf).collect(Collectors.toSet());
-        
+        Set<DayOfWeek> daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
+                .collect(Collectors.toSet());
+
         // if (daysOfWeekArray != null) {
-        //     daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
-        //             .collect(Collectors.toSet());
+        // daysOfWeek =
+        // Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
+        // .collect(Collectors.toSet());
         // } else {
-        //     daysOfWeek = null;
+        // daysOfWeek = null;
         // }
 
         Validation validate = TrainingSessionService.validate(name, daysOfWeek, startTime, endTime);
@@ -108,14 +108,15 @@ public class TrainingSessionController {
         }
 
         TrainingPlan trainingPlan = trainingPlanRepo.findByTpid(tpid);
-        
-        TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, Time.valueOf(startTimeString), Time.valueOf(endTimeString), newSession.get("name"));
-        
+
+        TrainingSession newTrainingSession = new TrainingSession(exercises, daysOfWeek, Time.valueOf(startTimeString),
+                Time.valueOf(endTimeString), newSession.get("name"));
+
         trainingPlan.addTrainingSession(newTrainingSession);
         if (selectedExercises != null) {
             for (String exerciseId : selectedExercises) {
                 Exercise exercise = exerciseRepository.findById(Integer.parseInt(exerciseId))
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid exercise ID: " + exerciseId));
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid exercise ID: " + exerciseId));
                 newTrainingSession.addExercise(exercise);
                 exercise.addTrainingSession(newTrainingSession);
             }
@@ -148,71 +149,68 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/trainingSession/delete")
-public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid, Model model) {
-    TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
+    public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid,
+            Model model) {
+        TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
 
-    if (ts == null) {
-        model.addAttribute("error", "Training session not found");
-        Integer userId = Integer.parseInt(newSession.get("userId"));
-        return "redirect:/trainingPlan/viewAll?userId=" + userId;
+        if (ts == null) {
+            model.addAttribute("error", "Training session not found");
+            Integer userId = Integer.parseInt(newSession.get("userId"));
+            return "redirect:/trainingPlan/viewAll?userId=" + userId;
+        }
+
+        ts.getExercises().forEach(exercise -> {
+            exercise.getTrainingSessions().remove(ts);
+            exerciseRepository.save(exercise);
+        });
+
+        trainingSessionRepo.delete(ts);
+        return "redirect:/trainingPlan/viewAll";
     }
 
-    ts.getExercises().forEach(exercise -> {
-        exercise.getTrainingSessions().remove(ts);
-        exerciseRepository.save(exercise);
-    });
+    @GetMapping("/trainingSession/edit/{tsid}")
+    public String editTrainingSessionForm(@PathVariable("tsid") int tsid, Model model) {
+        TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
 
-    trainingSessionRepo.delete(ts);
-    Integer userId = Integer.parseInt(newSession.get("userId"));
-    return "redirect:/trainingPlan/viewAll?userId=" + userId;
-}
-
-@GetMapping("/trainingSession/edit/{tsid}")
-public String editTrainingSessionForm(@PathVariable("tsid") int tsid, Model model) {
-    TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
-        
-    model.addAttribute("trainingSession", trainingSession);
-    model.addAttribute("allExercises", exerciseRepository.findAll());
-    return "training_sessions/editTrainingSession";
-}
-
-@PostMapping("/trainingSession/edit/{tsid}")
-public String updateTrainingSession(@PathVariable("tsid") int tsid,
-        @RequestParam Map<String, String> updatedSession,
-        @RequestParam(value = "exercises", required = false) List<Integer> selectedExerciseIds,
-        @RequestParam(value = "daysOfWeek[]", required = false) Set<DayOfWeek> daysOfWeek,
-        Model model) {
-    
-    TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
-    Time startTime = Time.valueOf(updatedSession.get("startTime"));
-    Time endTime = Time.valueOf(updatedSession.get("endTime"));
-
-    if (endTime.before(startTime)) {
-        model.addAttribute("error", "End Time must be after Start Time.");
         model.addAttribute("trainingSession", trainingSession);
         model.addAttribute("allExercises", exerciseRepository.findAll());
-        return "training_sessions/editTrainingSession"; 
-    }       
-    trainingSession.setName(updatedSession.get("name"));
-    trainingSession.setStartTime(Time.valueOf(updatedSession.get("startTime")));
-    trainingSession.setEndTime(Time.valueOf(updatedSession.get("endTime")));
-    trainingSession.setDaysOfWeek(daysOfWeek);
-
-    trainingSession.getExercises().clear(); 
-    if (selectedExerciseIds != null) {
-        List<Exercise> selectedExercises = exerciseRepository.findAllById(selectedExerciseIds);
-        trainingSession.setExercises(selectedExercises); 
+        return "training_sessions/editTrainingSession";
     }
 
-    trainingSessionRepo.save(trainingSession);
+    @PostMapping("/trainingSession/edit/{tsid}")
+    public String updateTrainingSession(@PathVariable("tsid") int tsid,
+            @RequestParam Map<String, String> updatedSession,
+            @RequestParam(value = "exercises", required = false) List<Integer> selectedExerciseIds,
+            @RequestParam(value = "daysOfWeek[]", required = false) Set<DayOfWeek> daysOfWeek,
+            Model model) {
 
-    int userId = trainingSession.getTrainingPlan().getUser().getUid();
-    return "redirect:/trainingPlan/viewAll?userId=" + userId;
-}
+        TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
+        Time startTime = Time.valueOf(updatedSession.get("startTime"));
+        Time endTime = Time.valueOf(updatedSession.get("endTime"));
 
+        if (endTime.before(startTime)) {
+            model.addAttribute("error", "End Time must be after Start Time.");
+            model.addAttribute("trainingSession", trainingSession);
+            model.addAttribute("allExercises", exerciseRepository.findAll());
+            return "training_sessions/editTrainingSession";
+        }
+        trainingSession.setName(updatedSession.get("name"));
+        trainingSession.setStartTime(Time.valueOf(updatedSession.get("startTime")));
+        trainingSession.setEndTime(Time.valueOf(updatedSession.get("endTime")));
+        trainingSession.setDaysOfWeek(daysOfWeek);
 
+        trainingSession.getExercises().clear();
+        if (selectedExerciseIds != null) {
+            List<Exercise> selectedExercises = exerciseRepository.findAllById(selectedExerciseIds);
+            trainingSession.setExercises(selectedExercises);
+        }
 
+        trainingSessionRepo.save(trainingSession);
+
+        int userId = trainingSession.getTrainingPlan().getUser().getUid();
+        return "redirect:/trainingPlan/viewAll?userId=" + userId;
+    }
 
 }
