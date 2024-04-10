@@ -125,7 +125,7 @@
             <div class="nav-menu" id="nav-menu">
 
                 <div class="mt-4">
-                    <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account
+                    <a th:href="@{/accDetails}" class="btn btn-secondary">View/Edit Account
                         Details</a>
                 </div>
                 <div class="mt-2">
@@ -139,27 +139,23 @@
                 <div class="actions">
                     <div class="card">
                         <form action="/dashboard" method="get">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">Dashboard</button>
                         </form>
                     </div>
 
                     <div class="card">
                         <form action="/trainingPlan/viewAll" method="get">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">View Training Plans</button>
                         </form>
                     </div>
 
                     <div class="card">
                         <form action="/exercise/view" method="get">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">View My Exercise</button>
                         </form>
                     </div>
                     <div class="card">
                         <form action="/exercise/add" method="post">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">Add Exercise</button>
                         </form>
                     </div>

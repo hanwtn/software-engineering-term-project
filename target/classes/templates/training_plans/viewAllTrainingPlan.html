@@ -85,7 +85,8 @@
                             <span th:each="day : ${s.daysOfWeek}" th:text="${day + ', '}"></span>
                         </p>
                         <!-- Edit Session Button -->
-                        <form th:action="@{/trainingSession/edit/{tsid}(tsid=${s.tsid})}" method="get">
+                        <form th:action="@{/trainingSession/edit}" method="get">
+                            <input type="hidden" name="tsid" th:value="${s.tsid}" />
                             <button type="submit" class="btn btn-primary">Edit Session</button>
                         </form>
                         <form th:action="@{/trainingSession/delete}" method="post">
@@ -99,7 +100,8 @@
                         <input type="hidden" name="tpid" th:value="${plan.tpid}" />
                         <button type="submit">Add Training Session</button>
                     </form>
-                    <form th:action="@{/trainingPlan/edit/{tpid}(tpid=${plan.tpid})}" method="get">
+                    <form th:action="@{/trainingPlan/edit}" method="get">
+                        <input type="hidden" name="tpid" th:value="${plan.tpid}" />
                         <button type="submit" class="btn btn-primary">Edit Training Plan</button>
                     </form>
                     <form th:action="@{/trainingPlan/delete}" method="post">

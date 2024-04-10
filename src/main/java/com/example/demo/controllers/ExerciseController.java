@@ -31,12 +31,10 @@ public class ExerciseController {
 
     @GetMapping("/exercise/view")
     public String showExercises(HttpSession session, Model model) {
-        Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) {
-            // User is not logged in, redirect to login page
+        if (session.getAttribute("userId") == null) {
             return "redirect:/login";
         }
-
+        Integer userId = (Integer) session.getAttribute("userId");
         User user = userRepo.findById(userId).orElse(null);
         if (user == null) {
             // User not found, handle this case appropriately
@@ -52,14 +50,12 @@ public class ExerciseController {
         return "exercises/viewExercise";
     }
 
-    // Shouldn't this be a Get mapping(?)
     @PostMapping("/exercise/add")
     public String addExercise(HttpSession session, Model model) {
-        Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) {
-            // User is not logged in, redirect to login page
+        if (session.getAttribute("userId") == null) {
             return "redirect:/login";
         }
+        Integer userId = (Integer) session.getAttribute("userId");
         User user = userRepo.findById(userId).orElse(null);
         if (user == null) {
             // User not found, handle this case appropriately
@@ -72,11 +68,10 @@ public class ExerciseController {
     @PostMapping("/exercise/add/submit")
     public String addExerciseSubmit(@RequestParam Map<String, String> newExercise, HttpSession session,
             HttpServletResponse response, Model model) {
-        Integer userId = (Integer) session.getAttribute("userId");
-        // Check if user is logged in
-        if (userId == null) {
+        if (session.getAttribute("userId") == null) {
             return "redirect:/login";
         }
+        Integer userId = (Integer) session.getAttribute("userId");
         User user = userRepo.findById(userId).orElse(null);
         if (user == null) {
             // User not found, handle this case appropriately
@@ -129,12 +124,10 @@ public class ExerciseController {
 
     @PostMapping("/exercise/delete")
     public String deleteExercise(@RequestParam("eid") int exerciseId, HttpSession session, Model model) {
-        Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) {
-            // User is not logged in, redirect to login page
+        if (session.getAttribute("userId") == null) {
             return "redirect:/login";
         }
-
+        Integer userId = (Integer) session.getAttribute("userId");
         User user = userRepo.findById(userId).orElse(null);
         if (user == null) {
             // User not found, redirect to login page

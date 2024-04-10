@@ -47,6 +47,10 @@ public class TrainingSessionController {
     public String trainingSessionAdd(@RequestParam("tpid") int tpid, HttpSession session,
             HttpServletResponse response,
             Model model) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("tpid", tpid);
         String search = "";
         List<Exercise> allExercises = exerciseRepository.findByNameIgnoreCaseContaining(search);
@@ -61,8 +65,12 @@ public class TrainingSessionController {
             HttpServletResponse response, Model model,
             @RequestParam("startTime") String startTimeString,
             @RequestParam("endTime") String endTimeString,
-            @RequestParam(value = "daysOfWeek", required = false) String[] daysOfWeekArray) {
-
+            @RequestParam(value = "daysOfWeek", required = false) String[] daysOfWeekArray,
+            HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         Time startTime = Time.valueOf(startTimeString);
         Time endTime = Time.valueOf(endTimeString);
         String name = newSession.get("name");
@@ -123,13 +131,16 @@ public class TrainingSessionController {
         }
         trainingPlanRepo.save(trainingPlan);
         response.setStatus(200); // OK
-        return "redirect:/dashboard";
+        return "redirect:/trainingPlan/viewAll";
     }
 
     @GetMapping("/trainingSession/add/search")
     public String trainingSessionSearch(@RequestParam Map<String, String> newUser, HttpServletResponse response,
-            Model model) {
-        Integer userId = Integer.parseInt(newUser.get("userId"));
+            Model model, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         String search = newUser.get("search");
         User user = userRepo.findByUid(userId);
         model.addAttribute("user", user);
@@ -140,7 +151,11 @@ public class TrainingSessionController {
 
     @GetMapping("/trainingSession/view")
     public String viewTrainingSessionView(@RequestParam Map<String, String> newSession, HttpServletResponse response,
-            Model model) {
+            Model model, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         List<TrainingSession> trainingSessions = trainingSessionRepo.findAll();
         model.addAttribute("trainingSessions", trainingSessions);
         System.out.println("HERE");
@@ -150,13 +165,16 @@ public class TrainingSessionController {
 
     @PostMapping("/trainingSession/delete")
     public String deleteTrainingSession(@RequestParam Map<String, String> newSession, @RequestParam("tsid") int tsid,
-            Model model) {
+            Model model, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         TrainingSession ts = trainingSessionRepo.findBytsid(tsid);
 
         if (ts == null) {
             model.addAttribute("error", "Training session not found");
-            Integer userId = Integer.parseInt(newSession.get("userId"));
-            return "redirect:/trainingPlan/viewAll?userId=" + userId;
+            return "redirect:/trainingPlan/viewAll";
         }
 
         ts.getExercises().forEach(exercise -> {
@@ -168,8 +186,12 @@ public class TrainingSessionController {
         return "redirect:/trainingPlan/viewAll";
     }
 
-    @GetMapping("/trainingSession/edit/{tsid}")
-    public String editTrainingSessionForm(@PathVariable("tsid") int tsid, Model model) {
+    @GetMapping("/trainingSession/edit")
+    public String editTrainingSessionForm(@RequestParam("tsid") int tsid, Model model, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
 
@@ -178,27 +200,32 @@ public class TrainingSessionController {
         return "training_sessions/editTrainingSession";
     }
 
-    @PostMapping("/trainingSession/edit/{tsid}")
-    public String updateTrainingSession(@PathVariable("tsid") int tsid,
+    @PostMapping("/trainingSession/edit")
+    public String updateTrainingSession(@RequestParam("tsid") int tsid,
             @RequestParam Map<String, String> updatedSession,
             @RequestParam(value = "exercises", required = false) List<Integer> selectedExerciseIds,
             @RequestParam(value = "daysOfWeek[]", required = false) Set<DayOfWeek> daysOfWeek,
-            Model model) {
-
+            Model model, HttpSession session) {
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
         TrainingSession trainingSession = trainingSessionRepo.findById(tsid)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid training session ID: " + tsid));
+        String name = updatedSession.get("name");
         Time startTime = Time.valueOf(updatedSession.get("startTime"));
         Time endTime = Time.valueOf(updatedSession.get("endTime"));
 
-        if (endTime.before(startTime)) {
-            model.addAttribute("error", "End Time must be after Start Time.");
+        Validation validate = TrainingSessionService.validate(name, daysOfWeek, startTime, endTime);
+        if (validate.isError) {
+            model.addAttribute("error", validate.message);
             model.addAttribute("trainingSession", trainingSession);
             model.addAttribute("allExercises", exerciseRepository.findAll());
             return "training_sessions/editTrainingSession";
         }
-        trainingSession.setName(updatedSession.get("name"));
-        trainingSession.setStartTime(Time.valueOf(updatedSession.get("startTime")));
-        trainingSession.setEndTime(Time.valueOf(updatedSession.get("endTime")));
+
+        trainingSession.setName(name);
+        trainingSession.setStartTime(startTime);
+        trainingSession.setEndTime(endTime);
         trainingSession.setDaysOfWeek(daysOfWeek);
 
         trainingSession.getExercises().clear();
@@ -209,8 +236,7 @@ public class TrainingSessionController {
 
         trainingSessionRepo.save(trainingSession);
 
-        int userId = trainingSession.getTrainingPlan().getUser().getUid();
-        return "redirect:/trainingPlan/viewAll?userId=" + userId;
+        return "redirect:/trainingPlan/viewAll";
     }
 
 }

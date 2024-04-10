@@ -17,7 +17,7 @@
         <div class="nav-menu" id="nav-menu">
 
             <div class="mt-4">
-                <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
+                <a th:href="@{/accDetails}" class="btn btn-secondary">View/Edit Account Details</a>
             </div>
             <div class="mt-2">
                 <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
@@ -30,31 +30,26 @@
             <div class="actions">
                 <div class="card">
                     <form action="/dashboard" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">Dashboard</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/trainingPlan/viewAll" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">View Training Plans</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/trainingPlan/add" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">Add Training Plan</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/exercise/view" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">View Exercise</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/exercise/add" method="post">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">Add Exercise</button>
                     </form>
                 </div>
@@ -62,9 +57,9 @@
 
         </div>
     </nav>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Ensure that the menu is initially closed
             var navMenu = document.getElementById('nav-menu');
             navMenu.style.display = 'none';
@@ -73,12 +68,12 @@
             bodyContent.style.display = 'block';
 
             // Toggle menu display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function() {
+            document.getElementById('nav-toggle').addEventListener('click', function () {
                 navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
             });
 
             // Toggle body content display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function() {
+            document.getElementById('nav-toggle').addEventListener('click', function () {
                 var bodyContent = document.querySelector('.bodyContent');
                 bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
             });
@@ -88,26 +83,27 @@
     <div class="bodyContent">
 
 
-    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
-    <form th:action="@{/accEdit/{userId}(userId=${user.uid})}" th:object="${user}" method="post">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Enter Username">
-        </div>
+        <form th:action="@{/accEdit}" th:object="${user}" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" th:field="*{username}"
+                    placeholder="Enter Username">
+            </div>
 
-        <div class="form-group">
-            <label for="weight">Weight</label>
-            <input type="number" class="form-control" id="weight" th:field="*{weight}" placeholder="Enter weight">
-        </div>
-        <div class="form-group">
-            <label for="height">Height</label>
-            <input type="number" class="form-control" id="height" th:field="*{height}" placeholder="Enter height">
-        </div>
-        <button type="submit" class="btn btn-primary">Update Account</button>
-    </form>
+            <div class="form-group">
+                <label for="weight">Weight</label>
+                <input type="number" class="form-control" id="weight" th:field="*{weight}" placeholder="Enter weight">
+            </div>
+            <div class="form-group">
+                <label for="height">Height</label>
+                <input type="number" class="form-control" id="height" th:field="*{height}" placeholder="Enter height">
+            </div>
+            <button type="submit" class="btn btn-primary">Update Account</button>
+        </form>
 
-</div>
+    </div>
 
 </body>
 

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -188,15 +187,15 @@ public class UsersController {
         }
     }
 
-    @GetMapping("/accEdit/{userId}")
-    public String editAccountForm(@PathVariable("userId") Integer uId, HttpSession session, Model model,
+    @GetMapping("/accEdit")
+    public String editAccountForm(HttpSession session, Model model,
             HttpServletRequest request) {
-        Integer sessionUid = (Integer) session.getAttribute("userId");
-        if (sessionUid == null || !sessionUid.equals(uId)) {
+        if (session.getAttribute("userId") == null) {
             return "redirect:/login";
         }
+        Integer userId = (Integer) session.getAttribute("userId");
 
-        Optional<User> uOptional = userRepo.findById(uId);
+        Optional<User> uOptional = userRepo.findById(userId);
         if (!uOptional.isPresent()) {
             return "redirect:/login";
         }
@@ -205,13 +204,13 @@ public class UsersController {
         return "users/accEdit";
     }
 
-    @PostMapping("/accEdit/{userId}")
-    public String updateAccount(@PathVariable("userId") Integer uId, @RequestParam Map<String, String> params,
+    @PostMapping("/accEdit")
+    public String updateAccount(@RequestParam Map<String, String> params,
             HttpSession session, RedirectAttributes redirectAttributes) {
-        Integer sessionUid = (Integer) session.getAttribute("userId");
-        if (sessionUid == null || !sessionUid.equals(uId)) {
+        if (session.getAttribute("userId") == null) {
             return "redirect:/login";
         }
+        Integer uId = (int) session.getAttribute("userId");
 
         User user = userRepo.findById(uId).orElse(null);
         if (user == null) {
@@ -221,21 +220,24 @@ public class UsersController {
         if (!user.getUsername().equals(newUname) && userRepo.existsByUsername(newUname)) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Username already exists. Please choose a different username.");
-            return "redirect:/accEdit/" + uId;
+            return "redirect:/accEdit";
         }
 
         user.setUsername(params.get("username"));
         user.setWeight(Double.valueOf(params.get("weight")));
         user.setHeight(Double.valueOf(params.get("height")));
         userService.saveUser(user);
-        return "redirect:/accDetails/" + uId;
+        return "redirect:/accDetails";
     }
 
     @GetMapping("/accDetails")
     public String accountDetails(HttpSession session, Model model) {
-        Integer Uid = (Integer) session.getAttribute("userId");
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
 
-        Optional<User> userOptional = userRepo.findById(Uid);
+        Optional<User> userOptional = userRepo.findById(userId);
         if (!userOptional.isPresent()) {
             return "redirect:/login";
         }

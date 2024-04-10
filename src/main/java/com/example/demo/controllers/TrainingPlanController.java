@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -133,16 +132,15 @@ public class TrainingPlanController {
         } else {
             System.out.println("Attempted to add training plan to a null User.");
         }
-        return "redirect:/dashboard";
+        return "redirect:/trainingPlan/viewAll";
     }
 
     @PostMapping("/trainingPlan/delete")
     public String deleteTrainingPlan(@RequestParam Map<String, String> deleteForm, Model model, HttpSession session) {
-        // check if user is logged in
         if (session.getAttribute("userId") == null) {
             return "redirect:/login";
         }
-        int userId = (int) session.getAttribute("userId");
+        Integer userId = (Integer) session.getAttribute("userId");
         int tpid = Integer.parseInt(deleteForm.get("tpid"));
 
         User user = userRepo.findByUid(userId);
@@ -166,30 +164,38 @@ public class TrainingPlanController {
         return "redirect:/trainingPlan/viewAll";
     }
 
-    @GetMapping("/trainingPlan/edit/{tpid}")
-    public String editTrainingPlanForm(@PathVariable("tpid") int tpid, Model model) {
+    @GetMapping("/trainingPlan/edit")
+    public String editTrainingPlanForm(@RequestParam("tpid") int tpid, Model model, HttpSession session) {
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
         TrainingPlan trainingPlan = trainingPlanRepo.findById(tpid)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid training plan ID: " + tpid));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid training plan ID: " + tpid));
         model.addAttribute("trainingPlan", trainingPlan);
         return "training_plans/editTrainingPlan";
     }
 
-    @PostMapping("/trainingPlan/edit/{tpid}")
-    public String updateTrainingPlan(@PathVariable("tpid") int tpid,
-            @RequestParam Map<String, String> updatedPlan, Model model) {
+    @PostMapping("/trainingPlan/edit")
+    public String updateTrainingPlan(@RequestParam("tpid") int tpid,
+            @RequestParam Map<String, String> updatedPlan, Model model, HttpSession session,
+            HttpServletResponse response) {
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
         TrainingPlan trainingPlan = trainingPlanRepo.findById(tpid)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid training plan ID: " + tpid));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid training plan ID: " + tpid));
 
         String newName = updatedPlan.get("name");
         String newDesc = updatedPlan.get("description");
         String newStartDateStr = updatedPlan.get("startDate");
         String newEndDateStr = updatedPlan.get("endDate");
 
-        // Validate input data
-        if (newName == null || newName.isEmpty() || newDesc == null || newDesc.isEmpty() ||
-                newStartDateStr == null || newStartDateStr.isEmpty() || newEndDateStr == null || newEndDateStr.isEmpty()) {
-            model.addAttribute("error", "All fields are required.");
+        Validation validate = TrainingPlanService.validateTrainingPlan(userRepo, (int) session.getAttribute("userId"),
+                newName, newDesc, newStartDateStr, newEndDateStr);
+        if (validate.isError) {
+            response.setStatus(validate.status);
             model.addAttribute("trainingPlan", trainingPlan);
+            model.addAttribute("error", validate.message);
             return "training_plans/editTrainingPlan";
         }
 
@@ -209,9 +215,7 @@ public class TrainingPlanController {
         trainingPlan.setEndDate(newEndDate);
 
         trainingPlanRepo.save(trainingPlan);
-        return "redirect:/trainingPlan/viewAll?userId=" + trainingPlan.getUser().getUid();
+        return "redirect:/trainingPlan/viewAll";
     }
-
-
 
 }
