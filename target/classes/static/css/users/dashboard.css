@@ -19,6 +19,15 @@ body, html {
     margin: 0 auto;
 }
 
+.nav-toggle {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 /* Header with shadow for depth */
 .header {
     display: flex;
