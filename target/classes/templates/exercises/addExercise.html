@@ -21,52 +21,82 @@
 </head>
 
 <body>
+    <div class="container mt-5">
+        
+       
 
-    <nav class="navbar">
-        <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
-        <div class="nav-menu" id="nav-menu">
-
-            <div class="mt-4">
-                <a th:href="@{/accDetails}" class="btn btn-secondary">View/Edit Account Details</a>
+        <nav class="navbar">
+            <div class="nav-container">
+            <div class="left-container">
+                <h1>ShapeUp</h1>
             </div>
-            <div class="mt-2">
-                <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
+            <div class="right-container">
+                <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
             </div>
-
-            <div class="mt-3">
-                <a th:href="@{/dashboard}" class="btn btn-danger">Home</a>
-            </div>
-
-            <div class="actions">
-                <div class="card">
-                    <form action="/dashboard" method="get">
-                        <button type="submit" class="btn btn-secondary">Dashboard</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <form action="/trainingPlan/viewAll" method="get">
-                        <button type="submit" class="btn btn-secondary">View Training Plans</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <form action="/trainingPlan/add" method="get">
-                        <button type="submit" class="btn btn-secondary">Add Training Plan</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <form action="/exercise/view" method="get">
-                        <button type="submit" class="btn btn-secondary">View Exercise</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <form action="/exercise/add" method="post">
-                        <button type="submit" class="btn btn-secondary">Add Exercise</button>
-                    </form>
-                </div>
-            </div>
-
         </div>
-    </nav>
+            <div class="nav-menu" id="nav-menu">
+
+                <div class="mt-4">
+                    <a th:href="@{/accDetails}" class="btn btn-secondary">View/Edit Account
+                        Details</a>
+                </div>
+                <div class="mt-2">
+                    <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
+                </div>
+
+                <div class="mt-3">
+                    <a th:href="@{/dashboard}" class="btn btn-danger">Home</a>
+                </div>
+
+                <div class="actions">
+                   
+                        <form action="/dashboard" method="get">
+                            <button type="submit" class="btn btn-secondary">Dashboard</button>
+                        </form>
+                
+                        <form action="/trainingPlan/viewAll" method="get">
+                            <button type="submit" class="btn btn-secondary">View Training Plans</button>
+                        </form>
+            
+                        <form action="/exercise/view" method="get">
+                            <button type="submit" class="btn btn-secondary">View My Exercise</button>
+                        </form>
+            
+                        <form action="/exercise/add" method="post">
+                            <button type="submit" class="btn btn-secondary">Add Exercise</button>
+                        </form>
+     
+                </div>
+
+            </div>
+        </nav>
+
+        
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ensure that the menu is initially closed
+            var navMenu = document.getElementById('nav-menu');
+            navMenu.style.display = 'none';
+
+            var bodyContent = document.querySelector('.bodyContent');
+            bodyContent.style.display = 'block';
+
+            // Toggle menu display when the button is clicked
+            document.getElementById('nav-toggle').addEventListener('click', function () {
+                navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Toggle body content display when the button is clicked
+            document.getElementById('nav-toggle').addEventListener('click', function () {
+                var bodyContent = document.querySelector('.bodyContent');
+                bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+    </script>
+
 
     <main class="container bodyContent">
 
@@ -135,23 +165,7 @@
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Ensure that the menu is initially closed
-            var navMenu = document.getElementById('nav-menu');
-            navMenu.style.display = 'none';
 
-            var bodyContent = document.querySelector('.bodyContent');
-            bodyContent.style.display = 'block';
-
-            // Toggle menu display and body content display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function () {
-                navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
-                var bodyContent = document.querySelector('.container');
-                bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
-            });
-        });
-    </script>
 </body>
 
 </html>
