@@ -66,6 +66,10 @@ public class TrainingPlan {
         return tpid;
     }
 
+    public void setTpid(int tpid) {
+        this.tpid = tpid;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }

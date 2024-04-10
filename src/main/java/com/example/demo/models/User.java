@@ -58,6 +58,10 @@ public class User {
         return this.trainingPlans;
     }
 
+    public void setTrainingPlans(List<TrainingPlan> trainingPlans) {
+        this.trainingPlans = trainingPlans;
+    }
+
     public void addExercise(Exercise exercise) {
         if (exercises == null) {
             exercises = new ArrayList<>();

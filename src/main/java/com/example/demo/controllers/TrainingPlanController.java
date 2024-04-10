@@ -80,12 +80,24 @@ public class TrainingPlanController {
             @RequestParam(value = "trainingSessions", required = false) String[] selectedSessions, HttpSession session,
             HttpServletResponse response, Model model) {
 
-        // check if user is logged in
-        if (session.getAttribute("userId") == null) {
-            return "redirect:/login";
-        }
+                
 
-        int userId = (int) session.getAttribute("userId");
+                Integer userId = (Integer) session.getAttribute("userId");
+                if (userId == null) {
+                    return "redirect:/login";
+                }
+            
+                User user = userRepo.findByUid(userId);
+                if (user == null) {
+                    // Redirect to an error page or set the status and display an error
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+                    model.addAttribute("error", "User not found");
+                    return "error";
+                }
+            
+                // Always add the user to the model
+                model.addAttribute("user", user);
+
         String newName = newPlan.get("name").strip();
         String newDesc = newPlan.get("description").strip();
         String startDateStr = newPlan.get("sdate");
@@ -110,7 +122,7 @@ public class TrainingPlanController {
         LocalDate endDate = LocalDate.parse(endDateStr);
 
         TrainingPlan newTrainingPlan = new TrainingPlan(newName, newDesc, startDate, endDate);
-        User user = userRepo.findByUid(userId);
+   
 
         // System.out.println("Training Session Names:");
         /*
