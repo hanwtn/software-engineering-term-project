@@ -29,6 +29,12 @@
 
             <div class="actions">
                 <div class="card">
+                    <form action="/dashboard" method="get">
+                        <input type="hidden" name="userId" th:value="${user.uid}">
+                        <button type="submit" class="btn btn-secondary">Dashboard</button>
+                    </form>
+                </div>
+                <div class="card">
                     <form action="/trainingPlan/viewAll" method="get">
                         <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">View Training Plans</button>

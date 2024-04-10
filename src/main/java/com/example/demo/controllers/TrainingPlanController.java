@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.models.Exercise;
 import com.example.demo.models.TrainingPlan;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 import com.example.demo.service.Validation;
 import com.example.demo.service.TrainingPlanService;
+import com.example.demo.models.TrainingPlanRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -26,7 +28,8 @@ public class TrainingPlanController {
 
     @Autowired
     private UserRepository userRepo;
-
+    @Autowired
+    private TrainingPlanRepository trainingPlanRepo;
 
     @GetMapping("/trainingPlan/viewAll")
     public String viewTrainingPlan(@RequestParam Map<String, String> newUser, HttpServletResponse response,

@@ -30,6 +30,12 @@
                 </div>
                 <div class="actions">
                     <div class="card">
+                        <form action="/dashboard" method="get">
+                            <input type="hidden" name="userId" th:value="${user.uid}">
+                            <button type="submit" class="btn btn-secondary">Dashboard</button>
+                        </form>
+                    </div>
+                    <div class="card">
                         <form action="/trainingPlan/viewAll" method="get">
                             <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">View Training Plans</button>
@@ -62,6 +68,10 @@
             <th:block th:if="${#lists.isEmpty(trainingPlans)}">
                 <p>No training plans found.</p>
             </th:block>
+            <form action="/trainingPlan/add" method="get">
+                <input type="hidden" name="userId" th:value="${user.uid}">
+                <button type="submit" class="btn btn-secondary">Add Training Plan</button>
+            </form>
             <!-- If trainingPlans is not empty, iterate over it -->
             <ul class="main-content" th:unless="${#lists.isEmpty(trainingPlans)}">
                 <li th:each="plan : ${trainingPlans}" class="card">
@@ -80,6 +90,10 @@
                         <p>Days of Week:
                             <span th:each="day : ${s.daysOfWeek}" th:text="${day + ', '}"></span>
                         </p>
+                        <!-- Edit Session Button -->
+                        <form th:action="@{/trainingSession/edit/{tsid}(tsid=${s.tsid})}" method="get">
+                            <button type="submit" class="btn btn-primary">Edit Session</button>
+                        </form>
                         <form th:action="@{/trainingSession/delete}" method="post">
                             <input type="hidden" name="tsid" th:value="${s.tsid}" />
                             <input type="hidden" name="userId" th:value="${user.uid}" />
@@ -90,10 +104,13 @@
                         <input type="hidden" name="tpid" th:value="${plan.tpid}" />
                         <button type="submit">Add Training Session</button>
                     </form>
+                    <form th:action="@{/trainingPlan/edit/{tpid}(tpid=${plan.tpid})}" method="get">
+                        <button type="submit" class="btn btn-primary">Edit Training Plan</button>
+                    </form>
                     <form th:action="@{/trainingPlan/delete}" method="post">
                         <input type="hidden" name="userId" th:value="${user.uid}" />
                         <input type="hidden" name="tpid" th:value="${plan.tpid}" />
-                        <button type="submit">Delete</button>
+                        <button type="submit">Delete Training Plan</button>
                     </form>
                 </li>
             </ul>
