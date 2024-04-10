@@ -8,6 +8,7 @@ import java.time.DayOfWeek;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.sql.Time;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -75,16 +76,11 @@ public class TrainingSessionController {
         Time endTime = Time.valueOf(endTimeString);
         String name = newSession.get("name");
         List<Exercise> exercises = new ArrayList<>();
-        Set<DayOfWeek> daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
-                .collect(Collectors.toSet());
-
-        // if (daysOfWeekArray != null) {
-        // daysOfWeek =
-        // Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
-        // .collect(Collectors.toSet());
-        // } else {
-        // daysOfWeek = null;
-        // }
+        Set<DayOfWeek> daysOfWeek = new HashSet<>();
+        if (daysOfWeekArray != null) {
+            daysOfWeek = Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
+                    .collect(Collectors.toSet());
+        }
 
         Validation validate = TrainingSessionService.validate(name, daysOfWeek, startTime, endTime);
         if (validate.isError) {
@@ -102,6 +98,13 @@ public class TrainingSessionController {
             model.addAttribute("exercises", allExercises);
             return "training_sessions/addTrainingSession";
         }
+        // if (daysOfWeekArray != null) {
+        // daysOfWeek =
+        // Arrays.stream(daysOfWeekArray).map(String::toUpperCase).map(DayOfWeek::valueOf)
+        // .collect(Collectors.toSet());
+        // } else {
+        // daysOfWeek = null;
+        // }
 
         System.out.println("Training add submit called");
         if (selectedExercises != null) {
