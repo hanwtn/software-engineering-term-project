@@ -22,11 +22,12 @@
             </div>
             <div class="mb-3">
                 <label for="startDate" class="form-label">Start Date</label>
-                <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
+                <input type="date" class="form-control" id="startDate" th:value="${eDate}" th:field="*{startDate}"
+                    required>
             </div>
             <div class="mb-3">
                 <label for="endDate" class="form-label">End Date</label>
-                <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
+                <input type="date" class="form-control" id="endDate" th:value="${eDate}" th:field="*{endDate}" required>
             </div>
             <!-- Display error message -->
             <div th:if="${error}" class="alert alert-danger mb-3">
