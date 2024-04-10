@@ -26,7 +26,6 @@ body, html {
     align-items: center;
     padding: 20px;
     background-color: #ffffff;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
     margin-bottom: 20px;
 }
 
@@ -43,7 +42,6 @@ body, html {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
     margin-top: 20px;
 }
 
@@ -101,4 +99,9 @@ input[type="text"], select, button {
     border-radius: 4px;
     font-size: 0.85em;
     padding: 4px 8px;
+}
+
+
+.nav-toggle {
+    background-color: #007bff;
 }

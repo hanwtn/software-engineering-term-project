@@ -118,7 +118,7 @@
 
 <body>
     <div class="container mt-5">
-        <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
+       
 
         <nav class="navbar">
             <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
@@ -137,32 +137,29 @@
                 </div>
 
                 <div class="actions">
-                    <div class="card">
+                   
                         <form action="/dashboard" method="get">
                             <button type="submit" class="btn btn-secondary">Dashboard</button>
                         </form>
-                    </div>
-
-                    <div class="card">
+                
                         <form action="/trainingPlan/viewAll" method="get">
                             <button type="submit" class="btn btn-secondary">View Training Plans</button>
                         </form>
-                    </div>
-
-                    <div class="card">
+            
                         <form action="/exercise/view" method="get">
                             <button type="submit" class="btn btn-secondary">View My Exercise</button>
                         </form>
-                    </div>
-                    <div class="card">
+            
                         <form action="/exercise/add" method="post">
                             <button type="submit" class="btn btn-secondary">Add Exercise</button>
                         </form>
-                    </div>
+     
                 </div>
 
             </div>
         </nav>
+
+        <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
 
     </div>
 
