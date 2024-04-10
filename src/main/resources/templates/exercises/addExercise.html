@@ -14,7 +14,8 @@
     <link rel="stylesheet" th:href="@{/css/exercises/addExercise.css}" />
     <style>
         .nav-menu {
-            background-color: white; /* Change to match your page background color */
+            background-color: white;
+            /* Change to match your page background color */
         }
     </style>
 </head>
@@ -26,7 +27,7 @@
         <div class="nav-menu" id="nav-menu">
 
             <div class="mt-4">
-                <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
+                <a th:href="@{/accDetails}" class="btn btn-secondary">View/Edit Account Details</a>
             </div>
             <div class="mt-2">
                 <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
@@ -39,31 +40,26 @@
             <div class="actions">
                 <div class="card">
                     <form action="/dashboard" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">Dashboard</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/trainingPlan/viewAll" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">View Training Plans</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/trainingPlan/add" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">Add Training Plan</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/exercise/view" method="get">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">View Exercise</button>
                     </form>
                 </div>
                 <div class="card">
                     <form action="/exercise/add" method="post">
-                        <input type="hidden" name="userId" th:value="${user.uid}">
                         <button type="submit" class="btn btn-secondary">Add Exercise</button>
                     </form>
                 </div>
@@ -71,12 +67,12 @@
 
         </div>
     </nav>
-    
+
     <main class="container bodyContent">
 
         <div class="row justify-content-center">
             <div class="col-md-8">
-                
+
                 <h2>Add a New Exercise</h2>
                 <form action="/exercise/add/submit" method="post">
                     <div class="mb-3">
@@ -140,7 +136,7 @@
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Ensure that the menu is initially closed
             var navMenu = document.getElementById('nav-menu');
             navMenu.style.display = 'none';
@@ -149,7 +145,7 @@
             bodyContent.style.display = 'block';
 
             // Toggle menu display and body content display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function() {
+            document.getElementById('nav-toggle').addEventListener('click', function () {
                 navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
                 var bodyContent = document.querySelector('.container');
                 bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';

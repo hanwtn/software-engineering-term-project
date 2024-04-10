@@ -15,37 +15,37 @@
     </style>
 </head>
 <script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var trainingPlans = JSON.parse(/*[[${trainingPlansJson}]]*/ '[]');
         var calendarEl = document.getElementById('training-calendar');
         var eventColors = {};
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             events: [],
-            eventClick: function(info) {
-                const startTime = new Date(info.event.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                const endTime = new Date(info.event.end).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                
+            eventClick: function (info) {
+                const startTime = new Date(info.event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const endTime = new Date(info.event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
                 alert(`Session: ${info.event.title}\nStart: ${startTime}\nEnd: ${endTime}`);
             }
         });
         calendar.render();
-        
+
         var selector = document.getElementById('training-plan-selector');
-        
+
         trainingPlans.forEach(plan => {
             var option = new Option(plan.name, plan.tpid.toString());
             selector.add(option);
         });
 
         function populateCalendarWithAllEvents() {
-            calendar.removeAllEvents(); 
+            calendar.removeAllEvents();
             trainingPlans.forEach(plan => {
                 createSessionEvents(plan.sessions, plan.startDate, plan.endDate).forEach(event => calendar.addEvent(event));
             });
         }
-        
-        selector.addEventListener('change', function() {
+
+        selector.addEventListener('change', function () {
             calendar.removeAllEvents();
             if (this.value === "") {
                 populateCalendarWithAllEvents();
@@ -68,13 +68,13 @@
             return color;
         }
         function getEventColor(eventName) {
-            
+
             if (!eventColors[eventName]) {
                 eventColors[eventName] = getRandomColor();
             }
             return eventColors[eventName];
         }
-    
+
         function createSessionEvents(sessions, planStartDate, planEndDate) {
             let events = [];
             let planStart = new Date(planStartDate);
@@ -83,7 +83,7 @@
             const dayMap = { "SUNDAY": 6, "MONDAY": 0, "TUESDAY": 1, "WEDNESDAY": 2, "THURSDAY": 3, "FRIDAY": 4, "SATURDAY": 5 };
 
             sessions.forEach(session => {
-                
+
                 session.daysOfWeek.forEach(dayName => {
                     var dayNumber = dayMap[dayName];
 
@@ -92,15 +92,15 @@
                     firstSessionDate.setDate(firstSessionDate.getDate() + diff);
 
                     for (let sessionDate = new Date(firstSessionDate); sessionDate <= planEnd; sessionDate.setDate(sessionDate.getDate() + 7)) {
-                        let eventDate = sessionDate.toISOString().split('T')[0]; 
-                        let startTime = session.startTime.substr(0, 5); 
-                        let endTime = session.endTime.substr(0, 5); 
+                        let eventDate = sessionDate.toISOString().split('T')[0];
+                        let startTime = session.startTime.substr(0, 5);
+                        let endTime = session.endTime.substr(0, 5);
 
                         events.push({
                             title: session.name,
                             start: `${eventDate}T${startTime}`,
                             end: `${eventDate}T${endTime}`,
-                            
+
                             color: getEventColor(session.name)
                         });
                     }
@@ -114,8 +114,8 @@
 
     });
 
-    </script>
-    
+</script>
+
 <body>
     <div class="container mt-5">
         <h1>Welcome, <span th:text="${user.username}">Username</span>!</h1>
@@ -125,7 +125,8 @@
             <div class="nav-menu" id="nav-menu">
 
                 <div class="mt-4">
-                    <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
+                    <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account
+                        Details</a>
                 </div>
                 <div class="mt-2">
                     <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
@@ -149,7 +150,7 @@
                             <button type="submit" class="btn btn-secondary">View Training Plans</button>
                         </form>
                     </div>
-                    
+
                     <div class="card">
                         <form action="/exercise/view" method="get">
                             <input type="hidden" name="userId" th:value="${user.uid}">
@@ -175,7 +176,7 @@
             <label for="training-plan-selector">Select a Training Plan:</label>
             <select id="training-plan-selector" class="form-control">
                 <option value="">All Training Plans</option>
-             </select>
+            </select>
         </div>
         <div id="training-calendar"></div>
     </div>
@@ -183,12 +184,12 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var navToggle = document.getElementById('nav-toggle');
             var navMenu = document.getElementById('nav-menu');
             var bodyContent = document.querySelector('.bodyContent');
 
-            navToggle.addEventListener('click', function() {
+            navToggle.addEventListener('click', function () {
                 navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
                 bodyContent.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
             });
@@ -198,12 +199,12 @@
             bodyContent.style.display = 'block';
 
             // Hide body content when the menu is clicked
-            navMenu.addEventListener('click', function() {
+            navMenu.addEventListener('click', function () {
                 bodyContent.style.display = 'none';
             });
 
             // Show body content when menu is closed
-            navToggle.addEventListener('blur', function() {
+            navToggle.addEventListener('blur', function () {
                 if (navMenu.style.display === 'none') {
                     bodyContent.style.display = 'block';
                 }

@@ -20,7 +20,7 @@
             <button type="button" id="nav-toggle" class="nav-toggle">☰ Menu</button>
             <div class="nav-menu" id="nav-menu">
                 <div class="mt-4">
-                    <a th:href="@{/accDetails/{userId}(userId=${user.uid})}" class="btn btn-secondary">View/Edit Account Details</a>
+                    <a th:href="@{/accDetails}" class="btn btn-secondary">View/Edit Account Details</a>
                 </div>
                 <div class="mt-2">
                     <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
@@ -31,31 +31,26 @@
                 <div class="actions">
                     <div class="card">
                         <form action="/dashboard" method="get">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">Dashboard</button>
                         </form>
                     </div>
                     <div class="card">
                         <form action="/trainingPlan/viewAll" method="get">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">View Training Plans</button>
                         </form>
                     </div>
                     <div class="card">
                         <form action="/trainingPlan/add" method="get">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">Add Training Plan</button>
                         </form>
                     </div>
                     <div class="card">
                         <form action="/exercise/view" method="get">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">View Exercise</button>
                         </form>
                     </div>
                     <div class="card">
                         <form action="/exercise/add" method="post">
-                            <input type="hidden" name="userId" th:value="${user.uid}">
                             <button type="submit" class="btn btn-secondary">Add Exercise</button>
                         </form>
                     </div>
@@ -69,7 +64,6 @@
                 <p>No training plans found.</p>
             </th:block>
             <form action="/trainingPlan/add" method="get">
-                <input type="hidden" name="userId" th:value="${user.uid}">
                 <button type="submit" class="btn btn-secondary">Add Training Plan</button>
             </form>
             <!-- If trainingPlans is not empty, iterate over it -->
@@ -96,8 +90,9 @@
                         </form>
                         <form th:action="@{/trainingSession/delete}" method="post">
                             <input type="hidden" name="tsid" th:value="${s.tsid}" />
-                            <input type="hidden" name="userId" th:value="${user.uid}" />
-                            <button type="submit" onclick="return confirm('Are you sure you want to delete this training session?');">Delete Session</button>
+                            <button type="submit"
+                                onclick="return confirm('Are you sure you want to delete this training session?');">Delete
+                                Session</button>
                         </form><br>
                     </div>
                     <form th:action="@{/trainingSession/add}" method="get">
@@ -108,9 +103,10 @@
                         <button type="submit" class="btn btn-primary">Edit Training Plan</button>
                     </form>
                     <form th:action="@{/trainingPlan/delete}" method="post">
-                        <input type="hidden" name="userId" th:value="${user.uid}" />
                         <input type="hidden" name="tpid" th:value="${plan.tpid}" />
-                        <button type="submit" onclick="return confirm('Are you sure you want to delete this training plan?');">Delete Training Plan</button>
+                        <button type="submit"
+                            onclick="return confirm('Are you sure you want to delete this training plan?');">Delete
+                            Training Plan</button>
 
                     </form>
                 </li>
@@ -118,27 +114,27 @@
         </div>
     </div>
 </body>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ensure that the menu is initially closed
-            var navMenu = document.getElementById('nav-menu');
-            navMenu.style.display = 'none';
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Ensure that the menu is initially closed
+        var navMenu = document.getElementById('nav-menu');
+        navMenu.style.display = 'none';
 
-            var bodyContent = document.querySelector('.bodyContent');
-            bodyContent.style.display = 'block';
+        var bodyContent = document.querySelector('.bodyContent');
+        bodyContent.style.display = 'block';
 
-            // Toggle menu display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function() {
-                navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
-            });
-
-            // Toggle body content display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function() {
-                var bodyContent = document.querySelector('.bodyContent');
-                bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
-            });
+        // Toggle menu display when the button is clicked
+        document.getElementById('nav-toggle').addEventListener('click', function () {
+            navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
         });
-    </script>
+
+        // Toggle body content display when the button is clicked
+        document.getElementById('nav-toggle').addEventListener('click', function () {
+            var bodyContent = document.querySelector('.bodyContent');
+            bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+</script>
 
 
 </html>
