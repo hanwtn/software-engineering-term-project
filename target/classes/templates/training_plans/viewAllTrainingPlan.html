@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Training Plans</title>
     <link rel="stylesheet" th:href="@{/css/users/dashboard.css}" />
-    <link rel="stylesheet" th:href="@{\css\training_plans\viewTrainingPlan.css}" />
+    <link rel="stylesheet" th:href="@{/css/training_plans/viewTrainingPlan.css}" />
 
 </head>
 
@@ -45,6 +45,28 @@
                 </div>
             </nav>
         </div>
+        
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Ensure that the menu is initially closed
+                    var navMenu = document.getElementById('nav-menu');
+                    navMenu.style.display = 'none';
+        
+                    var bodyContent = document.querySelector('.bodyContent');
+                    bodyContent.style.display = 'block';
+        
+                    // Toggle menu display when the button is clicked
+                    document.getElementById('nav-toggle').addEventListener('click', function () {
+                        navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
+                    });
+        
+                    // Toggle body content display when the button is clicked
+                    document.getElementById('nav-toggle').addEventListener('click', function () {
+                        var bodyContent = document.querySelector('.bodyContent');
+                        bodyContent.style.display = bodyContent.style.display === 'block' ? 'none' : 'block';
+                    });
+                });
+            </script>
         <div class="bodyContent">
             <div class="header">
                 <h1>Training Plans for <span th:text="${user.username}"></span></h1>
@@ -111,18 +133,7 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Ensure that the menu is initially closed
-            var navMenu = document.getElementById('nav-menu');
-            navMenu.style.display = 'none';
 
-            // Toggle menu display when the button is clicked
-            document.getElementById('nav-toggle').addEventListener('click', function () {
-                navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
-            });
-        });
-    </script>
 </body>
 
 </html>
