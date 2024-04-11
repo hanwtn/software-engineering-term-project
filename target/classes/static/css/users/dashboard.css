@@ -3,23 +3,23 @@
     box-sizing: border-box;
     margin: 0;
     padding: 10px;
-    font-family: 'Roboto', sans-serif; /* Roboto is a modern font */
+    font-family: 'Roboto', sans-serif;  
 }
 
-/* Body and html styling for a full height layout with modern fonts */
+ 
 body, html {
     height: 100%;
-    background-color: #ffffff; /* Light grey background for a modern look */
+    background-color: #ffffff;  
 }
 
-/* Modern looking container for the dashboard */
+ 
 .dashboard {
     padding: 2% 5%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Header with shadow for depth */
+ 
 .header {
     display: flex;
     justify-content: space-between;
@@ -29,7 +29,7 @@ body, html {
     margin-bottom: 20px;
 }
 
-/* Grid layout for main content with more spacing */
+ 
 .main-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -37,7 +37,7 @@ body, html {
     padding-bottom: 20px;
 }
 
-/* Styling for account details and action cards with modern touches */
+ 
 .account-details, .actions .card {
     background-color: #ffffff;
     padding: 20px;
@@ -49,15 +49,15 @@ body, html {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-/* Buttons with modern colors and hover effects */
+ 
 .btn {
     display: inline-block;
     padding: 10px 20px;
     border-radius: 4px;
     margin-top: 10px;
     font-weight: bold;
-    border: none; /* Remove borders for a modern flat design */
-    transition: background-color 0.3s ease; /* Smooth transition for button hover */
+    border: none;  
+    transition: background-color 0.3s ease;  
 }
 
 .btn-danger {
@@ -74,7 +74,7 @@ body, html {
     opacity: 0.9;
 }
 
-/* Modern form elements */
+ 
 input[type="text"], select, button {
     padding: 10px;
     margin: 10px 0;
@@ -83,7 +83,7 @@ input[type="text"], select, button {
     width: 100%;
 }
 
-/* Custom calendar styling */
+ 
 .fc-toolbar {
     padding: 10px;
     background-color: #ffffff;
@@ -150,3 +150,30 @@ input[type="text"], select, button {
 }
 
 
+.container {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 10px;
+}
+
+.top-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.btn-grid {
+    width: 100%; 
+}
+
+@media (max-width: 600px) {
+    .top-row {
+        grid-template-columns: 1fr;  
+    }
+}

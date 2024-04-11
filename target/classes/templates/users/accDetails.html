@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Details</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
-    <link rel="stylesheet" th:href="@{/css/login.css}" />
     <link rel="stylesheet" th:href="@{/css/users/dashboard.css}" />
 </head>
 
@@ -27,17 +25,12 @@
         </div>
             <div class="nav-menu" id="nav-menu">
 
-                <div class="mt-4">
-                    <a th:href="@{/accDetails}" class="btn btn-secondary">View/Edit Account
-                        Details</a>
-                </div>
-                <div class="mt-2">
-                    <a th:href="@{/users/logout}" class="btn btn-danger">Logout</a>
-                </div>
+                  <div class="top-row">
+        <a href="/accDetails" class="btn btn-secondary">View/Edit Account Details</a>
+        <a href="/users/logout" class="btn btn-danger">Logout</a>
+    </div>
 
-                <div class="mt-3">
-                    <a th:href="@{/dashboard}" class="btn btn-danger">Home</a>
-                </div>
+      
 
                 <div class="actions">
                    
