@@ -1,0 +1,38 @@
+
+.card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 50px;
+    background-color: #b2fcff;
+}
+
+.card-buttons {
+    margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+    padding: 5px 10px;
+    margin-right: 5px;
+}
+
+.session-card {
+    margin-top: 10px;
+}
+
+.session-card .card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.session-card .edit-button,
+.session-card .delete-button {
+    margin-top: 5px;
+}
+
+.main-content li {
+    list-style: none;
+}

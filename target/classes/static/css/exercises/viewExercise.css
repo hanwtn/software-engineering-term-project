@@ -1,95 +1,11 @@
-/* General Resets */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-}
-
-/* Body and html styling for a full height layout with modern fonts */
-body, html {
-    height: 100%;
-    background-color: #f7f7f7;
-    padding: 20px;
-}
-
-h1 {
-    margin-bottom: 20px;
-}
-
-/* Navbar styling */
-.navbar {
-    margin-bottom: 20px;
-}
-
-.nav-toggle {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.nav-menu {
-    display: none;
+.exercise-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
     padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
-    background-color: #ffffff;
-    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
 }
 
-.actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.card {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
-}
-
-.btn-secondary {
-    background-color: #00bcd4;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btn-secondary:hover {
-    opacity: 0.9;
-}
-
-/* Exercise list styling */
-ul {
-    list-style-type: none;
-}
-
-li {
-    margin-bottom: 20px;
-}
-
-/* Form styling */
-form {
-    display: inline-block;
-    margin-top: 10px;
-}
-
-button[type="submit"] {
-    background-color: #ff5252;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button[type="submit"]:hover {
-    opacity: 0.9;
+.delete-button {
+    margin-top: 5px;
 }
