@@ -1,0 +1,80 @@
+ 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;  
+}
+
+ 
+body, html {
+    height: 100%;
+    background-color: #f7f7f7;  
+}
+ 
+.container {
+    padding: 2% 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+ 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+/* Grid layout for main content with more spacing */
+.main-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    padding-bottom: 20px;
+}
+
+ 
+.account-details, .actions .card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.actions {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-weight: bold;
+    border: none; 
+    transition: background-color 0.3s ease; 
+}
+
+.btn-danger {
+    background-color: #ff5252;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #00bcd4;
+    color: white;
+}
+
+.btn-danger:hover, .btn-secondary:hover {
+    opacity: 0.9;
+}
+
+
+.nav-menu {
+    display: none;
+}
